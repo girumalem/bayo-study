@@ -1,0 +1,152 @@
+/* ===== new-style lessons (v-*) ===== */
+:root{--blue:#2463b5;--cyto:#fdf3d7;--mem:#d98a1f;--nuc:#7b5cc4;--mito:#e2681f;--ribo:#1d3557;--chl:#2f9a4d;--vac:#7fb8e6;--wall:#7a8b3a;--bark-l:#d9cfbf;--bark-d:#3b3530}
+@media (prefers-color-scheme:dark){:root{--blue:#7fb2f0;--cyto:#3a3320;--mem:#f0a94a;--nuc:#b39cf0;--mito:#f0823a;--ribo:#cfe0f5;--chl:#6fd39b;--vac:#5c8fbf;--wall:#b9c96a;--bark-l:#cfc4b2;--bark-d:#2a2522}}
+.v-track{display:flex;gap:4px}
+.v-track button{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:4px 0;cursor:pointer}
+.v-track i{width:46px;height:46px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:21px;background:var(--card)}
+.v-track .on{color:var(--ink)} .v-track .on i{border-color:var(--accent);background:var(--accent)}
+.v-track .done i{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.v-stage{position:relative;border-radius:18px;background:var(--bg);border:2px solid var(--line);overflow:hidden;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px}
+.v-stage > svg.v-scene{display:block;width:100%;height:auto}
+.v-cap{min-height:64px;font-size:24px;font-weight:700;line-height:1.35;text-align:center;padding:4px 8px}
+.v-cap .k,.v-prompt .k{color:var(--accent)}
+.v-center{justify-content:center}
+.v-big{min-height:72px!important;font-size:22px!important;padding:0 26px!important}
+.v-part{transition:opacity .7s ease, transform .7s ease;transform-box:fill-box;transform-origin:center}
+.v-part.off{opacity:0;transform:scale(.5);pointer-events:none}
+.v-part.dim{opacity:.25}
+.v-part.glow{filter:drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 4px var(--accent))}
+@media (prefers-reduced-motion:no-preference){.v-part.glow{animation:vpulse 1.2s ease-in-out infinite}@keyframes vpulse{50%{transform:scale(1.08)}}
+  .v-pop{animation:vpop .5s ease both}@keyframes vpop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}}
+.v-part.right{filter:drop-shadow(0 0 10px var(--good)) drop-shadow(0 0 4px var(--good))}
+.v-part.wrong{filter:drop-shadow(0 0 10px var(--bad))}
+.v-tappable .v-part{cursor:pointer}
+.v-bubble{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--card);border:3px solid var(--accent);border-radius:16px;padding:8px 16px;font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px;white-space:nowrap;max-width:94%}
+.v-bubble svg{width:34px;height:34px;flex:none}
+.v-emo{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;line-height:1}
+.v-erow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;font-size:64px;padding:16px 4px}
+.v-erow.many{font-size:46px}
+.v-bigtxt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px}
+.v-bigtxt div{font-size:34px;font-weight:800;letter-spacing:.03em;text-align:center}
+.v-bigtxt div:last-child{color:var(--accent)}
+/* balance */
+.v-bal{width:100%;max-width:440px}
+.v-bal text{font:800 22px Lexend,sans-serif;fill:var(--ink)}
+.v-bal .act{font-size:18px;fill:var(--accent)}
+/* timeline */
+.v-tl{display:flex;flex-direction:column;gap:6px;width:100%}
+.v-tl button{display:flex;align-items:center;gap:12px;border:3px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:18px;padding:6px 12px;text-align:left;cursor:pointer;min-height:54px}
+.v-tl button b{font-size:20px;min-width:56px;color:var(--navy)}
+.v-tl button .v-emo{font-size:28px}
+.v-tl button.hi{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--card))}
+.v-tl button.dimmed{opacity:.55}
+/* chain, pyramid, acronym */
+.v-chain{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;padding:10px}
+.v-chain .n{display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:700;font-size:15px;padding:6px 8px;border-radius:14px;border:3px solid transparent}
+.v-chain .n .v-emo{font-size:46px}
+.v-chain .n.hi{border-color:var(--accent);background:var(--card)}
+.v-chain .ar{font-size:26px;color:var(--muted)}
+.v-pyr{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;padding:8px}
+.v-pyr div{display:flex;align-items:center;justify-content:center;gap:10px;background:color-mix(in srgb,var(--good) 22%,var(--card));border-radius:10px;font-weight:800;font-size:20px;padding:6px}
+.v-pyr .v-emo{font-size:34px}
+.v-acr{display:flex;flex-direction:column;gap:6px;width:100%;padding:8px}
+.v-acr div{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;opacity:.4;transition:opacity .4s}
+.v-acr div b{width:52px;height:52px;border-radius:12px;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:30px}
+.v-acr div.hi,.v-acr.all div{opacity:1}.v-acr div.hi b{background:var(--accent);color:var(--accent-ink)}
+/* dna */
+.v-dna{display:flex;flex-direction:column;gap:6px;align-items:center;padding:8px}
+.v-dna .r{display:flex;align-items:center;gap:8px}
+.v-dna .b{width:54px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:26px;font-weight:800;color:#fff}
+.v-dna .bar{width:60px;height:6px;border-radius:3px;background:var(--line)}
+.v-dna .hi .bar{background:var(--accent)} .v-dna .mut .b:first-child{outline:4px solid var(--bad)}
+.bA{background:#d9534f}.bT{background:#2f9a4d}.bG{background:#2463b5}.bC{background:#e2a21f;color:#1c2430!important}.bq{background:var(--line);color:var(--muted)!important}
+/* punnett */
+.v-pun{border-collapse:separate;border-spacing:6px;font-size:26px;font-weight:800}
+.v-pun th{width:70px;height:52px;color:var(--navy);font-size:24px}
+.v-pun td{width:76px;height:64px;text-align:center;border-radius:12px;background:var(--card);border:2px solid var(--line)}
+.v-pun td.dom{color:var(--verb)} .v-pun td.rec{color:var(--noun)} .v-pun td.sel{border-color:var(--accent);border-width:4px}
+.v-pun td.ok{background:var(--good-bg);border-color:var(--good)} .v-pun td.no{background:var(--bad-bg);border-color:var(--bad)}
+.v-pun td button{width:100%;height:100%;border:0;background:transparent;font:inherit;color:inherit;cursor:pointer}
+/* number line, machine */
+.v-nl{width:100%;max-width:440px}
+.v-nl text{font:700 15px Lexend,sans-serif;fill:var(--ink)}
+.v-mach{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;flex-wrap:wrap}
+.v-mach .io{width:76px;height:76px;border-radius:50%;border:4px solid var(--blue);display:grid;place-items:center;font-size:30px;font-weight:800;background:var(--card)}
+.v-mach .io.out{border-color:var(--accent)}
+.v-mach .box{min-width:140px;height:96px;border-radius:18px;background:var(--navy);color:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:24px;padding:0 12px}
+.v-mach .box small{font-size:13px;opacity:.8;letter-spacing:.08em}
+.v-mach .ar{font-size:30px;color:var(--muted)}
+/* moths */
+.v-moths{width:100%;max-width:440px}
+/* word power */
+.v-word{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;font-size:42px;font-weight:800;letter-spacing:.04em}
+.v-chunk{border:0;font:inherit;padding:2px 10px;border-radius:12px;cursor:pointer;color:#fff}
+.v-chunk.c0{background:var(--blue)} .v-chunk.c1{background:var(--accent)} .v-chunk.c2{background:var(--good)}
+.v-mean{text-align:center;font-size:24px;font-weight:700;min-height:40px}
+.v-wcards{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.v-wcards button{font:inherit;font-size:16px;font-weight:700;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;cursor:pointer}
+.v-wcards button.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+/* beat */
+.v-lyrics{display:flex;flex-direction:column;gap:6px;font-size:22px;font-weight:700;line-height:1.35}
+.v-lyrics p{margin:0;padding:6px 12px;border-radius:12px;transition:background .2s}
+.v-lyrics p.now{background:var(--accent);color:var(--accent-ink)}
+.v-beatviz{display:flex;gap:6px;justify-content:center}
+.v-beatviz i{width:18px;height:18px;border-radius:50%;background:var(--line)} .v-beatviz i.hit{background:var(--accent)}
+/* play */
+.v-qtop{display:flex;align-items:flex-start;gap:12px}
+.v-qtop .btn{flex:none}
+.v-prompt{font-size:24px;font-weight:800;line-height:1.3;margin:0}
+.v-tf{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.v-tf button{min-height:104px;font:inherit;font-size:23px;font-weight:800;border-radius:20px;border:3px solid var(--line);background:var(--card);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:8px}
+.v-tf svg{width:44px;height:44px}
+.v-mc{display:flex;flex-direction:column;gap:10px}
+.v-mc button{min-height:64px;font:inherit;font-size:22px;font-weight:800;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink);display:flex;align-items:center;gap:12px;padding:6px 16px;text-align:left;cursor:pointer}
+.v-mc .lt{flex:none;width:36px;height:36px;border-radius:50%;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:16px}
+.v-chips{display:flex;flex-wrap:wrap;gap:10px}
+.v-chip{font:inherit;font-weight:700;font-size:19px;min-height:54px;border-radius:14px;border:3px solid var(--accent);background:var(--card);color:var(--ink);padding:6px 14px;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.v-chip svg{width:30px;height:30px} .v-chip .v-emo{font-size:26px}
+.v-chip.sel{background:var(--accent);color:var(--accent-ink)}
+.v-chip.ok{border-color:var(--good);background:var(--good-bg);color:var(--ink)} .v-chip.no{border-color:var(--bad);background:var(--bad-bg);color:var(--ink)}
+.v-bins{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.v-bin{min-height:150px;border:3px dashed var(--navy);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:8px;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.v-bin > b{font-size:18px}
+.v-bin .v-chips{gap:6px}.v-bin .v-chip{min-height:44px;font-size:16px}
+.v-match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v-match .col{display:flex;flex-direction:column;gap:10px}
+.v-mi{font:inherit;font-weight:700;font-size:18px;min-height:64px;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer}
+.v-mi svg{width:34px;height:34px;flex:none} .v-mi .v-emo{font-size:28px}
+.v-mi.sel{border-color:var(--accent);border-width:4px}
+.v-mi.p0{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 15%,var(--card))} .v-mi.p1{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--card))}
+.v-mi.p2{border-color:var(--good);background:var(--good-bg)} .v-mi.p3{border-color:var(--nuc);background:color-mix(in srgb,var(--nuc) 15%,var(--card))} .v-mi.no{border-color:var(--bad);background:var(--bad-bg)}
+.v-pics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.v-pic{font:inherit;font-weight:800;font-size:19px;border:3px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.v-pic svg{width:100%;max-width:170px;height:auto} .v-pic .v-emo{font-size:60px}
+.v-seq{display:flex;flex-direction:column;gap:8px}
+.v-slot{min-height:58px;border:3px dashed var(--line);border-radius:14px;display:flex;align-items:center;gap:10px;padding:0 10px;font-weight:700}
+.v-slot .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:16px}
+.v-slot.filled{border-style:solid;border-color:var(--navy)} .v-slot.ok{border-color:var(--good);background:var(--good-bg)} .v-slot.no{border-color:var(--bad);background:var(--bad-bg)}
+.v-slot button{flex:1;border:0;background:transparent;font:inherit;text-align:left;display:flex;align-items:center;gap:10px;min-height:52px;color:inherit;padding:0;cursor:pointer}
+.v-slot svg{width:34px;height:34px} .v-slot .v-emo{font-size:28px}
+.v-fb{border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:21px;font-weight:700}
+.v-fb.ok{background:var(--good-bg);border:3px solid var(--good)} .v-fb.no{background:var(--bad-bg);border:3px solid var(--bad)}
+.v-fb svg{flex:none;width:40px;height:40px}
+.v-dots{display:flex;gap:6px;justify-content:center}
+.v-dots i{width:14px;height:14px;border-radius:50%;background:var(--line)} .v-dots i.ok{background:var(--good)} .v-dots i.no{background:var(--bad)} .v-dots i.now{background:var(--accent)}
+svg.v-graph{display:block;width:100%;max-width:400px;margin:0 auto;height:auto}
+.v-graph .grid{stroke:var(--line);stroke-width:1} .v-graph .ax{stroke:var(--ink);stroke-width:2.5}
+.v-graph text{font:700 13px Lexend,sans-serif;fill:var(--muted)}
+.v-eq{text-align:center;font-size:38px;font-weight:800;letter-spacing:.03em}
+.v-eq .m{color:var(--accent)} .v-eq .b{color:var(--blue)}
+.v-knobs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.v-knob{border:3px solid var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.v-knob b{font-size:17px} .v-knob .v{font-size:32px;font-weight:800}
+.v-knob.m .v{color:var(--accent)} .v-knob.b .v{color:var(--blue)}
+.v-knob .row{justify-content:center}
+.v-knob .btn{min-width:64px;justify-content:center;font-size:28px;padding:0}
+.v-ydot{cursor:pointer}
+.v-moves{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v-moves button{min-height:60px;font:inherit;font-weight:800;font-size:19px;border-radius:14px;border:3px solid var(--accent);background:var(--card);color:var(--ink);cursor:pointer}
+.v-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.v-gallery button{border:3px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:16px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;text-align:center}
+.v-gallery button .v-emo{font-size:40px}
+.v-gallery button.seen{border-color:var(--good)}
