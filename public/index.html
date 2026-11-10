@@ -1328,7 +1328,7 @@ function exMoths(){ let m = {bark:"light", l:6, d:2};
   exFrame("Run the experiment.", `<div class="v-stage" id="eM"></div><div class="v-cap" id="eC"></div><div class="row v-center"><button class="btn" id="eBark">🌳 Change the tree</button><button class="btn" id="eBird">🐦 Birds hunt</button><button class="btn go" id="eGen">👶 Next generation</button></div>`, "Run the experiment. Change the tree color, let the birds hunt, then make the next generation.");
   const draw = () => { $("eM").innerHTML = mothsSVG(m); $("eC").textContent = `${m.l} light · ${m.d} dark on a ${m.bark} tree`; };
   $("eBark").onclick = () => { m.bark = m.bark==="light"?"dark":"light"; tick(); draw(); sayRaw(`Now the tree is ${m.bark}. Which moths stand out?`); };
-  $("eBird").onclick = () => { const k = m.bark==="dark" ? "l" : "d"; const ate = Math.min(2, m[k]); m[k] -= ate; draw(); sayRaw(ate ? `The birds ate ${ate} ${k==="l"?"light":"dark"} moths. They stood out on the ${m.bark} tree.` : "The birds can't find any moths that stand out."); };
+  $("eBird").onclick = () => { const k = m.bark==="dark" ? "l" : "d"; const ate = Math.min(2, m[k]); m[k] -= ate; draw(); sayRaw(ate ? `The birds ate ${ate===1?"one":"two"} ${k==="l"?"light":"dark"} moth${ate===1?"":"s"}. ${ate===1?"It":"They"} stood out on the ${m.bark} tree.` : "The birds can't find any moths that stand out."); };
   $("eGen").onclick = () => { const t = m.l + m.d; if (!t) { m = {bark:m.bark, l:4, d:4}; } else { const L = Math.round(m.l / t * 8); m.l = L; m.d = 8 - L; } tick(); draw(); sayRaw(`The survivors had babies. Now ${m.l} light and ${m.d} dark. The moths that blend in take over.`); };
   draw(); }
 function exTl(){ const seen = new Set();
