@@ -74,3 +74,5 @@ finally:
     for p in OUT.glob("*.mp3"):
         if p.name not in live: p.unlink()
     print(f"Done: {done} recorded, {failed} failed, {used} characters used. {len(keep)} lines have audio.")
+if failed and not done:
+    sys.exit("Nothing was recorded. See the error above.")
