@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Bayo's Study Court · Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700;800&display=swap">
+<style>
+:root{--bg:#eaf0f6;--card:#f8fafc;--ink:#1c2430;--muted:#566273;--line:#c9d3df;--accent:#e2681f;--accent-ink:#fff;--navy:#1d3557;
+  --good:#1d7a4c;--good-bg:#dcf1e5;--bad:#b4421d;--bad-bg:#fbe5da;--cyto:#fdf3d7;--mem:#d98a1f;--nuc:#7b5cc4;--mito:#e2681f;--ribo:#1d3557;--chl:#2f9a4d;--vac:#7fb8e6;--wall:#7a8b3a;
+  --blue:#2463b5;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#141a22;--card:#1c2430;--ink:#eef2f7;--muted:#a6b1c0;--line:#323e4e;--accent:#f0823a;--accent-ink:#1a0d03;--navy:#9cc3ee;
+  --good:#6fd39b;--good-bg:#143726;--bad:#f39a72;--bad-bg:#3d2116;--cyto:#3a3320;--mem:#f0a94a;--nuc:#b39cf0;--mito:#f0823a;--ribo:#cfe0f5;--chl:#6fd39b;--vac:#5c8fbf;--wall:#b9c96a;--blue:#7fb2f0;color-scheme:dark}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Lexend,system-ui,sans-serif;font-size:20px;line-height:1.5;letter-spacing:.02em;word-spacing:.08em;
+  padding:16px max(16px,env(safe-area-inset-left)) 60px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{margin:0;font-size:28px;font-weight:800;line-height:1.2}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.muted{color:var(--muted)} .small{font-size:16px}
+.btn{font:inherit;font-weight:700;font-size:19px;min-height:56px;border-radius:16px;padding:0 20px;border:3px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+.btn.go{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.big{min-height:72px;font-size:22px;padding:0 28px}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+/* level picker */
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.lv{display:flex;gap:14px;align-items:center;text-align:left;border:3px solid var(--line);border-radius:18px;background:var(--card);padding:14px;font:inherit;color:inherit;cursor:pointer}
+.lv svg{flex:none;width:70px;height:70px}
+.lv b{display:block;font-size:22px}
+/* stage tracker */
+.track{display:flex;gap:6px}
+.track button{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:4px 0;cursor:pointer}
+.track i{width:44px;height:44px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:20px;background:var(--card)}
+.track .on{color:var(--ink)} .track .on i{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.track .done i{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+/* stage */
+.stage{position:relative;border-radius:18px;background:var(--bg);border:2px solid var(--line);overflow:hidden}
+.stage svg.scene{display:block;width:100%;height:auto}
+.cap{min-height:64px;font-size:24px;font-weight:700;line-height:1.35;text-align:center;padding:4px 8px}
+.cap .k{color:var(--accent)}
+.controls{justify-content:center}
+.part{transition:opacity .7s ease, transform .7s ease;transform-box:fill-box;transform-origin:center}
+.part.off{opacity:0;transform:scale(.5);pointer-events:none}
+.part.dim{opacity:.25}
+.part.glow{filter:drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 4px var(--accent))}
+@media (prefers-reduced-motion:no-preference){.part.glow{animation:pulse 1.2s ease-in-out infinite}@keyframes pulse{50%{transform:scale(1.08)}}}
+.part.right{filter:drop-shadow(0 0 10px var(--good)) drop-shadow(0 0 4px var(--good))}
+.part.wrong{filter:drop-shadow(0 0 10px var(--bad))}
+.tappable .part{cursor:pointer}
+.bubble{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--card);border:3px solid var(--accent);border-radius:16px;padding:8px 16px;font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px;white-space:nowrap;max-width:94%}
+.bubble svg{width:34px;height:34px;flex:none}
+/* word power */
+.word{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;font-size:44px;font-weight:800;letter-spacing:.04em}
+.chunk{border:0;font:inherit;padding:2px 10px;border-radius:12px;cursor:pointer;color:#fff}
+.chunk.c0{background:var(--blue)} .chunk.c1{background:var(--accent)} .chunk.c2{background:var(--good)}
+.mean{text-align:center;font-size:24px;font-weight:700;min-height:40px}
+.wcards{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.wcards button{font:inherit;font-size:16px;font-weight:700;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;cursor:pointer}
+.wcards button.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+/* beat */
+.lyrics{display:flex;flex-direction:column;gap:6px;font-size:23px;font-weight:700;line-height:1.35}
+.lyrics p{margin:0;padding:6px 12px;border-radius:12px;transition:background .2s}
+.lyrics p.now{background:var(--accent);color:var(--accent-ink)}
+.beatviz{display:flex;gap:6px;justify-content:center}
+.beatviz i{width:18px;height:18px;border-radius:50%;background:var(--line)}
+.beatviz i.hit{background:var(--accent)}
+/* play */
+.qtop{display:flex;align-items:flex-start;gap:12px}
+.qtop .btn{flex:none}
+.prompt{font-size:24px;font-weight:800;line-height:1.3;margin:0}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tf button{min-height:110px;font:inherit;font-size:24px;font-weight:800;border-radius:20px;border:3px solid var(--line);background:var(--card);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.tf svg{width:44px;height:44px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font:inherit;font-weight:700;font-size:19px;min-height:54px;border-radius:14px;border:3px solid var(--accent);background:var(--card);color:var(--ink);padding:6px 14px;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.chip svg{width:30px;height:30px}
+.chip.sel{background:var(--accent);color:var(--accent-ink)}
+.chip.ok{border-color:var(--good);background:var(--good-bg);color:var(--ink)} .chip.no{border-color:var(--bad);background:var(--bad-bg);color:var(--ink)}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bin{min-height:150px;border:3px dashed var(--navy);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:8px;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.bin > b{font-size:19px}
+.bin .chips{gap:6px}.bin .chip{min-height:44px;font-size:16px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:flex;flex-direction:column;gap:10px}
+.mi{font:inherit;font-weight:700;font-size:18px;min-height:64px;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer}
+.mi svg{width:34px;height:34px;flex:none}
+.mi.sel{border-color:var(--accent)} .mi.p0{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 15%,var(--card))}
+.mi.p1{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--card))} .mi.p2{border-color:var(--good);background:var(--good-bg)}
+.mi.p3{border-color:var(--nuc);background:color-mix(in srgb,var(--nuc) 15%,var(--card))} .mi.no{border-color:var(--bad);background:var(--bad-bg)}
+.pics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pic{font:inherit;font-weight:800;font-size:19px;border:3px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.pic svg{width:100%;max-width:170px;height:auto}
+.seq{display:flex;flex-direction:column;gap:8px}
+.slot{min-height:58px;border:3px dashed var(--line);border-radius:14px;display:flex;align-items:center;gap:10px;padding:0 10px;font-weight:700}
+.slot .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:16px}
+.slot.filled{border-style:solid;border-color:var(--navy)} .slot.ok{border-color:var(--good);background:var(--good-bg)} .slot.no{border-color:var(--bad);background:var(--bad-bg)}
+.slot button{flex:1;border:0;background:transparent;font:inherit;text-align:left;display:flex;align-items:center;gap:10px;min-height:52px;color:inherit;padding:0;cursor:pointer}
+.slot svg{width:34px;height:34px}
+.fb{border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:21px;font-weight:700}
+.fb.ok{background:var(--good-bg);border:3px solid var(--good)} .fb.no{background:var(--bad-bg);border:3px solid var(--bad)}
+.fb svg{flex:none;width:40px;height:40px}
+.dots{display:flex;gap:6px;justify-content:center}
+.dots i{width:14px;height:14px;border-radius:50%;background:var(--line)} .dots i.ok{background:var(--good)} .dots i.no{background:var(--bad)} .dots i.now{background:var(--accent)}
+/* graph */
+svg.graph{display:block;width:100%;max-width:420px;margin:0 auto;height:auto;touch-action:manipulation}
+.graph .grid{stroke:var(--line);stroke-width:1}
+.graph .ax{stroke:var(--ink);stroke-width:2.5}
+.graph text{font:700 13px Lexend,sans-serif;fill:var(--muted)}
+.eq{text-align:center;font-size:40px;font-weight:800;letter-spacing:.03em}
+.eq .m{color:var(--accent)} .eq .b{color:var(--blue)}
+.knobs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.knob{border:3px solid var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.knob b{font-size:18px}
+.knob .v{font-size:34px;font-weight:800}
+.knob.m .v{color:var(--accent)} .knob.b .v{color:var(--blue)}
+.knob .row{justify-content:center}
+.knob .btn{min-width:64px;justify-content:center;font-size:28px;padding:0}
+.ydot{cursor:pointer}
+.score{text-align:center;font-size:56px;font-weight:800;line-height:1}
+.stars{font-size:44px;letter-spacing:.1em;text-align:center;color:var(--accent)} .stars .off{color:var(--line)}
+.note{background:var(--card);border:2px dashed var(--accent);border-radius:16px;padding:12px 16px;font-size:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="row between"><div><span class="small muted" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase">New style · preview</span><h1>Bayo's Study Court</h1></div>
+    <div class="row"><button class="btn" id="speedBtn" aria-label="Voice speed">🐢 Speed: normal</button></div></header>
+  <main id="view" class="wrap" style="gap:16px"></main>
+</div>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- voice (shares settings with the main app) ---------- */
+let MAIN = {}; try { MAIN = JSON.parse(localStorage.getItem("bayo-grammar-v1")) || {}; } catch(e) {}
+let rate = MAIN.rate || 0.9, voice = null, talkId = 0;
+const RATES = [[0.75,"slow"],[0.9,"normal"],[1.1,"fast"]];
+function paintSpeed(){ const r = RATES.find(x=>x[0]===rate) || RATES[1]; $("speedBtn").textContent = (r[1]==="slow"?"🐢":r[1]==="fast"?"🐇":"🎧")+" Speed: "+r[1]; }
+$("speedBtn").onclick = () => { const i = RATES.findIndex(x=>x[0]===rate); rate = RATES[(i+1)%3][0]; paintSpeed(); try { MAIN.rate = rate; localStorage.setItem("bayo-grammar-v1", JSON.stringify(Object.assign(JSON.parse(localStorage.getItem("bayo-grammar-v1")||"{}"),{rate}))); } catch(e) {} say("This is how fast I'll talk."); };
+function pickVoice(){ if (!window.speechSynthesis) return; const vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang)); if (!vs.length) return;
+  const want = MAIN.voice && vs.find(v => v.name === MAIN.voice); if (want) { voice = want; return; }
+  const score = v => (/natural|neural|premium|enhanced/i.test(v.name)?10:0) + (/google|microsoft|samantha|aria|jenny|guy/i.test(v.name)?3:0) + (/en-US/i.test(v.lang)?2:0);
+  voice = vs.sort((a,b)=>score(b)-score(a))[0]; }
+if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function hush(){ talkId++; try { window.speechSynthesis && speechSynthesis.cancel(); } catch(e) {} }
+/* say(): speak and resolve when finished (or when interrupted) */
+function say(text){ hush(); return sayQ(text); }
+function sayQ(text){ const id = talkId; return new Promise(res => {
+  if (!window.speechSynthesis || !text) { setTimeout(res, 30); return; }
+  const u = new SpeechSynthesisUtterance(text); u.rate = rate; if (voice) u.voice = voice; u.lang = voice ? voice.lang : "en-US";
+  let done = false; const fin = () => { if (!done) { done = true; res(id === talkId); } };
+  u.onend = fin; u.onerror = fin; setTimeout(fin, 2500 + text.length * 110 / rate);
+  speechSynthesis.speak(u); }); }
+
+/* ---------- tones + beat ---------- */
+let actx = null; const ac = () => (actx = actx || new (window.AudioContext||window.webkitAudioContext)());
+function tone(notes){ if (MAIN.sfx === false) return; try { const a = ac(); let t = a.currentTime; notes.forEach(([f,d]) => { const o = a.createOscillator(), g = a.createGain(); o.type="triangle"; o.frequency.value=f; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.18,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.connect(g).connect(a.destination); o.start(t); o.stop(t+d+.02); t+=d*.8; }); } catch(e) {} }
+const SFX = { ok:()=>tone([[660,.12],[990,.2]]), no:()=>tone([[330,.18],[262,.25]]), tap:()=>tone([[520,.06]]), win:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]) };
+let beatT = null, beatN = 0;
+function drum(kind){ try { const a = ac(), t = a.currentTime, g = a.createGain(); g.connect(a.destination);
+  if (kind==="k"){ const o=a.createOscillator(); o.frequency.setValueAtTime(140,t); o.frequency.exponentialRampToValueAtTime(40,t+.15); g.gain.setValueAtTime(.5,t); g.gain.exponentialRampToValueAtTime(.001,t+.18); o.connect(g); o.start(t); o.stop(t+.2); }
+  else { const len = kind==="s"?.15:.04, b = a.createBuffer(1, a.sampleRate*len, a.sampleRate), d = b.getChannelData(0); for (let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    const s = a.createBufferSource(), f = a.createBiquadFilter(); f.type = kind==="s"?"bandpass":"highpass"; f.frequency.value = kind==="s"?1800:7000; s.buffer=b; s.connect(f).connect(g);
+    g.gain.setValueAtTime(kind==="s"?.35:.12,t); g.gain.exponentialRampToValueAtTime(.001,t+len); s.start(t); } } catch(e) {} }
+function beatStart(){ beatStop(); beatN = 0; const step = 60000/88/2; beatT = setInterval(() => { const n = beatN++ % 8;
+  if (n===0||n===3||n===5) drum("k"); if (n===2||n===6) drum("s"); drum("h");
+  document.querySelectorAll(".beatviz i").forEach((e,i) => e.classList.toggle("hit", i===n)); }, step); }
+function beatStop(){ clearInterval(beatT); beatT = null; document.querySelectorAll(".beatviz i").forEach(e=>e.classList.remove("hit")); }
+
+/* ---------- little icons ---------- */
+const IC = {
+ coach:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 20a9 9 0 1 0 18 0v-4h10v-5H17a9 9 0 0 0-9 9z" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="17" cy="20" r="3.5" fill="var(--accent)"/></svg>`,
+ power:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M23 3L9 23h10l-3 14 15-21H21z" fill="var(--accent)" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+ shield:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4l13 5v9c0 9-6 15-13 18C13 33 7 27 7 18V9z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20l4 4 8-9" fill="none" stroke="var(--good)" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+ hammer:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 10h16l4 4-4 4H8z" fill="var(--accent)"/><path d="M18 18l-10 16" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
+ sun:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="8" fill="var(--accent)"/><path d="M20 3v6M20 31v6M3 20h6M31 20h6M8 8l4 4M28 28l4 4M32 8l-4 4M12 28l-4 4" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/></svg>`,
+ brick:`<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="8" width="32" height="24" rx="3" fill="var(--wall)"/><path d="M4 16h32M4 24h32M14 8v8M26 8v8M20 16v8M10 24v8M30 24v8" stroke="var(--card)" stroke-width="2"/></svg>`,
+ drop:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4C14 14 9 20 9 26a11 11 0 0 0 22 0c0-6-5-12-11-22z" fill="var(--vac)"/></svg>`,
+ dna:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M12 4c16 8 16 12 0 16s-16 8 0 16M28 4c-16 8-16 12 0 16s16 8 0 16" fill="none" stroke="var(--nuc)" stroke-width="3"/></svg>`,
+ up:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 34V8M10 18l10-10 10 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ yes:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="var(--good)"/><path d="M12 21l6 6 11-13" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ nope:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="var(--bad)"/><path d="M13 13l14 14M27 13L13 27" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`,
+ cell1:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="15" fill="var(--cyto)" stroke="var(--mem)" stroke-width="3"/><circle cx="20" cy="20" r="5" fill="var(--nuc)"/></svg>`,
+ tissue:`<svg viewBox="0 0 40 40" aria-hidden="true">${[[10,12],[22,10],[32,16],[12,26],[24,24],[32,30],[18,34]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6" fill="var(--cyto)" stroke="var(--mem)" stroke-width="2"/>`).join("")}</svg>`,
+ heart:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 34S5 25 5 14a8 8 0 0 1 15-4 8 8 0 0 1 15 4c0 11-15 20-15 20z" fill="var(--bad)"/></svg>`,
+ system:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4v32M20 12l-10 8M20 12l10 8M20 22l-8 8M20 22l8 8" stroke="var(--bad)" stroke-width="3" stroke-linecap="round"/><path d="M20 22c-3-2-3-6 0-8 3 2 3 6 0 8z" fill="var(--bad)"/></svg>`,
+ person:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="9" r="6" fill="currentColor"/><path d="M8 38c0-10 5-17 12-17s12 7 12 17" fill="var(--accent)"/></svg>`,
+};
+
+/* ---------- the cell (one SVG, parts can appear, glow, and be tapped) ---------- */
+const CELL_PARTS = {
+ wall:{role:"the strong wall", name:"Cell wall", job:"Strength for plants", icon:"brick", say:"Cell wall. Plants only. A strong wall that holds the plant up."},
+ membrane:{role:"security", name:"Cell membrane", job:"Security: controls in and out", icon:"shield", say:"Cell membrane. The security. It decides what goes in and out."},
+ vacuole:{role:"the water tank", name:"Vacuole", job:"Stores water", icon:"drop", say:"Vacuole. A big water tank. Plants have a giant one."},
+ nucleus:{role:"the coach", name:"Nucleus", job:"The coach: holds the DNA", icon:"coach", say:"Nucleus. The coach. It holds the DNA playbook."},
+ mito:{role:"the power", name:"Mitochondria", job:"The power: makes energy", icon:"power", say:"Mitochondria. The power. They make energy."},
+ ribo:{role:"the builders", name:"Ribosomes", job:"Builders: make proteins", icon:"hammer", say:"Ribosomes. The builders. They make proteins."},
+ chloro:{role:"the sun catcher", name:"Chloroplast", job:"Catches sunlight to make food", icon:"sun", say:"Chloroplast. Plants only. It catches sunlight to make food."},
+};
+function cellSVG(id){ return `<svg class="scene" id="${id||"cell"}" viewBox="0 0 400 290" role="img" aria-label="A cell">
+  <g class="part off" data-p="wall"><rect x="14" y="10" width="372" height="270" rx="48" fill="none" stroke="var(--wall)" stroke-width="14"/></g>
+  <g class="part" data-p="membrane"><path d="M200 26C310 24 368 70 368 146s-52 122-168 122S30 224 32 146 92 28 200 26z" fill="var(--cyto)" stroke="var(--mem)" stroke-width="8"/></g>
+  <g class="part off" data-p="vacuole"><path d="M70 150c0-40 30-60 60-56s40 30 36 60-24 56-56 54-40-24-40-58z" fill="var(--vac)" opacity=".85"/></g>
+  <g class="part off" data-p="nucleus"><circle cx="210" cy="140" r="52" fill="var(--nuc)" opacity=".9"/><circle cx="210" cy="140" r="52" fill="none" stroke="var(--ink)" stroke-width="3" stroke-dasharray="6 5" opacity=".5"/>
+    <path d="M182 128c10-14 20 14 30 0s20 14 30 0M182 152c10-14 20 14 30 0s20 14 30 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>
+  <g class="part off" data-p="mito"><g transform="rotate(-20 306 96)"><ellipse cx="306" cy="96" rx="34" ry="17" fill="var(--mito)"/><path d="M280 96c6-10 10 10 16 0s10 10 16 0 10 10 16 0" fill="none" stroke="#fff" stroke-width="3"/></g>
+    <g transform="rotate(25 300 206)"><ellipse cx="300" cy="206" rx="30" ry="15" fill="var(--mito)"/><path d="M278 206c6-9 9 9 15 0s9 9 15 0 9 9 15 0" fill="none" stroke="#fff" stroke-width="3"/></g></g>
+  <g class="part off" data-p="ribo">${[[120,70],[140,58],[160,224],[180,236],[250,226],[270,60],[110,214],[340,150],[86,96],[236,62]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="16" fill="transparent"/><circle cx="${x}" cy="${y}" r="6" fill="var(--ribo)"/>`).join("")}</g>
+  <g class="part off" data-p="chloro">${[[130,232,-15],[300,150,10],[112,62,20]].map(([x,y,r])=>`<g transform="rotate(${r} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="28" ry="14" fill="var(--chl)"/><path d="M${x-14} ${y-6}v12M${x-4} ${y-8}v16M${x+6} ${y-8}v16M${x+16} ${y-6}v12" stroke="#fff" stroke-width="3" opacity=".8"/></g>`).join("")}</g>
+</svg>`; }
+const partEl = (svg,p) => svg.querySelector(`.part[data-p="${p}"]`);
+function cellShow(svg, parts){ svg.querySelectorAll(".part").forEach(g => g.classList.toggle("off", !parts.includes(g.dataset.p))); }
+function cellGlow(svg, p){ svg.querySelectorAll(".part").forEach(g => { g.classList.toggle("glow", g.dataset.p===p); g.classList.toggle("dim", !!p && g.dataset.p!==p && g.dataset.p!=="membrane"); }); }
+const ANIMAL = ["membrane","nucleus","mito","ribo"], PLANT = ["wall","membrane","vacuole","nucleus","mito","ribo","chloro"];
+/* which part did a tap hit? smaller, inner parts win over the membrane */
+function cellTap(svg, handler){
+  svg.parentElement.classList.add("tappable");
+  svg.addEventListener("click", e => { const g = e.target.closest(".part"); if (!g || g.classList.contains("off")) return; handler(g.dataset.p, g); });
+}
+function bacteriaSVG(){ return `<svg viewBox="0 0 200 130" aria-hidden="true"><rect x="20" y="30" width="160" height="70" rx="35" fill="var(--cyto)" stroke="var(--mem)" stroke-width="6"/><path d="M60 60c10-12 20 12 30 0s20 12 30 0 20 12 30 0" fill="none" stroke="var(--nuc)" stroke-width="4"/>${[[50,82],[150,50],[130,84],[70,46]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="var(--ribo)"/>`).join("")}<path d="M180 65c14 0 10 20 24 20" fill="none" stroke="var(--mem)" stroke-width="4"/></svg>`; }
+function euSVG(){ return `<svg viewBox="0 0 200 130" aria-hidden="true"><ellipse cx="100" cy="65" rx="84" ry="56" fill="var(--cyto)" stroke="var(--mem)" stroke-width="6"/><circle cx="96" cy="64" r="24" fill="var(--nuc)"/><ellipse cx="150" cy="44" rx="16" ry="8" fill="var(--mito)"/>${[[50,50],[60,90],[140,92]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="var(--ribo)"/>`).join("")}</svg>`; }
+
+/* ---------- graph for slope ---------- */
+const G = {R:6, W:360};
+function graphSVG(lines, opt){ opt = opt || {}; const {R,W} = G, sc = W/(2*R), X = x => (x+R)*sc, Y = y => (R-y)*sc; let s = "";
+  for (let i=-R;i<=R;i++) s += `<path class="grid" d="M${X(i)} 0V${W}M0 ${Y(i)}H${W}"/>`;
+  s += `<path class="ax" d="M${X(0)} 0V${W}M0 ${Y(0)}H${W}"/>`;
+  for (const i of [-4,-2,2,4]) s += `<text x="${X(i)}" y="${Y(0)+16}" text-anchor="middle">${i<0?"−"+(-i):i}</text><text x="${X(0)-7}" y="${Y(i)+5}" text-anchor="end">${i<0?"−"+(-i):i}</text>`;
+  lines.forEach(L => { s += `<path d="M${X(-R)} ${Y(L.m*-R+L.b)}L${X(R)} ${Y(L.m*R+L.b)}" style="stroke:${L.c||"var(--accent)"};stroke-width:${L.w||5};stroke-linecap:round"/>`;
+    if (L.tri!=null) { const x0 = L.tri; s += `<path d="M${X(x0)} ${Y(L.m*x0+L.b)}H${X(x0+1)}V${Y(L.m*(x0+1)+L.b)}" style="fill:none;stroke:var(--blue);stroke-width:4;stroke-dasharray:7 5"/>
+      <text x="${X(x0+.5)}" y="${Y(L.m*x0+L.b)+(L.m>=0?18:-8)}" text-anchor="middle" style="fill:var(--blue);font-size:15px">over 1</text>
+      <text x="${X(x0+1)+8}" y="${(Y(L.m*x0+L.b)+Y(L.m*(x0+1)+L.b))/2+5}" style="fill:var(--accent);font-size:15px">${L.m>=0?"up":"down"} ${Math.abs(L.m)}</text>`; }
+    if (L.start) s += `<circle cx="${X(0)}" cy="${Y(L.b)}" r="9" style="fill:var(--blue);stroke:var(--card);stroke-width:3"/>`; });
+  (opt.ydots||[]).forEach(v => { s += `<circle class="ydot" data-v="${v}" cx="${X(0)}" cy="${Y(v)}" r="14" style="fill:var(--card);stroke:var(--navy);stroke-width:3"/>`; });
+  return `<svg class="graph" viewBox="-4 -4 ${W+8} ${W+8}" role="img" aria-label="${esc(opt.label||"Graph")}"><defs><clipPath id="gc${opt.k||0}"><rect width="${W}" height="${W}"/></clipPath></defs><g clip-path="url(#gc${opt.k||0})">${s}</g></svg>`; }
+const eqHTML = (m,b) => `<span class="m">${m===1?"":m===-1?"−":m<0?"−"+(-m):m}x</span>${b?` <span>${b<0?"−":"+"}</span> <span class="b">${Math.abs(b)}</span>`:""}`;
+const eqSay = (m,b) => `y equals ${m===1?"":m===-1?"negative ":m<0?"negative "+(-m)+" ":m+" "}x${b?(b<0?" minus ":" plus ")+Math.abs(b):""}`;
+
+/* =====================================================================
+   LEVELS: each has watch (narrated scene), explore, words, beat, play
+   ===================================================================== */
+const LEVELS = {
+cells: { title:"Cells", sub:"Biology · Level 1", art:"cell1",
+  watchHTML: () => `<div class="stage">${cellSVG("wcell")}</div>`,
+  watch: [
+    {cap:"Hey Bayo. Every living thing is made of <span class='k'>cells</span>.", say:"Hey Bayo. Every living thing is made of cells. Your body has trillions of them.", go:s=>cellShow(s,["membrane"])},
+    {cap:"A cell is like a <span class='k'>team</span>. Every part has a position.", say:"Think of a cell like a team. Every part has a position.", go:s=>cellGlow(s,null)},
+    {cap:"<span class='k'>Membrane</span>: security at the door.", say:"The membrane is security. It decides what gets in and out.", go:s=>cellGlow(s,"membrane")},
+    {cap:"<span class='k'>Nucleus</span>: the coach with the playbook.", say:"The nucleus is the coach. It holds the DNA, the playbook.", go:s=>{cellShow(s,["membrane","nucleus"]);cellGlow(s,"nucleus");}},
+    {cap:"<span class='k'>Mitochondria</span>: the power.", say:"The mitochondria are the power. They make energy, so the team can run.", go:s=>{cellShow(s,["membrane","nucleus","mito"]);cellGlow(s,"mito");}},
+    {cap:"<span class='k'>Ribosomes</span>: the builders.", say:"The ribosomes are the builders. These little dots make proteins.", go:s=>{cellShow(s,ANIMAL);cellGlow(s,"ribo");}},
+    {cap:"That's an <span class='k'>animal cell</span>. Like yours.", say:"That's an animal cell. Like the ones in you.", go:s=>cellGlow(s,null)},
+    {cap:"Plants get <span class='k'>3 extras</span>.", say:"Plant cells get three extras. Watch.", go:s=>cellGlow(s,null)},
+    {cap:"1. A <span class='k'>cell wall</span>: strength.", say:"One. A cell wall, for strength.", go:s=>{cellShow(s,[...ANIMAL,"wall"]);cellGlow(s,"wall");}},
+    {cap:"2. <span class='k'>Chloroplasts</span>: catch sunlight.", say:"Two. Chloroplasts. The green parts catch sunlight to make food.", go:s=>{cellShow(s,[...ANIMAL,"wall","chloro"]);cellGlow(s,"chloro");}},
+    {cap:"3. A big <span class='k'>vacuole</span>: a water tank.", say:"Three. A big vacuole. A water tank.", go:s=>{cellShow(s,PLANT);cellGlow(s,"vacuole");}},
+    {cap:"That's a <span class='k'>plant cell</span>. Now you try.", say:"That's a plant cell. Now it's your turn. Tap the parts.", go:s=>cellGlow(s,null)},
+  ],
+  exploreHTML: () => `<p class="prompt">Tap any part. I'll tell you what it is.</p><div class="row"><button class="btn" id="eAnimal">Animal cell</button><button class="btn" id="ePlant">Plant cell</button></div>
+    <div class="stage" id="estage">${cellSVG("ecell")}</div>`,
+  explore(){ const s = $("ecell"); cellShow(s, PLANT); let found = new Set();
+    const set = parts => { cellShow(s, parts); cellGlow(s, null); $("estage").querySelector(".bubble")?.remove(); };
+    $("eAnimal").onclick = () => { set(ANIMAL); say("Animal cell. No wall, no chloroplasts, small vacuoles."); };
+    $("ePlant").onclick = () => { set(PLANT); say("Plant cell. It has a wall, chloroplasts, and a big vacuole."); };
+    cellTap(s, p => { const P = CELL_PARTS[p]; found.add(p); cellGlow(s, p); SFX.tap();
+      $("estage").querySelector(".bubble")?.remove(); $("estage").insertAdjacentHTML("beforeend", `<div class="bubble">${IC[P.icon]}${esc(P.name)}</div>`);
+      say(P.say); $("exploreCount").textContent = `${found.size} of 7 parts found`; });
+    return `<span id="exploreCount">0 of 7 parts found</span>`; },
+  words: [
+    {w:["Pro","karyote"], m:["before","nucleus"], say:"Pro means before. Karyote means nucleus. Before a nucleus. So prokaryotes, like bacteria, have no nucleus.", sum:"No nucleus. Like bacteria."},
+    {w:["Eu","karyote"], m:["true","nucleus"], say:"Eu means true. Karyote means nucleus. A true nucleus. Plants, animals, and you.", sum:"Has a true nucleus. Like you."},
+    {w:["Chloro","plast"], m:["green","little body"], say:"Chloro means green. Plast means a little body. A green little body that catches sunlight.", sum:"The green part that catches sun."},
+    {w:["Cyto","plasm"], m:["cell","stuff"], say:"Cyto means cell. Plasm means stuff. Cell stuff. The jelly that fills the cell.", sum:"The jelly inside the cell."},
+    {w:["Homeo","stasis"], m:["same","standing still"], say:"Homeo means same. Stasis means standing still. Staying the same. Like sweating to cool down after practice.", sum:"Keeping your body steady."},
+  ],
+  beat: ["Nucleus the coach, got the DNA play,","Mitochondria the power, keep it running all day,","Membrane at the door, says who gets inside,","Ribosomes the builders, making proteins, that's the vibe.","Plants got extra: wall, vacuole, chloroplast too,","Catching all that sunlight, now you know it, it's true."],
+  play: () => [
+    {t:"tap", cell:ANIMAL, target:"nucleus", say:"Tap the coach. The part that holds the DNA.", cap:"Tap the <span class='k'>coach</span>: holds the DNA."},
+    {t:"tap", cell:ANIMAL, target:"mito", say:"Tap the power. The part that makes energy.", cap:"Tap the <span class='k'>power</span>: makes energy."},
+    {t:"tf", say:"True or false. Bacteria have a nucleus.", cap:"Bacteria have a nucleus.", ans:false, why:"False. Bacteria are prokaryotes. Pro means before. No nucleus yet."},
+    {t:"sort", say:"Sort them. Tap a part, then tap where it goes. Plant cells only, or both plant and animal cells.", cap:"Sort: <span class='k'>plant only</span> or <span class='k'>both</span>?",
+      bins:["Plant cells only","Both"], items:[["Cell wall","brick",0],["Chloroplast","sun",0],["Big vacuole","drop",0],["Nucleus","coach",1],["Mitochondria","power",1],["Membrane","shield",1]]},
+    {t:"match", say:"Match each part with its job. Tap a part, then tap its job.", cap:"Match the <span class='k'>part</span> to its <span class='k'>job</span>.",
+      pairs:[["Nucleus","coach","Holds the DNA"],["Mitochondria","power","Makes energy"],["Membrane","shield","Controls in and out"],["Ribosomes","hammer","Builds proteins"]]},
+    {t:"tap", cell:PLANT, target:"chloro", say:"Plant cell. Tap the part that catches sunlight.", cap:"Tap the part that <span class='k'>catches sunlight</span>."},
+    {t:"seq", say:"Put them in order, from smallest to biggest. Tap them one by one.", cap:"Smallest to <span class='k'>biggest</span>.",
+      items:[["Cell","cell1"],["Tissue","tissue"],["Organ","heart"],["Organ system","system"],["Organism","person"]]},
+    {t:"pick", say:"Which one is a eukaryote? Remember: eu means true. A true nucleus.", cap:"Which one has a <span class='k'>true nucleus</span>?",
+      opts:[["Eukaryote",euSVG(),true],["Prokaryote",bacteriaSVG(),false]], why:"The eukaryote has the big purple nucleus. The bacteria's DNA just floats around."},
+    {t:"tf", say:"True or false. Sweating after practice to cool down is homeostasis.", cap:"Sweating to cool down = homeostasis.", ans:true, why:"True. Homeostasis means keeping your body steady, like your temperature."},
+  ]},
+
+slope: { title:"Slope & Lines", sub:"Algebra 1 · Level 3", art:"up",
+  watchHTML: () => `<div class="stage" id="wg"></div><div class="eq" id="weq"></div>`,
+  watch: [
+    {cap:"<span class='k'>Slope</span> = how steep a line is.", say:"Bayo, slope tells you how steep a line is. Like a ramp up to the rim.", go:()=>gW([{m:1,b:0}],"")},
+    {cap:"Count <span class='k'>up</span>, then count <span class='k'>over</span>.", say:"To find it, count how far up, for every one step over.", go:()=>gW([{m:2,b:0,tri:1}],"")},
+    {cap:"Up 2, over 1. Slope = <span class='k'>2</span>.", say:"Up two, over one. The slope is two.", go:()=>gW([{m:2,b:0,tri:1}],eqHTML(2,0))},
+    {cap:"Up 3, over 1. <span class='k'>Steeper</span>!", say:"Up three, over one. Slope three. Steeper.", go:()=>gW([{m:3,b:0,tri:0}],eqHTML(3,0))},
+    {cap:"Going <span class='k'>down</span>? Slope is negative.", say:"If the line goes down from left to right, the slope is negative.", go:()=>gW([{m:-2,b:0,tri:0}],eqHTML(-2,0))},
+    {cap:"<span class='k'>b</span> = where the line starts.", say:"Now b. b is where the line crosses the y axis. Where you start.", go:()=>gW([{m:2,b:3,start:1}],eqHTML(2,3))},
+    {cap:"y = <span class='k'>m</span>x + <span class='k' style='color:var(--blue)'>b</span>", say:"So y equals m x plus b. m is the slope, how fast it climbs. b is the start.", go:()=>gW([{m:2,b:3,start:1,tri:0}],eqHTML(2,3))},
+    {cap:"Like followers: start at <span class='k' style='color:var(--blue)'>3</span>, gain <span class='k'>2</span> a week.", say:"Like a rapper who starts with three thousand followers and gains two thousand a week. Start at three. Climb two each week.", go:()=>gW([{m:2,b:3,start:1,tri:1}],eqHTML(2,3))},
+    {cap:"Your turn. Make some lines.", say:"Your turn. Go make some lines.", go:()=>{}},
+  ],
+  exploreHTML: () => `<p class="prompt">Change <span style="color:var(--accent)">m</span> and <span style="color:var(--blue)">b</span>. Watch the line move.</p><div class="stage" id="eg"></div><div class="eq" id="eeq"></div>
+    <div class="knobs"><div class="knob m"><b>m = slope</b><span class="v" id="mv">1</span><div class="row"><button class="btn" id="m-" aria-label="Less slope">−</button><button class="btn" id="m+" aria-label="More slope">+</button></div></div>
+    <div class="knob b"><b>b = start</b><span class="v" id="bv">0</span><div class="row"><button class="btn" id="b-" aria-label="Lower start">−</button><button class="btn" id="b+" aria-label="Higher start">+</button></div></div></div>`,
+  explore(){ let m = 1, b = 0; const draw = speak => { $("eg").innerHTML = graphSVG([{m,b,start:1,tri:m?0:null}],{label:eqSay(m,b)}); $("eeq").innerHTML = "y = "+eqHTML(m,b); $("mv").textContent = m<0?"−"+(-m):m; $("bv").textContent = b<0?"−"+(-b):b;
+      if (speak) say(`${eqSay(m,b)}. ${m>0?"Up "+m+" for every 1 over.":m<0?"Down "+(-m)+" for every 1 over.":"Flat. Slope zero."} Starts at ${b}.`); };
+    $("m-").onclick = () => { m = Math.max(-4, m-1); SFX.tap(); draw(1); }; $("m+").onclick = () => { m = Math.min(4, m+1); SFX.tap(); draw(1); };
+    $("b-").onclick = () => { b = Math.max(-5, b-1); SFX.tap(); draw(1); }; $("b+").onclick = () => { b = Math.min(5, b+1); SFX.tap(); draw(1); };
+    draw(0); return ""; },
+  words: [
+    {w:["Slope"], m:["how steep"], say:"Slope. How steep the line is. Rise over run.", sum:"Rise over run."},
+    {w:["Inter","cept"], m:["between","catch"], say:"Inter means between. Cept means catch. The intercept is where the line catches the axis.", sum:"Where the line crosses the axis."},
+    {w:["Posi","tive"], m:["going up",""], say:"Positive slope. The line goes up from left to right.", sum:"Line goes up."},
+    {w:["Nega","tive"], m:["going down",""], say:"Negative slope. The line goes down from left to right.", sum:"Line goes down."},
+  ],
+  beat: ["Rise over run, that's the slope, that's the rule,","Climbing from the left? That's positive, cool.","Going down the hill? Then it's negative, son,","b is where you start, m is how you run."],
+  play: () => [
+    {t:"build", m:2, b:1, say:"Build the line. y equals 2 x plus 1. Use the buttons.", cap:"Build: y = "+eqHTML(2,1)},
+    {t:"pickline", say:"Tap the steeper line.", cap:"Tap the <span class='k'>steeper</span> line.", lines:[{m:3,b:-1,c:"var(--accent)",name:"Orange line"},{m:1,b:1,c:"var(--blue)",name:"Blue line"}], ans:0, why:"The orange line climbs 3 for every 1 over. The blue line only climbs 1."},
+    {t:"tf", graph:[{m:-2,b:2}], say:"True or false. This line has a negative slope.", cap:"This line has a <span class='k'>negative</span> slope.", ans:true, why:"True. It goes down from left to right, so the slope is negative."},
+    {t:"sort", say:"Sort the lines. Does each one go up or go down?", cap:"Sort: goes <span class='k'>up</span> or goes <span class='k'>down</span>?", bins:["Goes up ↗","Goes down ↘"],
+      items:[["y = 3x + 1","",0,"y equals 3 x plus 1"],["y = −x + 4","",1,"y equals negative x plus 4"],["y = ½x","",0,"y equals one half x"],["y = −2x − 1","",1,"y equals negative 2 x minus 1"]]},
+    {t:"ydot", m:1, b:-2, say:"Tap where this line crosses the y axis. That's b.", cap:"Tap where it crosses the <span class='k' style='color:var(--blue)'>y axis</span>.", why:"It crosses at negative 2. So b is negative 2."},
+    {t:"build", m:-1, b:3, say:"Build a line that starts at 3, and goes down 1 each step.", cap:"Start at <span class='k' style='color:var(--blue)'>3</span>, go <span class='k'>down 1</span> each step."},
+    {t:"match", say:"Match each equation to what it means.", cap:"Match the <span class='k'>equation</span> to its meaning.",
+      pairs:[["y = 2x + 5","","Starts at 5, climbs 2","y equals 2 x plus 5"],["y = 5x + 2","","Starts at 2, climbs 5","y equals 5 x plus 2"],["y = −x + 3","","Starts at 3, goes down","y equals negative x plus 3"]]},
+    {t:"pick", say:"Which graph shows y equals negative x plus 2?", cap:"Which graph is y = "+eqHTML(-1,2)+"?",
+      opts:[["A",graphSVG([{m:-1,b:2}],{k:1}),true],["B",graphSVG([{m:1,b:2}],{k:2}),false],["C",graphSVG([{m:-1,b:-2}],{k:3}),false]], why:"It starts at positive 2 and goes down 1 each step. That's graph A."},
+  ]},
+};
+function gW(lines, eq){ $("wg").innerHTML = graphSVG(lines); $("weq").innerHTML = eq ? "y = "+eq : "&nbsp;"; }
+
+/* =====================================================================
+   FLOW
+   ===================================================================== */
+const STAGES = [["watch","▶","Watch"],["explore","👆","Explore"],["words","🧩","Words"],["beat","🎤","Beat"],["play","🏀","Play"]];
+let L = null, stage = 0, doneStages = new Set();
+let viewTok = 0;
+function go(html){ viewTok++; hush(); beatStop(); $("view").innerHTML = html; window.scrollTo(0,0); }
+function home(){
+  go(`<section class="card"><p class="prompt" id="hi">What's up, Bayo! Try the new style. Pick one.</p><div class="row"><button class="btn" id="hiHear">🔊 Hear this</button></div></section>
+  <div class="levels">${Object.entries(LEVELS).map(([k,v]) => `<button class="lv" data-k="${k}">${k==="cells"?IC.cell1:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 36V4M4 36h32" stroke="var(--navy)" stroke-width="3"/><path d="M6 32L34 8" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/></svg>`}<span><span class="small muted" style="font-weight:700">${esc(v.sub)}</span><b>${esc(v.title)}</b></span></button>`).join("")}</div>
+  <div class="note">This is a preview page. Bayo's real app at <a href="/">bayo-grammar.netlify.app</a> isn't changed yet.</div>`);
+  $("hiHear").onclick = () => say("What's up, Bayo! Try the new style. Pick one: Cells, from Biology, or Slope, from Algebra.");
+  document.querySelectorAll(".lv").forEach(b => b.onclick = () => { L = LEVELS[b.dataset.k]; L.key = b.dataset.k; doneStages = new Set(); openStage(0); });
+}
+function trackHTML(){ return `<nav class="track" aria-label="Steps">${STAGES.map(([k,ic,nm],i)=>`<button data-i="${i}" class="${i===stage?"on":""} ${doneStages.has(i)&&i!==stage?"done":""}" aria-current="${i===stage}"><i>${doneStages.has(i)&&i!==stage?"✓":ic}</i>${nm}</button>`).join("")}</nav>`; }
+function frame(inner, nextLabel){
+  go(`<section class="card"><div class="row between"><button class="btn" id="homeB">← Levels</button><span class="small muted" style="font-weight:700">${esc(L.sub)} · ${esc(L.title)}</span></div>${trackHTML()}</section>
+  <section class="card" id="stageCard">${inner}</section>
+  ${nextLabel?`<div class="row" style="justify-content:flex-end"><button class="btn go big" id="nextStage">${nextLabel} →</button></div>`:""}`);
+  $("homeB").onclick = home; document.querySelectorAll(".track button").forEach(b => b.onclick = () => openStage(+b.dataset.i));
+  if ($("nextStage")) $("nextStage").onclick = () => { doneStages.add(stage); openStage(stage+1); };
+}
+function openStage(i){ stage = i; [watch, explore, words, beat, play][i](); }
+
+/* ---- 1. Watch: narrated scene, one idea per line ---- */
+function watch(){
+  frame(`${L.watchHTML()}<div class="cap" id="cap" aria-live="polite">Tap Play. I'll walk you through it.</div>
+    <div class="row controls"><button class="btn go big" id="playW">▶ Play</button><button class="btn" id="backW" aria-label="Back one line">⏮ Back</button><button class="btn" id="againW" aria-label="Say that again">🔁 Again</button></div>
+    <div class="dots" id="wdots">${L.watch.map(()=>"<i></i>").join("")}</div>`, "Explore");
+  const scene = document.querySelector("#stageCard svg.scene"); let i = 0, playing = false; const tok = viewTok;
+  if (L.key==="cells") cellShow(scene, []); else gW([], "");
+  const show = k => { const st = L.watch[k]; $("cap").innerHTML = st.cap; st.go(scene); document.querySelectorAll("#wdots i").forEach((d,j)=>{ d.className = j<k?"ok":j===k?"now":""; }); };
+  const run = async () => { playing = true; $("playW").textContent = "⏸ Pause";
+    while (playing && i < L.watch.length && tok === viewTok) { show(i); const ok = await say(L.watch[i].say); if (!ok || !playing || tok !== viewTok) return; await sleep(350); if (tok !== viewTok) return; i++; }
+    if (i >= L.watch.length) { playing = false; i = L.watch.length-1; $("playW").textContent = "▶ Watch again"; doneStages.add(0); i = 0; } };
+  $("playW").onclick = () => { if (playing) { playing = false; hush(); $("playW").textContent = "▶ Play"; } else run(); };
+  $("againW").onclick = () => { playing = false; hush(); $("playW").textContent = "▶ Play"; show(i); say(L.watch[i].say); };
+  $("backW").onclick = () => { playing = false; hush(); $("playW").textContent = "▶ Play"; i = Math.max(0,i-1); if (L.key==="cells") { cellShow(scene,[]); for (let k=0;k<=i;k++) L.watch[k].go(scene); } show(i); say(L.watch[i].say); };
+}
+/* ---- 2. Explore: touch + hear ---- */
+function explore(){ frame(L.exploreHTML() + `<div class="small muted" id="exInfo"></div>`, "Word power"); $("exInfo").innerHTML = L.explore() || "";
+  say(L.key==="cells" ? "Tap any part of the cell. I'll tell you what it is. Switch between animal and plant cells." : "Use the plus and minus buttons. Change m and b and watch the line move."); }
+/* ---- 3. Word power: break big words into parts ---- */
+function words(){ let k = 0;
+  const draw = () => { const W = L.words[k];
+    $("wbox").innerHTML = `<div class="word">${W.w.map((p,i)=>`<button class="chunk c${i}" data-i="${i}">${esc(p)}</button>`).join("")}</div>
+      <div class="mean" id="wmean">${W.m.filter(Boolean).map((m,i)=>`<span style="color:${["var(--blue)","var(--accent)","var(--good)"][i]}">${esc(m)}</span>`).join(" + ")}</div>
+      <div class="cap" style="font-size:21px">${esc(W.sum)}</div>`;
+    document.querySelectorAll(".chunk").forEach(c => c.onclick = () => { const i = +c.dataset.i; SFX.tap(); say(`${W.w[i]}. ${W.m[i] ? "Means "+W.m[i]+"." : ""}`); });
+    document.querySelectorAll(".wcards button").forEach((b,i) => b.classList.toggle("on", i===k));
+    say(W.say); };
+  frame(`<p class="prompt">Big words are just small parts. Tap each colored part.</p><div class="wcards">${L.words.map((W,i)=>`<button data-i="${i}">${esc(W.w.join(""))}</button>`).join("")}</div>
+    <div id="wbox" style="display:flex;flex-direction:column;gap:12px"></div><div class="row controls"><button class="btn" id="wAgain">🔁 Hear it again</button><button class="btn go" id="wNext">Next word →</button></div>`, "The beat");
+  document.querySelectorAll(".wcards button").forEach(b => b.onclick = () => { k = +b.dataset.i; draw(); });
+  $("wAgain").onclick = () => say(L.words[k].say); $("wNext").onclick = () => { k = (k+1) % L.words.length; draw(); };
+  draw();
+}
+/* ---- 4. The beat: a short rhyme over a drum loop ---- */
+function beat(){
+  frame(`<p class="prompt">Learn it like a song. Play the beat and follow along.</p><div class="beatviz" aria-hidden="true">${"<i></i>".repeat(8)}</div>
+    <div class="lyrics" id="lyr">${L.beat.map(l=>`<p>${esc(l)}</p>`).join("")}</div>
+    <div class="row controls"><button class="btn go big" id="bPlay">🎤 Play the beat</button><button class="btn" id="bVoice">🗣 Words only</button></div>
+    <p class="small muted">Tip: play it twice. The second time, say it with the voice.</p>`, "Play");
+  let on = false;
+  const tok = viewTok;
+  const sing = async (withBeat) => { on = true; if (withBeat) beatStart(); await sleep(withBeat?1400:0); const ps = [...document.querySelectorAll("#lyr p")];
+    for (let i=0;i<ps.length && on && tok===viewTok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await say(L.beat[i]); if (!ok) break; }
+    if (tok !== viewTok) return; ps.forEach(p=>p.classList.remove("now")); beatStop(); on = false; $("bPlay").textContent = "🎤 Play the beat"; doneStages.add(3); };
+  $("bPlay").onclick = () => { if (on) { on = false; hush(); beatStop(); $("bPlay").textContent = "🎤 Play the beat"; } else { $("bPlay").textContent = "⏹ Stop"; sing(true); } };
+  $("bVoice").onclick = () => { if (!on) sing(false); };
+}
+/* ---- 5. Play: hands-on questions, read out loud automatically ---- */
+let P = null;
+function play(){ const items = L.play(); P = {items, i:0, right:0, res:[], miss:[], replay:false}; ask(); }
+function ask(){
+  const q = P.items[P.i];
+  frame(`<div class="dots">${P.items.map((_,j)=>`<i class="${P.res[j]===true?"ok":P.res[j]===false?"no":j===P.i?"now":""}"></i>`).join("")}</div>
+    <div class="qtop"><button class="btn" id="hearQ" aria-label="Hear it again">🔊</button><p class="prompt" id="qcap">${q.cap}</p></div>
+    <div id="qbody" style="display:flex;flex-direction:column;gap:12px"></div><div id="fbox"></div>`, "");
+  $("hearQ").onclick = () => say(q.say);
+  const body = $("qbody"), finish = (ok, why, show) => answered(q, ok, why, show);
+  ({tap:qTap, tf:qTf, sort:qSort, match:qMatch, seq:qSeq, pick:qPick, build:qBuild, pickline:qPickLine, ydot:qYdot})[q.t](q, body, finish);
+  say(q.say);
+}
+function answered(q, ok, why, show){
+  if (P.res[P.i] !== undefined) return; P.res[P.i] = ok; if (ok) P.right++; else P.miss.push(q);
+  ok ? SFX.ok() : SFX.no();
+  const cheer = ok ? ["Bucket!","Clutch, Bayo.","Money.","Nothing but net.","That's my guy."][Math.floor(Math.random()*5)] : ["Close, Bayo.","Shake it off.","Good try."][Math.floor(Math.random()*3)];
+  $("fbox").innerHTML = `<div class="fb ${ok?"ok":"no"}">${ok?IC.yes:IC.nope}<div><div>${cheer}</div>${why?`<div style="font-weight:500">${esc(why)}</div>`:""}</div></div>
+    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="fbHear">🔊 Hear it</button><button class="btn go big" id="nextQ">Next →</button></div>`;
+  if (show) show();
+  const talk = cheer + " " + (why || ""); say(talk); $("fbHear").onclick = () => say(talk);
+  $("nextQ").onclick = () => { P.i++; if (P.i < P.items.length) ask(); else done(); }; $("nextQ").focus({preventScroll:true});
+  document.querySelectorAll("#qbody button, #qbody .part").forEach(b => { if (b.tagName==="BUTTON") b.disabled = true; });
+  $("qbody").style.pointerEvents = "none";
+}
+function done(){
+  const n = P.items.length, pct = P.right/n, stars = pct>=.9?3:pct>=.7?2:pct>=.5?1:0; doneStages.add(4); if (stars) SFX.win();
+  frame(`<p class="small muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.08em">${P.replay?"Replay round":"Final score"}</p><div class="score">${P.right} / ${n}</div>
+    <div class="stars" aria-label="${stars} of 3 stars">${[0,1,2].map(i=>`<span class="${i<stars?"":"off"}">★</span>`).join("")}</div>
+    <p class="cap">${pct>=.9?"Bayo, that's a three-star game.":pct>=.5?"You won it, Bayo. Run back the misses for more stars.":"Good effort. Let's run back the misses."}</p>
+    <div class="row controls">${P.miss.length?`<button class="btn go big" id="replay">🔁 Replay my ${P.miss.length} miss${P.miss.length>1?"es":""}</button>`:""}<button class="btn" id="again">Play all again</button><button class="btn" id="watchA">▶ Watch again</button></div>`, "");
+  say(`${P.right} out of ${n}. ${pct>=.9?"That's a three-star game, Bayo.":P.miss.length?"Let's replay the ones you missed.":""}`);
+  if ($("replay")) $("replay").onclick = () => { const m = P.miss; P = {items:shuffle(m), i:0, right:0, res:[], miss:[], replay:true}; ask(); };
+  $("again").onclick = play; $("watchA").onclick = () => openStage(0);
+}
+
+/* ---- question types ---- */
+function qTap(q, body, finish){
+  body.innerHTML = `<div class="stage" id="tstage">${cellSVG("tcell")}</div>`; const s = $("tcell"); cellShow(s, q.cell);
+  cellTap(s, (p, g) => { const ok = p === q.target, T = CELL_PARTS[q.target], H = CELL_PARTS[p];
+    finish(ok, ok ? T.say : `That's the ${H.name.toLowerCase()}, ${H.role}. You wanted ${T.role}: the ${T.name.toLowerCase()}. It's glowing green now.`,
+      () => { cellGlow(s, null); partEl(s,q.target).classList.add("right"); if (!ok) g.classList.add("wrong"); }); });
+}
+function qTf(q, body, finish){
+  body.innerHTML = `${q.graph?`<div class="stage">${graphSVG(q.graph)}</div>`:""}<div class="tf"><button data-v="1">${IC.yes}True</button><button data-v="0">${IC.nope}False</button></div>`;
+  body.querySelectorAll(".tf button").forEach(b => b.onclick = () => { const v = b.dataset.v==="1"; b.style.borderColor = v===q.ans ? "var(--good)" : "var(--bad)"; finish(v===q.ans, q.why); });
+}
+function qSort(q, body, finish){
+  let sel = null; const where = {}; const items = shuffle(q.items.map((it,i)=>[...it,i]));
+  const chip = it => `<button class="chip" data-i="${it[4]??it[3]}" data-k="${it.at(-1)}">${it[1]?IC[it[1]]:""}${esc(it[0])}</button>`;
+  const draw = () => { body.innerHTML = `<div class="chips" id="pool">${items.filter(it=>where[it.at(-1)]==null).map(chip).join("")}</div>
+    <div class="bins">${q.bins.map((b,j)=>`<button class="bin" data-b="${j}"><b>${esc(b)}</b><span class="chips">${items.filter(it=>where[it.at(-1)]===j).map(chip).join("")}</span></button>`).join("")}</div>
+    <div class="row"><button class="btn go" id="sortCheck" ${Object.keys(where).length<items.length?"disabled":""}>Check</button></div>`;
+    body.querySelectorAll("#pool .chip").forEach(c => { if (+c.dataset.k===sel) c.classList.add("sel");
+      c.onclick = () => { sel = +c.dataset.k; const it = items.find(x=>x.at(-1)===sel); say(it[3]&&typeof it[3]==="string"?it[3]:it[0]); draw(); }; });
+    body.querySelectorAll(".bin").forEach(bn => bn.onclick = e => { const inChip = e.target.closest(".chip");
+      if (inChip) { delete where[+inChip.dataset.k]; draw(); return; }
+      if (sel==null) { say("Tap a part first, then tap a box."); return; } where[sel] = +bn.dataset.b; SFX.tap(); say(q.bins[+bn.dataset.b]); sel = null; draw(); });
+    if ($("sortCheck")) $("sortCheck").onclick = () => { const wrong = items.filter(it => where[it.at(-1)] !== it[2]);
+      body.querySelectorAll(".bin .chip").forEach(c => { const it = items.find(x=>x.at(-1)===+c.dataset.k); c.classList.add(where[+c.dataset.k]===it[2]?"ok":"no"); });
+      finish(!wrong.length, wrong.length ? wrong.map(it=>`${it[0]} goes in ${q.bins[it[2]].replace(/[↗↘]/g,"").trim()}.`).join(" ") : "All sorted right."); }; };
+  draw();
+}
+function qMatch(q, body, finish){
+  const left = q.pairs.map((p,i)=>({i,t:p[0],ic:p[1],say:p[3]||p[0]})), right = shuffle(q.pairs.map((p,i)=>({i,t:p[2]})));
+  let sel = null, made = {}, colors = 0, wrongs = 0; const pc = {};
+  const draw = () => { body.innerHTML = `<div class="match"><div class="col">${left.map(l=>`<button class="mi ${pc[l.i]!=null?"p"+pc[l.i]:""} ${sel===l.i?"sel":""}" data-l="${l.i}">${l.ic?IC[l.ic]:""}${esc(l.t)}</button>`).join("")}</div>
+    <div class="col">${right.map(r=>`<button class="mi ${made[r.i]?"p"+pc[r.i]:""}" data-r="${r.i}">${esc(r.t)}</button>`).join("")}</div></div>`;
+    body.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { const i = +b.dataset.l; if (made[i]) return; sel = i; say(left.find(l=>l.i===i).say); draw(); });
+    body.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { const i = +b.dataset.r; if (made[i]) return; const r = right.find(x=>x.i===i);
+      if (sel==null) { say(r.t + ". Tap a part on the left first."); return; }
+      if (i === sel) { made[i] = true; pc[i] = colors++ % 4; SFX.ok(); say(r.t); sel = null; draw();
+        if (Object.keys(made).length === left.length) finish(wrongs === 0, wrongs ? `You got them all matched, with ${wrongs} wrong tr${wrongs>1?"ies":"y"} along the way.` : "Every match on the first try."); }
+      else { wrongs++; SFX.no(); b.classList.add("no"); say("Not that one. Try again."); setTimeout(draw, 700); } }); };
+  draw();
+}
+function qSeq(q, body, finish){
+  const mix = shuffle(q.items.map((_,i)=>i)); const pick = [];
+  const draw = () => { body.innerHTML = `<div class="seq">${q.items.map((_,j)=>pick[j]!=null?`<div class="slot filled"><span class="n">${j+1}</span><button data-p="${j}">${IC[q.items[pick[j]][1]]||""}${esc(q.items[pick[j]][0])}</button></div>`:`<div class="slot"><span class="n">${j+1}</span><span class="muted small">tap one below</span></div>`).join("")}</div>
+    <div class="chips">${mix.filter(k=>!pick.includes(k)).map(k=>`<button class="chip" data-k="${k}">${IC[q.items[k][1]]||""}${esc(q.items[k][0])}</button>`).join("")}</div>
+    <div class="row"><button class="btn go" id="seqCheck" ${pick.length<q.items.length?"disabled":""}>Check</button></div>`;
+    body.querySelectorAll(".chip").forEach(c => c.onclick = () => { pick.push(+c.dataset.k); SFX.tap(); say(q.items[+c.dataset.k][0]); draw(); });
+    body.querySelectorAll(".slot button").forEach(b => b.onclick = () => { pick.splice(+b.dataset.p,1); draw(); });
+    if ($("seqCheck")) $("seqCheck").onclick = () => { body.querySelectorAll(".slot").forEach((s,j)=>s.classList.add(pick[j]===j?"ok":"no"));
+      const ok = pick.every((k,j)=>k===j); finish(ok, ok ? q.items.map(x=>x[0]).join(", then ")+"." : "The right order is: "+q.items.map(x=>x[0]).join(", then ")+"."); }; };
+  draw();
+}
+function qPick(q, body, finish){
+  const opts = shuffle(q.opts);
+  body.innerHTML = `<div class="pics">${opts.map((o,j)=>`<button class="pic" data-j="${j}">${o[1]}<span>${esc(o[0])}</span></button>`).join("")}</div>`;
+  body.querySelectorAll(".pic").forEach(b => b.onclick = () => { const o = opts[+b.dataset.j]; b.style.borderColor = o[2]?"var(--good)":"var(--bad)"; finish(o[2], q.why); });
+}
+function qBuild(q, body, finish){ let m = 0, b = 0;
+  const draw = () => { body.innerHTML = `<div class="stage">${graphSVG([{m:q.m,b:q.b,c:"var(--line)",w:9},{m,b,start:1}],{label:"Your line"})}</div><div class="eq">y = ${eqHTML(m,b)}</div>
+    <div class="knobs"><div class="knob m"><b>m = slope</b><span class="v">${m<0?"−"+(-m):m}</span><div class="row"><button class="btn" data-a="m-1" aria-label="Less slope">−</button><button class="btn" data-a="m1" aria-label="More slope">+</button></div></div>
+    <div class="knob b"><b>b = start</b><span class="v">${b<0?"−"+(-b):b}</span><div class="row"><button class="btn" data-a="b-1" aria-label="Lower start">−</button><button class="btn" data-a="b1" aria-label="Higher start">+</button></div></div></div>
+    <p class="small muted" style="text-align:center">Match the thick gray line.</p><div class="row" style="justify-content:center"><button class="btn go big" id="bCheck">Lock it in</button></div>`;
+    body.querySelectorAll("[data-a]").forEach(x => x.onclick = () => { const a = x.dataset.a; if (a[0]==="m") m = Math.max(-4,Math.min(4,m+ +a.slice(1))); else b = Math.max(-5,Math.min(5,b+ +a.slice(1))); SFX.tap(); draw(); say(eqSay(m,b)); });
+    $("bCheck").onclick = () => { const ok = m===q.m && b===q.b; finish(ok, ok ? `${eqSay(m,b)}. Starts at ${b}, ${m>0?"up":"down"} ${Math.abs(m)} each step.` : `The line was ${eqSay(q.m,q.b)}. Start at ${q.b}, then ${q.m>0?"up":"down"} ${Math.abs(q.m)} for every 1 over.`); }; };
+  draw();
+}
+function qPickLine(q, body, finish){
+  body.innerHTML = `<div class="stage">${graphSVG(q.lines)}</div><div class="tf">${q.lines.map((l,j)=>`<button data-j="${j}" style="border-color:${l.c}"><span style="width:60px;height:8px;border-radius:4px;background:${l.c}"></span>${esc(l.name)}</button>`).join("")}</div>`;
+  body.querySelectorAll(".tf button").forEach(b => b.onclick = () => finish(+b.dataset.j===q.ans, q.why));
+}
+function qYdot(q, body, finish){
+  body.innerHTML = `<div class="stage">${graphSVG([{m:q.m,b:q.b}],{ydots:[-4,-2,0,2,4]})}</div><p class="small muted" style="text-align:center">Tap a circle on the y axis.</p>`;
+  body.querySelectorAll(".ydot").forEach(d => d.onclick = () => { const v = +d.dataset.v; d.style.fill = v===q.b?"var(--good)":"var(--bad)"; finish(v===q.b, q.why); });
+}
+
+paintSpeed(); home();
+</script>
+</body>
