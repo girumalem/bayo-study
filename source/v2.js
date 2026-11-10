@@ -11,8 +11,21 @@ const mix = a => shuffle(a);
 
 /* ---------- voice: authored lines are read as written; labels go through the app's math/genetics reader ---------- */
 let talkId = 0;
-function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} }
-function sayRaw(text){ hush(); const id = talkId; return new Promise(res => {
+/* recorded voice: /audio/manifest.json maps each line to [file, [[start,end] per word]] */
+let REC = {}; const AU = typeof Audio !== "undefined" ? new Audio() : null;
+try { fetch("/audio/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(j => { REC = j || {}; }).catch(() => {}); } catch(e) {}
+document.addEventListener("click", function unlock(){ if (AU && !AU.src) { try { AU.muted = true; AU.play().catch(()=>{}); AU.muted = false; } catch(e) {} } document.removeEventListener("click", unlock, true); }, true);
+function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} try { if (AU) { AU.pause(); AU.ontimeupdate = null; } } catch(e) {} document.querySelectorAll(".v-w.now").forEach(w => w.classList.remove("now")); }
+function wordSpans(el, text){ if (!el) return []; el.innerHTML = text.split(/\s+/).map(w => `<span class="v-w">${E(w)}</span>`).join(" "); return [...el.querySelectorAll(".v-w")]; }
+function playRec(text, el){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return null; const id = talkId;
+  return new Promise(res => { const ws = wordSpans(el, text), T = rec[1] || []; let fin = false; const end = ok => { if (!fin) { fin = true; ws.forEach(w => w.classList.remove("now")); res(ok && id === talkId); } };
+    AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
+    AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; ws.forEach((w,i) => w.classList.toggle("now", !!T[i] && t >= T[i][0] && t < T[i][1] + 0.05)); };
+    AU.onended = () => end(true); AU.onerror = () => end(false);
+    AU.play().catch(() => { end(false); }); }); }
+function sayRaw(text, el){ hush(); const id = talkId, p = playRec(String(text||""), el); if (p) return p.then(ok => ok ? true : (id === talkId ? ttsRaw(text) : false)); return ttsRaw(text); }
+async function saySeq(parts){ for (const [t, el] of parts) { if (!t) continue; const id0 = talkId; const ok = await sayRaw(t, el); if (!ok) return false; } return true; }
+function ttsRaw(text){ const id = talkId; return new Promise(res => {
   if (!synth || !text) { setTimeout(() => res(id === talkId), 30); return; }
   const u = new SpeechSynthesisUtterance(text); u.rate = S.rate; if (voice) u.voice = voice; u.lang = voice ? voice.lang : "en-US";
   let fin = false; const end = () => { if (!fin) { fin = true; res(id === talkId); } };
@@ -320,7 +333,7 @@ function beat(){
     <p class="small muted">Play it twice. The second time, say it with the voice.</p>`, "Play");
   const my = tok; let on = false;
   const sing = async withBeat => { on = true; if (withBeat) beatStart(); await sleep(withBeat ? 1400 : 0); const ps = [...document.querySelectorAll("#bLyr p")];
-    for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i]); if (!ok) break; }
+    for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i], ps[i]); if (!ok) break; }
     if (my !== tok) return; ps.forEach(p=>p.classList.remove("now")); beatStop(); on = false; $("bPlay").textContent = "🎤 Play the beat"; doneSt.add(3); };
   $("bPlay").onclick = () => { if (on) { on = false; hush(); beatStop(); $("bPlay").textContent = "🎤 Play the beat"; } else { $("bPlay").textContent = "⏹ Stop"; sing(true); } };
   $("bVoice").onclick = () => { if (!on) sing(false); };
@@ -345,10 +358,10 @@ function answered(q, ok, why, show){
   if (P.replay) { ok ? SFX.ok() : SFX.no(); if (ok) { S.points += 1; save(); paintBoard(); } } else score(ok, {prompt: plain(q.cap)});
   const cheer = ok ? CHEERS_OK[Math.floor(Math.random()*CHEERS_OK.length)] : CHEERS_NO[Math.floor(Math.random()*CHEERS_NO.length)];
   const last = P.i + 1 >= P.items.length;
-  $("qFb").innerHTML = `<div class="v-fb ${ok?"ok":"no"}">${ok?IC.yes:IC.nope}<div><div>${E(cheer)}${ok&&!P.replay?" +2":""}</div>${why?`<div style="font-weight:500">${E(why)}</div>`:""}</div></div>
+  $("qFb").innerHTML = `<div class="v-fb ${ok?"ok":"no"}">${ok?IC.yes:IC.nope}<div><div>${E(cheer)}${ok&&!P.replay?" +2":""}</div>${why?`<div style="font-weight:500" id="fbWhy">${E(why)}</div>`:""}</div></div>
     <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="fbHear">🔊 Hear it</button><button class="btn go v-big" id="qNext">${last?"See my score":"Next"} →</button></div>`;
   if (show) show();
-  const talk = cheer + " " + (why || ""); sayRaw(talk); $("fbHear").onclick = () => sayRaw(talk);
+  const talk = () => saySeq([[cheer], [why, $("fbWhy")]]); talk(); $("fbHear").onclick = talk;
   $("qNext").onclick = () => { P.i++; if (P.i < P.items.length) ask(); else finish(); };
   $("qNext").focus({preventScroll:true}); $("qBody").style.pointerEvents = "none";
   const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; $("qFb").scrollIntoView({behavior: calm ? "auto" : "smooth", block:"nearest"});
@@ -393,7 +406,7 @@ function qSort(q, body, fin){
       if (sel==null) { sayRaw("Tap one first, then tap a box."); return; } where[sel] = +bn.dataset.b; tick(); sayLabel(q.bins[+bn.dataset.b].replace(/[↗↘]/g,"")); sel = null; draw(); });
     $("sCheck").onclick = () => { const wrong = items.filter(it => where[it.k] !== it.bin);
       body.querySelectorAll(".v-bin .v-chip").forEach(c => { const it = items.find(x=>x.k===+c.dataset.k); c.classList.add(where[it.k]===it.bin?"ok":"no"); });
-      fin(!wrong.length, wrong.length ? wrong.map(it=>`${it.say} goes in ${q.bins[it.bin].replace(/[↗↘]/g,"").trim()}.`).join(" ") : "All sorted right."); }; };
+      fin(!wrong.length, wrong.length ? q.bins.map((b,j)=>`${b.replace(/[↗↘]/g,"").trim()}: ${q.items.filter(it=>it[2]===j).map(it=>it[3]||it[0]).join(", ")}.`).join(" ") : "All sorted right."); }; };
   draw();
 }
 function qMatch(q, body, fin){
@@ -405,7 +418,7 @@ function qMatch(q, body, fin){
     body.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { const i = +b.dataset.r; if (made[i]) return; const r = right.find(x=>x.i===i);
       if (sel==null) { sayLabel(r.t + ". Tap one on the left first."); return; }
       if (i === sel) { made[i] = true; pc[i] = n++ % 4; tick(); sayLabel(r.t); sel = null; draw();
-        if (n === left.length) fin(wrongs === 0, wrongs ? `All matched, with ${wrongs} wrong tr${wrongs>1?"ies":"y"} along the way.` : "Every match on the first try."); }
+        if (n === left.length) fin(wrongs === 0, wrongs ? "All matched. Some took a second try. Run it back for a clean sweep." : "Every match on the first try."); }
       else { wrongs++; SFX.no(); b.classList.add("no"); sayRaw("Not that one. Try again."); setTimeout(draw, 700); } }); };
   draw();
 }
@@ -449,7 +462,7 @@ function qDna(q, body, fin){ const got = []; let wrong = 0;
     body.innerHTML = `<div class="v-stage"><div class="v-dna">${[...q.strand].map((c,k)=>`<div class="r ${k===i?"hi":""}"><span class="b b${c}">${c}</span><span class="bar"></span><span class="b ${k<i?"b"+PAIR[c]:"bq"}">${k<i?PAIR[c]:"?"}</span></div>`).join("")}</div></div>
       ${i<q.strand.length?`<p class="small muted" style="text-align:center">Partner for <b>${q.strand[i]}</b>?</p><div class="v-tf" style="grid-template-columns:repeat(4,1fr)">${"ATGC".split("").map(c=>`<button data-c="${c}" style="min-height:72px"><span class="b b${c}" style="width:46px;height:40px;border-radius:10px;display:grid;place-items:center;color:#fff">${c}</span></button>`).join("")}</div>`:""}`;
     body.querySelectorAll("[data-c]").forEach(b => b.onclick = () => { const c = b.dataset.c, want = PAIR[q.strand[got.length]];
-      if (c === want) { got.push(c); tick(); sayRaw(`${q.strand[got.length-1]} with ${c}.`); draw(); if (got.length === q.strand.length) fin(wrong === 0, wrong ? `Built it, with ${wrong} slip${wrong>1?"s":""}. A with T, C with G.` : "Perfect. A with T, C with G."); }
+      if (c === want) { got.push(c); tick(); sayRaw(`${q.strand[got.length-1]} with ${c}.`); draw(); if (got.length === q.strand.length) fin(wrong === 0, wrong ? "Built it, with a slip. Remember: A with T, C with G." : "Perfect. A with T, C with G."); }
       else { wrong++; SFX.no(); b.style.borderColor = "var(--bad)"; sayRaw(`Not ${c}. ${q.strand[got.length]==="A"||q.strand[got.length]==="T"?"Apple in the Tree.":"Car in the Garage."}`); } }); };
   draw(); }
 function qPun(q, body, fin){ const [a,b] = q.p, vals = [null,null,null,null], marks = {}; let cur = 0;
@@ -473,6 +486,6 @@ function qTl(q, body, fin){ const tl = q._lv.tl;
 function boss(){ unit = Object.assign({}, bossU(), {v2:true}); unitI = UNITS.length; stage = 4;
   const items = mix(UNITS.flatMap(u => mix(u.v2.play).slice(0,2).map(q => Object.assign({}, q, {_lv:u.v2}))));
   play(items); }
-function replayMisses(){ unit = UNITS[unitI]; LV = unit.v2; stage = 4; play(mix(lastMiss), true); }
-return {get P(){ return P; }, open, boss, hush, misses: () => lastMiss.length, replayMisses};
+function replayMisses(){ if (!unit.boss) { unit = UNITS[unitI]; LV = unit.v2; } stage = 4; play(mix(lastMiss), true); }
+return {get P(){ return P; }, open, boss, hush: () => { tok++; hush(); beatStop(); }, misses: () => lastMiss.length, replayMisses};
 })();

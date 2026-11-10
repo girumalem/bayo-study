@@ -1,0 +1,43 @@
+name: Make voice audio
+on:
+  workflow_dispatch:
+    inputs:
+      voice_id:
+        description: "ElevenLabs voice ID for lessons"
+        required: true
+      beat_voice_id:
+        description: "Voice ID for the raps (leave empty to use the same voice)"
+        required: false
+        default: ""
+      max_chars:
+        description: "Stop after this many characters (0 = record everything)"
+        required: false
+        default: "0"
+permissions:
+  contents: write
+concurrency: make-audio
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests==2.32.3
+      - name: Record lines
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          VOICE_ID: ${{ inputs.voice_id }}
+          BEAT_VOICE_ID: ${{ inputs.beat_voice_id }}
+          MAX_CHARS: ${{ inputs.max_chars }}
+        run: python tools/make_audio.py
+      - name: Save the audio to the repo
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add public/audio
+          git commit -m "Record voice audio" || echo "Nothing new to save"
+          git push
