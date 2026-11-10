@@ -231,7 +231,7 @@ ALG = {
   bal("Solve it. Pick the move that gets x alone.", "Get *x* alone.", ["x + 9", "20"], [["Subtract 9", ["x", "11"]]], ["Subtract 9", "Add 9", "Divide by 9"]),
   bal("Solve it. Pick the move.", "Get *x* alone.", ["4x", "28"], [["Divide by 4", ["x", "7"]]], ["Subtract 4", "Divide by 4", "Multiply by 4"]),
   bal("Two steps. Undo the adding first.", "Two steps. Get *x* alone.", ["3x + 4", "19"], [["Subtract 4", ["3x", "15"]], ["Divide by 3", ["x", "5"]]], ["Subtract 4", "Add 4", "Divide by 3", "Multiply by 3"]),
-  mc("Solve. n minus 6 equals 14.", "Solve: n − 6 = 14", [["n = 20", True], ["n = 8", False], ["n = 14", False]], "Add 6 to both sides. 14 plus 6 is 20."),
+  bal("x minus 6 equals 14. The red holes are the minus 6. Fill them in to get x alone.", "Get *x* alone.", ["x − 6", "14"], [["Add 6", ["x", "20"]]], ["Add 6", "Subtract 6", "Divide by 6"]),
   tf("True or false. To undo plus 5, you add 5.", "To undo + 5, you add 5.", False, "False. Undo plus with minus. Subtract 5."),
   seq("Put the steps in order, starting with the problem.", "Put the *steps* in order.", [["2x − 3 = 11", ""], ["2x = 14", ""], ["x = 7", ""]]),
   mc("Bayo scores 3 points per three-pointer, plus 5 free throw points. 26 points total. Which equation fits?", "Which *equation* fits?", [["3t + 5 = 26", True], ["5t + 3 = 26", False], ["3 + 5 = 26t", False]], "3 points times t threes, plus 5, equals 26."),
@@ -252,7 +252,7 @@ ALG = {
            [["Dis", "tribute"], ["apart", "give"], "Distribute means give out to each one. Multiply the outside number by everything inside.", "Give it to every term."]],
  "beat": ["Outside the parentheses? Pass it to each one,", "Open circle: not included, closed: it counts, son,", "The arrow shows the answers, left or right it goes,", "Divide by a negative? Flip it, now you know."],
  "play": [
-  mc("Solve. 3 times the group x minus 2, equals 12.", "Solve: 3(x − 2) = 12", [["x = 6", True], ["x = 2", False], ["x = 4", False]], "Distribute: 3x minus 6 equals 12. Add 6: 3x equals 18. x equals 6."),
+  bal("3 groups of x minus 2, equals 12. Open up the groups first.", "Get *x* alone.", ["3(x − 2)", "12"], [["Distribute the 3", ["3x − 6", "12"]], ["Add 6", ["3x", "18"]], ["Divide by 3", ["x", "6"]]], ["Distribute the 3", "Add 6", "Divide by 3", "Subtract 2"]),
   pick("Which number line shows x is greater than 2?", "Which shows *x > 2*?", [["A", "@nl:2:>", True], ["B", "@nl:2:≥", False], ["C", "@nl:2:<", False]], "Greater than 2: open circle at 2, arrow to the right."),
   bal("Solve it. Get the x's together first.", "Get *x* alone.", ["5x + 2", "3x + 10"], [["Subtract 3x", ["2x + 2", "10"]], ["Subtract 2", ["2x", "8"]], ["Divide by 2", ["x", "4"]]], ["Subtract 3x", "Add 3x", "Subtract 2", "Divide by 2"]),
   tf("True or false. When you divide by a negative number, you flip the sign.", "Divide by a negative → flip the sign.", True, "True. That's the one special rule."),

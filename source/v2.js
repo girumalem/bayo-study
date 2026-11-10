@@ -104,18 +104,83 @@ const eqHTML = (m,b) => `<span class="m">${m===1?"":m===-1?"−":m===0?"0":fmtN(
 const eqSay = (m,b) => `y equals ${m===0?"0":(m===1?"":m===-1?"negative ":m<0?"negative "+(-m)+" ":m+" ")+"x"}${b?(b<0?" minus ":" plus ")+Math.abs(b):""}`;
 
 /* ---------- other visuals ---------- */
-function balSVG(L, R, act, win){ const tilt = 0;
-  return `<svg class="v-bal" viewBox="0 0 400 210" role="img" aria-label="${E(L)} equals ${E(R)}">
-   <path d="M200 40V190M150 196h100" style="stroke:var(--navy);stroke-width:8;stroke-linecap:round"/>
-   <path d="M40 60H360" transform="rotate(${tilt} 200 60)" style="stroke:var(--navy);stroke-width:7;stroke-linecap:round"/>
-   <circle cx="200" cy="40" r="10" style="fill:var(--accent)"/>
-   <path d="M60 60l-30 60M60 60l30 60M340 60l-30 60M340 60l30 60" style="stroke:var(--muted);stroke-width:2.5"/>
-   <rect x="10" y="118" width="130" height="54" rx="14" style="fill:var(--card);stroke:${win?"var(--good)":"var(--blue)"};stroke-width:4"/>
-   <rect x="260" y="118" width="130" height="54" rx="14" style="fill:var(--card);stroke:${win?"var(--good)":"var(--accent)"};stroke-width:4"/>
-   <text x="75" y="153" text-anchor="middle">${E(L)}</text><text x="325" y="153" text-anchor="middle">${E(R)}</text>
-   <circle cx="200" cy="145" r="20" style="fill:var(--card);stroke:var(--navy);stroke-width:3"/><text x="200" y="155" text-anchor="middle" style="font-size:30px">=</text>
-   ${act?`<text class="act" x="75" y="196" text-anchor="middle">${E(act)}</text><text class="act" x="325" y="196" text-anchor="middle">${E(act)}</text>`:""}
-  </svg>`; }
+/* ---------- balance: x = orange bags, numbers = blue blocks, minus = red holes ---------- */
+function parseSide(str){ let s = String(str).replace(/−/g,"-").replace(/\s+/g,"");
+  let m = s.match(/^(\d+)\(x([+-])(\d+)\)$/); if (m) return {x:1, d:1, pos:m[2]==="+"?+m[3]:0, neg:m[2]==="-"?+m[3]:0, grp:+m[1]};
+  const out = {x:0, d:1, pos:0, neg:0, grp:0}, terms = s.match(/[+-]?[^+-]+/g); if (!terms) return null;
+  for (const t of terms) { if (t.includes("x")) { m = t.match(/^([+-]?)(\d*)x(?:\/(\d+))?$/); if (!m) return null; out.x += (m[1]==="-"?-1:1) * (m[2]?+m[2]:1); if (m[3]) out.d = +m[3]; }
+    else if (/^[+-]?\d+$/.test(t)) { const n = +t; if (n >= 0) out.pos += n; else out.neg += -n; } else return null; }
+  return out; }
+function sideText(sd){ if (!sd) return "";
+  if (sd.grp) return `${sd.grp}(x ${sd.neg?"−":"+"} ${sd.neg||sd.pos})`;
+  let t = sd.x ? (sd.x===1?"":sd.x===-1?"−":sd.x) + "x" + (sd.d>1?"/"+sd.d:"") : "";
+  if (sd.pos) t += t ? ` + ${sd.pos}` : String(sd.pos);
+  if (sd.neg) t += t ? ` − ${sd.neg}` : `−${sd.neg}`;
+  return t || "0"; }
+const alone = sd => sd && sd.x===1 && sd.d===1 && !sd.pos && !sd.neg && !sd.grp;
+function itemsHTML(sd){ if (!sd) return "";
+  const bag = k => `<span class="bag ${sd.d>1?"frac":""}" data-k="x${k}">${sd.d>1?"x÷"+sd.d:"x"}</span>`;
+  const big = sd.pos > 40 || sd.neg > 40 || Math.abs(sd.x) > 10;
+  if (big) return `<div class="v-badge">${E(sideText(sd))}</div>`;
+  const unit = (n, cls, off) => Array.from({length:n}, (_,i) => `<span class="${cls}" data-k="${cls}${off+i}"></span>`).join("");
+  if (sd.grp) return `<div class="grps">${Array.from({length:sd.grp}, (_,g) => `<span class="grp">${bag(g)}<span class="blks">${unit(sd.pos,"blk",g*sd.pos)}${unit(sd.neg,"hole",g*sd.neg)}</span></span>`).join("")}</div>`;
+  return `<div class="bags">${Array.from({length:Math.max(0,sd.x)}, (_,i) => bag(i)).join("")}</div><div class="blks">${unit(sd.pos,"blk",0)}${unit(sd.neg,"hole",0)}</div>`; }
+function balHTML(L, R, opt){ opt = opt || {}; const pL = typeof L === "string" ? parseSide(L) : L, pR = typeof R === "string" ? parseSide(R) : R;
+  return `<div class="v-balx ${opt.win?"win":""}" style="--t:0deg;--dy:0px" role="img" aria-label="${E(sideText(pL)||L)} equals ${E(sideText(pR)||R)}">
+    <div class="beam"></div><div class="pivot"></div><div class="post"></div><div class="base"></div>
+    <div class="pans"><div class="pan l">${pL?itemsHTML(pL):`<b>${E(L)}</b>`}</div><div class="eqc">=</div><div class="pan r">${pR?itemsHTML(pR):`<b>${E(R)}</b>`}</div></div>
+    <div class="lbls"><span class="lbl l">${E(pL?sideText(pL):L)}</span><span class="act">${opt.act?E(opt.act):""}</span><span class="lbl r">${E(pR?sideText(pR):R)}</span></div></div>`; }
+function parseMove(c){ let m;
+  if ((m = c.match(/^Subtract (\d*)(x?)$/))) return {op:"-", k:+(m[1]||1), x:!!m[2], sym:"− "+(m[1]||"")+(m[2]||"")};
+  if ((m = c.match(/^Add (\d*)(x?)$/))) return {op:"+", k:+(m[1]||1), x:!!m[2], sym:"+ "+(m[1]||"")+(m[2]||"")};
+  if ((m = c.match(/^Divide by (\d+)$/))) return {op:"/", k:+m[1], sym:"÷ "+m[1]};
+  if ((m = c.match(/^Multiply by (\d+)$/))) return {op:"*", k:+m[1], sym:"× "+m[1]};
+  if (/^Distribute/.test(c)) return {op:"dist", sym:"distribute"};
+  return null; }
+function applyMove(sd, mv){ if (!sd || !mv) return null; const o = Object.assign({}, sd);
+  if (mv.op === "dist") { if (!o.grp) return o; o.x = o.grp; o.pos *= o.grp; o.neg *= o.grp; o.grp = 0; return o; }
+  if (o.grp) { if (mv.op === "/" && mv.k === o.grp) { o.grp = 0; return o; } return null; }
+  if (mv.op === "-" && mv.x) { o.x -= mv.k; return o; }
+  if (mv.op === "+" && mv.x) { o.x += mv.k; return o; }
+  if (mv.op === "-") { const c = Math.min(o.pos, mv.k); o.pos -= c; o.neg += mv.k - c; return o; }
+  if (mv.op === "+") { const c = Math.min(o.neg, mv.k); o.neg -= c; o.pos += mv.k - c; return o; }
+  if (mv.op === "/") { if (o.d > 1 || o.x % mv.k || o.pos % mv.k || o.neg % mv.k) return null; o.x /= mv.k; o.pos /= mv.k; o.neg /= mv.k; return o; }
+  if (mv.op === "*") { if (o.d === mv.k) { o.d = 1; } else o.x *= mv.k; o.pos *= mv.k; o.neg *= mv.k; return o; }
+  return null; }
+const calm = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+const wait = ms => sleep(calm() ? Math.min(ms, 120) : ms);
+function tilt(host, dir){ const b = host.querySelector(".v-balx"); if (!b) return; b.style.setProperty("--t", (dir*7)+"deg"); b.style.setProperty("--dy", (dir*14)+"px");
+  const eq = b.querySelector(".eqc"); eq.textContent = dir ? "≠" : "="; eq.classList.toggle("off", !!dir); }
+/* play one move on one pan: things lift off (or drop in) */
+async function panStep(pan, sd, mv){
+  const add = (cls, n) => { const box = pan.querySelector(".blks") || pan.appendChild(Object.assign(document.createElement("div"), {className:"blks"}));
+    for (let i=0;i<n;i++) { const e = document.createElement("span"); e.className = cls + " v-enter"; box.appendChild(e); } };
+  if (mv.x) { const bags = [...pan.querySelectorAll(".bag")];
+    if (mv.op === "-") bags.slice(-mv.k).forEach(b => b.classList.add("v-leave"));
+    else { const box = pan.querySelector(".bags"); for (let i=0;i<mv.k;i++) { const e = document.createElement("span"); e.className = "bag v-enter"; e.textContent = "x"; box && box.appendChild(e); } } }
+  else if (mv.op === "-") { const blks = [...pan.querySelectorAll(".blk")], take = Math.min(blks.length, mv.k); blks.slice(-take || blks.length).slice(0, take).forEach(b => b.classList.add("v-leave")); if (mv.k > take) add("hole", mv.k - take); }
+  else if (mv.op === "+") { const holes = [...pan.querySelectorAll(".hole")], take = Math.min(holes.length, mv.k); holes.slice(0, take).forEach(h => h.classList.add("v-cancel")); if (mv.k > take) add("blk", mv.k - take); }
+  await wait(750); }
+/* divide: split both pans into equal colored groups, keep one */
+async function splitStep(host, k){ host.querySelectorAll(".pan").forEach(pan => {
+    pan.querySelectorAll(".bag").forEach((b,i) => b.classList.add("g"+(i%k)));
+    pan.querySelectorAll(".blk,.hole").forEach((b,i) => b.classList.add("g"+(i%k))); });
+  await wait(1100);
+  host.querySelectorAll(".pan").forEach(pan => pan.querySelectorAll(".bag,.blk,.hole").forEach(b => { if (![...b.classList].includes("g0")) b.classList.add("v-leave"); }));
+  await wait(800); }
+async function growStep(host, k){ host.querySelectorAll(".pan").forEach(pan => { const html = pan.innerHTML; for (let i=1;i<k && i<6;i++) pan.insertAdjacentHTML("beforeend", `<div class="v-copy v-enter">${html}</div>`); }); await wait(900); }
+async function distStep(host){ host.querySelectorAll(".grp").forEach(g => g.classList.add("open")); await wait(900); }
+const MV_SAY = mv => mv.op==="dist" ? "Distribute. Everything inside the group gets multiplied." : mv.op==="/" ? `Divide by ${mv.k}, on both sides. Split into ${mv.k} equal groups, and keep one.` : mv.op==="*" ? `Multiply by ${mv.k}, on both sides.` : null;
+/* the whole move, with the voice explaining each beat */
+async function animateMove(host, L, R, mv, label){
+  const pans = host.querySelectorAll(".pan"), my = tok;
+  if (mv.op === "/" || mv.op === "*" || mv.op === "dist") {
+    const said = sayRaw(MV_SAY(mv)); if (mv.op === "/") await splitStep(host, mv.k); else if (mv.op === "*") await growStep(host, mv.k); else await distStep(host); await said; return my === tok; }
+  const dir = mv.op === "-" ? 1 : -1;
+  const s1 = sayLabel(`Left side: ${label.toLowerCase()}.`); await panStep(pans[0], L, mv); tilt(host, dir); await s1; await wait(300); if (my !== tok) return false;
+  const s2 = sayRaw("Now the right side too. Balanced again."); await panStep(pans[1], R, mv); tilt(host, 0); await s2; return my === tok; }
+function renderPans(host, L, R, act, win){ const st = host.querySelector(".v-stage"); st.innerHTML = balHTML(L, R, {act, win}); }
+
 function nlSVG(v, op){ const X = n => 30 + (n+6)*28.3; let s = `<path d="M20 50H380" style="stroke:var(--ink);stroke-width:3"/>`;
   for (let n=-6;n<=6;n++) s += `<path d="M${X(n)} 42v16" style="stroke:var(--ink);stroke-width:2"/>${n%2===0?`<text x="${X(n)}" y="80" text-anchor="middle">${fmtN(n)}</text>`:""}`;
   const right = op === ">" || op === "≥", closed = op === "≥" || op === "≤";
@@ -145,7 +210,7 @@ function visHTML(v, LV){ if (!v) return "";
   if (v.e) return `<div class="v-erow ${v.e.length>4?"many":""}">${v.e.map((x,i)=>`<span class="v-emo v-pop" style="animation-delay:${i*0.25}s" aria-hidden="true">${E(x)}</span>`).join("")}</div>`;
   if (v.big) return `<div class="v-bigtxt">${v.big.map((x,i)=>`<div class="v-pop" style="animation-delay:${i*0.4}s">${E(x)}</div>`).join("")}</div>`;
   if (v.g) return graphSVG(v.g) + (v.eq ? `<div class="v-eq">y = ${eqHTML(v.eq[0], v.eq[1])}</div>` : "");
-  if (v.bal) return balSVG(v.bal[0], v.bal[1], v.act, v.win);
+  if (v.bal) return balHTML(v.bal[0], v.bal[1], {act:v.act, win:v.win});
   if (v.tl != null) return tlHTML(LV.tl, v.tl);
   if (v.pun) return punHTML(v.pun[0], v.pun[1], v.fill);
   if (v.chain) return `<div class="v-chain">${v.chain.map(([e,l],k)=>`${k?`<span class="ar" aria-hidden="true">→</span>`:""}<span class="n ${k===v.hi?"hi":""} v-pop" style="animation-delay:${k*0.3}s">${icon(e)}<span>${E(l)}</span></span>`).join("")}</div>`;
@@ -264,14 +329,26 @@ function exBalance(ex){ let k = 0;
   exFrame("Pick the move that gets x alone.", `<div id="eBal"></div>`, "Pick the move that gets x alone. Same move on both sides.");
   const run = () => { const pz = ex.puzzles[k % ex.puzzles.length]; balGame($("eBal"), pz.start, pz.steps, pz.choices, () => { setTimeout(() => { if (!$("eBal") || $("eNextP")) return; k++; $("eBal").insertAdjacentHTML("beforeend", `<div class="row v-center"><button class="btn go" id="eNextP">Next puzzle →</button></div>`); $("eNextP").onclick = run; }, 300); }, true); };
   run(); }
-function balGame(host, start, steps, choices, onEnd, practice){ let cur = start, s = 0, wrong = 0;
-  const draw = (act, win) => { host.innerHTML = `<div class="v-stage">${balSVG(cur[0], cur[1], act, win)}</div><div class="v-moves">${choices.map(c=>`<button data-c="${E(c)}">${E(c)}</button>`).join("")}</div>`;
-    host.querySelectorAll(".v-moves button").forEach(b => b.onclick = () => { if (s >= steps.length) return; const c = b.dataset.c, want = steps[s][0];
-      if (c === want) { cur = steps[s][1]; s++; tick(); const done = s >= steps.length; draw(c.replace(/^(Subtract|Add|Divide by|Multiply by) /, m => ({"Subtract ":"− ","Add ":"+ ","Divide by ":"÷ ","Multiply by ":"× "})[m]), done);
-        sayLabel(`${c} from both sides. ${cur[0]} = ${cur[1]}.`.replace("from both sides", /Divide|Multiply/.test(c) ? "on both sides" : "from both sides"));
-        if (done) { host.querySelectorAll(".v-moves button").forEach(x => x.disabled = true); onEnd(wrong === 0); } }
-      else { wrong++; b.style.borderColor = "var(--bad)"; SFX.no(); sayRaw(practice || true ? "That doesn't get x alone yet. Try another move." : ""); } }); };
-  draw(); }
+function balGame(host, start, steps, choices, onEnd, practice){
+  let L = parseSide(start[0]), R = parseSide(start[1]), s = 0, wrong = 0, busy = false;
+  host.innerHTML = `<div class="v-stage v-balstage">${balHTML(L, R)}</div><div class="v-moves">${choices.map(c=>`<button data-c="${E(c)}">${E(c)}</button>`).join("")}</div><p class="small muted v-center" style="text-align:center;margin:0">Pick a move. Watch what happens to both sides.</p>`;
+  const btns = [...host.querySelectorAll(".v-moves button")], lock = on => btns.forEach(b => b.disabled = on);
+  btns.forEach(b => b.onclick = async () => { if (busy || s >= steps.length) return; busy = true; lock(true);
+    const c = b.dataset.c, mv = parseMove(c), right = c === steps[s][0], nL = applyMove(L, mv), nR = applyMove(R, mv), my = tok;
+    b.classList.add("picked"); tick();
+    if (!nL || !nR) { // e.g. dividing something that doesn't split evenly
+      host.querySelector(".v-balx").classList.add("v-wobble"); await sayRaw(`${c} doesn't split evenly here. x is still stuck. Try another move.`); if (my !== tok) return;
+      host.querySelector(".v-balx")?.classList.remove("v-wobble"); wrong++; b.classList.remove("picked"); b.classList.add("nope"); busy = false; lock(false); return; }
+    const ok = await animateMove(host, L, R, mv, c); if (!ok || my !== tok) return;
+    renderPans(host, nL, nR, mv.sym); await wait(250);
+    if (right) { L = nL; R = nR; s++; b.classList.remove("picked");
+      const done = s >= steps.length;
+      if (done) { renderPans(host, L, R, mv.sym, true); SFX.win(); await sayLabel(`${sideText(L)} = ${sideText(R)}.`); await sayRaw("x is all alone. Solved!"); if (my !== tok) return; onEnd(wrong === 0); return; }
+      await sayLabel(`${sideText(L)} = ${sideText(R)}.`); }
+    else { wrong++; SFX.no(); await sayRaw("Still balanced, but x isn't alone yet. Let's undo that move."); if (my !== tok) return;
+      host.querySelector(".v-balx").classList.add("v-rewind"); await wait(500); renderPans(host, L, R); b.classList.remove("picked"); b.classList.add("nope"); }
+    busy = false; lock(false); });
+}
 function exDna(){ const S0 = "ATGCGTAC"; let shown = new Set();
   exFrame("Tap a letter. See its partner.", `<div class="v-stage"><div class="v-dna" id="eD"></div></div><p class="small muted">Apple in the Tree: A–T. Car in the Garage: C–G.</p>`, "Tap a letter on the left side. I'll show you its partner.");
   const draw = () => { $("eD").innerHTML = [...S0].map((c,i)=>`<div class="r"><button class="b b${c}" data-i="${i}" style="border:0;font:inherit;font-weight:800;font-size:26px;cursor:pointer">${c}</button><span class="bar"></span><span class="b ${shown.has(i)?"b"+PAIR[c]:"bq"}">${shown.has(i)?PAIR[c]:"?"}</span></div>`).join("");
@@ -364,6 +441,9 @@ function answered(q, ok, why, show){
   $("qFb").innerHTML = `<div class="v-fb ${ok?"ok":"no"}">${ok?IC.yes:IC.nope}<div><div>${E(cheer)}${ok&&!P.replay?" +2":""}</div>${why?`<div style="font-weight:500" id="fbWhy">${E(why)}</div>`:""}</div></div>
     <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="fbHear">🔊 Hear it</button><button class="btn go v-big" id="qNext">${last?"See my score":"Next"} →</button></div>`;
   if (show) show();
+  if (ok) { $("qFb").insertAdjacentHTML("afterbegin", `<div class="v-pop2" aria-hidden="true">+${P.replay?1:2}</div><div class="v-confetti" aria-hidden="true">${Array.from({length:18},(_,k)=>`<i style="left:${5+(k*53)%90}%;background:${["var(--accent)","var(--blue)","var(--good)","var(--nuc)"][k%4]};animation-delay:${(k%6)*0.05}s"></i>`).join("")}</div>`);
+    if (S.streak >= 3 && !P.replay) $("qFb").querySelector(".v-fb > div").insertAdjacentHTML("beforeend", `<div class="v-streak">🔥 ${S.streak} in a row</div>`); }
+  else { const qb = $("qBody"); qb.classList.remove("v-shake"); void qb.offsetWidth; qb.classList.add("v-shake"); }
   const talk = () => saySeq([[cheer], [why, $("fbWhy")]]); talk(); $("fbHear").onclick = talk;
   $("qNext").onclick = () => { P.i++; if (P.i < P.items.length) ask(); else finish(); };
   $("qNext").focus({preventScroll:true}); $("qBody").style.pointerEvents = "none";
