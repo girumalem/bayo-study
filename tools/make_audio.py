@@ -24,8 +24,16 @@ OUT.mkdir(parents=True, exist_ok=True)
 man_path = OUT / "manifest.json"
 manifest = json.loads(man_path.read_text()) if man_path.exists() else {}
 
+# How names should sound: the screen shows the real spelling, ElevenLabs gets the respelling (tools/pronounce.json).
+import re as _re
+PRON = json.loads((ROOT / "tools" / "pronounce.json").read_text()) if (ROOT / "tools" / "pronounce.json").exists() else {}
+def say_as(text):
+    for k, v in PRON.items(): text = _re.sub(rf"\b{_re.escape(k)}\b", v, text)
+    return text
+
 def fid(text, voice):
-    return hashlib.sha1(f"{voice}|{MODEL}|{text}".encode()).hexdigest()[:16] + ".mp3"
+    # the file name depends on the respelled text, so changing a pronunciation re-records just those lines
+    return hashlib.sha1(f"{voice}|{MODEL}|{say_as(text)}".encode()).hexdigest()[:16] + ".mp3"
 
 def word_times(text, al):
     chars, st, en = al["characters"], al["character_start_times_seconds"], al["character_end_times_seconds"]
@@ -90,7 +98,7 @@ try:
     for t in todo:
         if LIMIT and used + len(t) > LIMIT: print("Reached MAX_CHARS, stopping."); break
         v = BEAT_VOICE if t in beat else VOICE
-        body = {"text": t, "model_id": MODEL, "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": True}}
+        body = {"text": say_as(t), "model_id": MODEL, "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": True}}
         for attempt in range(5):
             r = s.post(f"https://api.elevenlabs.io/v1/text-to-speech/{v}/with-timestamps?output_format=mp3_44100_128", json=body, timeout=90)
             if r.status_code == 429 or r.status_code >= 500: time.sleep(3 * (attempt + 1)); continue
