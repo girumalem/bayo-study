@@ -12,5 +12,5 @@ l2 = {}; exec((here/"lessons2.py").read_text(), l2)
 for S_ in SUBJ[1:]:
     for u in S_["units"]:
         u["v2"] = l2["V2"][u["id"]]
-h = (here/"template.html").read_text().replace("__SUBJ__", json.dumps(SUBJ, ensure_ascii=False))
+h = (here/"template.html").read_text().replace("__V2CSS__", (here/"v2.css").read_text()).replace("__V2JS__", (here/"v2.js").read_text()).replace("__SUBJ__", json.dumps(SUBJ, ensure_ascii=False))
 (here.parent/"public/index.html").write_text(h); print("built", len(h))

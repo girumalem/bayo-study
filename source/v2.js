@@ -16,15 +16,18 @@ let REC = {}; const AU = typeof Audio !== "undefined" ? new Audio() : null;
 try { fetch("/audio/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(j => { REC = j || {}; }).catch(() => {}); } catch(e) {}
 document.addEventListener("click", function unlock(){ if (AU && !AU.src) { try { AU.muted = true; AU.play().catch(()=>{}); AU.muted = false; } catch(e) {} } document.removeEventListener("click", unlock, true); }, true);
 function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} try { if (AU) { AU.pause(); AU.ontimeupdate = null; } } catch(e) {} document.querySelectorAll(".v-w.now").forEach(w => w.classList.remove("now")); }
+/* slower playback keeps the voice's pitch natural (preservesPitch) */
+function setRate(){ const r = Math.max(0.6, Math.min(1.2, S.rate || 0.8)); try { AU.preservesPitch = true; AU.webkitPreservesPitch = true; AU.defaultPlaybackRate = r; AU.playbackRate = r; } catch(e) {} }
+AU && AU.addEventListener("loadedmetadata", () => setRate());
 function wordSpans(el, text){ if (!el) return []; el.innerHTML = text.split(/\s+/).map(w => `<span class="v-w">${E(w)}</span>`).join(" "); return [...el.querySelectorAll(".v-w")]; }
 function playRec(text, el){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return null; const id = talkId;
   return new Promise(res => { const ws = wordSpans(el, text), T = rec[1] || []; let fin = false; const end = ok => { if (!fin) { fin = true; ws.forEach(w => w.classList.remove("now")); res(ok && id === talkId); } };
-    AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
+    AU.src = "/audio/" + rec[0]; setRate();
     AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; ws.forEach((w,i) => w.classList.toggle("now", !!T[i] && t >= T[i][0] && t < T[i][1] + 0.05)); };
     AU.onended = () => end(true); AU.onerror = () => end(false);
     AU.play().catch(() => { end(false); }); }); }
 function sayRaw(text, el){ hush(); const id = talkId, p = playRec(String(text||""), el); if (p) return p.then(ok => ok ? true : (id === talkId ? ttsRaw(text) : false)); return ttsRaw(text); }
-async function saySeq(parts){ for (const [t, el] of parts) { if (!t) continue; const id0 = talkId; const ok = await sayRaw(t, el); if (!ok) return false; } return true; }
+async function saySeq(parts){ let last = null; for (const [t, el] of parts) { if (!t) continue; if (last !== null) { await sleep(450); if (talkId !== last) return false; } const ok = await sayRaw(t, el); if (!ok) return false; last = talkId; } return true; }
 function ttsRaw(text){ const id = talkId; return new Promise(res => {
   if (!synth || !text) { setTimeout(() => res(id === talkId), 30); return; }
   const u = new SpeechSynthesisUtterance(text); u.rate = S.rate; if (voice) u.voice = voice; u.lang = voice ? voice.lang : "en-US";
@@ -189,7 +192,7 @@ function watch(){
     document.querySelectorAll("#wDots i").forEach((d,j) => d.className = j<k?"ok":j===k?"now":""); };
   show(0);
   const run = async () => { playing = true; $("wPlay").textContent = "⏸ Pause";
-    while (playing && i < LV.watch.length && my === tok) { show(i); const ok = await sayRaw(LV.watch[i][0]); if (!ok || !playing || my !== tok) return; await sleep(400); if (my !== tok) return; i++; }
+    while (playing && i < LV.watch.length && my === tok) { show(i); const ok = await sayRaw(LV.watch[i][0]); if (!ok || !playing || my !== tok) return; await sleep(Math.round(1300 / (S.rate||0.8))); if (my !== tok) return; i++; }
     if (my === tok && i >= LV.watch.length) { playing = false; i = 0; doneSt.add(0); $("wPlay").textContent = "▶ Watch again"; } };
   $("wPlay").onclick = () => { if (playing) { playing = false; hush(); $("wPlay").textContent = "▶ Play"; } else run(); };
   $("wAgain").onclick = () => { playing = false; hush(); $("wPlay").textContent = "▶ Play"; show(i); sayRaw(LV.watch[i][0]); };
@@ -333,7 +336,7 @@ function beat(){
     <p class="small muted">Play it twice. The second time, say it with the voice.</p>`, "Play");
   const my = tok; let on = false;
   const sing = async withBeat => { on = true; if (withBeat) beatStart(); await sleep(withBeat ? 1400 : 0); const ps = [...document.querySelectorAll("#bLyr p")];
-    for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i], ps[i]); if (!ok) break; }
+    for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i], ps[i]); if (!ok) break; await sleep(250); }
     if (my !== tok) return; ps.forEach(p=>p.classList.remove("now")); beatStop(); on = false; $("bPlay").textContent = "🎤 Play the beat"; doneSt.add(3); };
   $("bPlay").onclick = () => { if (on) { on = false; hush(); beatStop(); $("bPlay").textContent = "🎤 Play the beat"; } else { $("bPlay").textContent = "⏹ Stop"; sing(true); } };
   $("bVoice").onclick = () => { if (!on) sing(false); };
@@ -490,7 +493,7 @@ function replayMisses(){ if (!unit.boss) { unit = UNITS[unitI]; LV = unit.v2; } 
 /* lets the rest of the app (Grammar, map, scores) use the recordings too */
 function recMain(text, onWord, onEnd){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return false;
   hush(); const id = talkId, T = rec[1] || [];
-  AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
+  AU.src = "/audio/" + rec[0]; setRate();
   AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; let i = -1; T.forEach((w,k) => { if (t >= w[0]) i = k; }); onWord(i, T.length); };
   AU.onended = () => { if (id === talkId) onEnd(true); }; AU.onerror = () => { if (id === talkId) onEnd(false); };
   AU.play().catch(() => { if (id === talkId) onEnd(false); }); return true; }

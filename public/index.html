@@ -389,7 +389,7 @@ svg.v-graph{display:block;width:100%;max-width:400px;margin:0 auto;height:auto}
 
   <section class="card" id="settings" hidden>
     <h2>Sound settings</h2>
-    <div class="row"><span style="font-weight:700">Speed</span><div class="seg" id="speed"><button data-r="0.75">Slow</button><button data-r="0.9">Normal</button><button data-r="1.1">Fast</button></div></div>
+    <div class="row"><span style="font-weight:700">Speed</span><div class="seg" id="speed"><button data-r="0.7">Slowest</button><button data-r="0.8">Slow</button><button data-r="0.9">Calm</button><button data-r="1">Normal</button></div></div>
     <label class="chk"><input type="checkbox" id="auto"> Read each question out loud automatically</label>
     <label class="chk"><input type="checkbox" id="sfx"> Game sounds (cheer when you get it right)</label>
     <label class="chk"><input type="checkbox" id="rec"> Recorded voice (sounds like a real person)</label>
@@ -412,7 +412,7 @@ const CHEERS_NO = ["Close, Bayo. Check the replay.","Not this time. Watch the re
 
 /* ---------- saved progress (this device only) ---------- */
 const KEY = "bayo-grammar-v1";
-let S = {points:0, streak:0, best:{}, seen:{}, rate:0.9, auto:false, voice:"", days:{}, sfx:true, sub:"", miss:[]};
+let S = {points:0, streak:0, best:{}, seen:{}, rate:0.8, speedV:2, auto:false, voice:"", days:{}, sfx:true, sub:"", miss:[]};
 try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
 const today = () => { const d = new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); };
@@ -440,7 +440,8 @@ function loadVoices(){
 if (synth) { loadVoices(); synth.onvoiceschanged = loadVoices; } else { $("noTTS").hidden = false; }
 
 function clearHighlights(){ document.querySelectorAll(".reading").forEach(e=>e.classList.remove("reading")); document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur")); document.querySelectorAll(".w.speaking").forEach(e=>e.classList.remove("speaking")); if (speakingBtn) speakingBtn.classList.remove("playing"); speakingBtn = null; }
-function stop(){ if (synth) synth.cancel(); if (typeof V2 !== "undefined") V2.quiet(); clearHighlights(); }
+let readTok = 0;
+function stop(){ readTok++; if (synth) synth.cancel(); if (typeof V2 !== "undefined") V2.quiet(); clearHighlights(); }
 /* speak(text, spans?) — spans: elements each with data-o (char offset in text) for word highlighting */
 function speak(text, spans, btn){
   if (!synth) return;
@@ -461,6 +462,9 @@ function hlWord(list, i, n){ if (!list.length) return; list.forEach(s => s.class
   const s = list[Math.min(list.length-1, list.length === n ? i : Math.floor(i * list.length / n))]; if (s) s.classList.add(s.classList.contains("w")?"speaking":"cur"); }
 /* Turn plain text into word spans that can be highlighted while spoken */
 function spansFrom(text, base){ let o = base||0, out = ""; for (const part of text.split(/(\s+)/)) { if (!part) continue; if (/^\s+$/.test(part)) { out += part; o += part.length; continue; } out += `<span data-o="${o}">${esc(part)}</span>`; o += part.length; } return out; }
+/* several sentences, each read (and recorded) on its own */
+function partsHTML(arr){ return arr.filter(Boolean).map(t => `<span class="say vpart">${spansFrom(t,0)}</span>`).join(" "); }
+const readParts = (el, btn) => readSequence([...el.querySelectorAll(".vpart")], btn);
 function sayHTML(text){ return `<span class="say">${spansFrom(text,0)}</span>`; }
 function speakEl(el, btn){ const spans = el.querySelectorAll("[data-o]"); const text = el.dataset.text || el.textContent; speak(text, spans, btn); }
 function listenBtn(label, id){ return `<button class="listen" ${id?`id="${id}"`:""}>${SPK}<span>${label}</span></button>`; }
@@ -468,6 +472,7 @@ function listenBtn(label, id){ return `<button class="listen" ${id?`id="${id}"`:
 /* ---------- tagged sentences ---------- */
 const SUP = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9"};
 function mathSpeak(t){
+  t = t.replace(/\(([^()]+)\)([²³⁴⁵⁶⁷⁸⁹])/g, (m, inner, p) => `the quantity ${inner}, ${p==="²"?"squared":p==="³"?"cubed":"to the "+SUP[p]+"th power"}`);
   t = t.replace(/([A-Za-z0-9)])([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (m,b,p) => { const n = [...p].map(c=>SUP[c]).join(""); return b + (n==="2"?" squared":n==="3"?" cubed":n==="0"?" to the zero power":" to the "+n+(n==="1"?"st":"th")+" power"); })
    .replace(/ˣ/g," to the x power")
    .replace(/\((−?[\d.]+), (−?[\d.]+)\)/g,"the point $1, $2")
@@ -655,15 +660,15 @@ function linkSVG(fromSide, done){ const d = fromSide==="l" ? "M60 4 C 60 30, 300
 function mapLine(){ const k = currentLevel(), rk = rankOf(S.points);
   const where = k === -1 ? "" : k === UNITS.length ? `Bayo, you're in the ${SUB.name} Championship Game.` : `Bayo, you're on Level ${k+1} of ${SUB.name}: ${UNITS[k].name}.`;
   const allDone = UNITS.every(u=>passed(u.id)) && passed(SUB.boss);
-  return `${allDone?"You won the championship. Go for three stars on every level.":where} Your rank is ${rk.r.name}.${rk.next?` ${rk.next.at-S.points} more points to ${rk.next.name}.`:" That's the top rank."} Each right answer is 2 points.`; }
+  return [allDone ? "You won the championship. Go for three stars on every level." : where, `Your rank is ${rk.r.name}.`, rk.next ? `Keep stacking points to reach ${rk.next.name}.` : "That's the top rank.", "Each right answer is 2 points."]; }
 function subStats(s){ const won = s.units.filter(u => (S.best[u.id]||0) >= PASS).length; const stars = s.units.reduce((t,u)=>{ const b = S.best[u.id]; return t + (b==null?0:b>=0.9?3:b>=0.7?2:b>=0.5?1:0); },0); return {won, stars, champ:(S.best[s.boss]||0)>=PASS}; }
 function subjects(){
   const rk = rankOf(S.points), d = S.days[today()];
-  const greet = `What's up, Bayo! ${d&&d.q?`You've done ${d.q} plays today. Keep it going.`:"Pick a subject and let's get to work."} Your rank is ${rk.r.name}.`;
-  go(`<section class="card"><h1 id="hiH">${sayHTML(greet)}</h1><div class="row">${listenBtn("Hear this","hearSub")}</div></section>
+  const greet = ["What's up, Bayo!", d&&d.q ? "You're putting in work today. Keep it going." : "Pick a subject and let's get to work.", `Your rank is ${rk.r.name}.`];
+  go(`<section class="card"><h1 id="hiH">${partsHTML(greet)}</h1><div class="row">${listenBtn("Hear this","hearSub")}</div></section>
   <div class="subjects">${SUBJ.map(s => { const st = subStats(s); return `<button class="subj" data-s="${s.id}">${art(s.icon,76)}<span style="flex:1;min-width:0"><span class="nm">${esc(s.name)}</span>
     <span class="st">${st.champ?"Champion · ":""}${st.won} of ${s.units.length} levels won · ${st.stars} ★</span><span class="xp"><i style="width:${Math.round(st.won/s.units.length*100)}%"></i></span></span></button>`; }).join("")}</div>`);
-  $("hearSub").onclick = e => readSequence([$("hiH"), ...SUBJ.map(s => Object.assign(document.createElement("span"), {textContent: `${s.name}: ${subStats(s).won} of ${s.units.length} levels won.`}))], e.currentTarget);
+  $("hearSub").onclick = e => readSequence([...$("hiH").querySelectorAll(".vpart"), ...SUBJ.map(s => Object.assign(document.createElement("span"), {textContent: `${s.name}: ${subStats(s).won} of ${s.units.length} levels won.`}))], e.currentTarget);
   document.querySelectorAll(".subj").forEach(b => b.onclick = () => { setSub(b.dataset.s); home(); });
 }
 function home(){
@@ -677,12 +682,12 @@ function home(){
       <div class="rankname">${esc(rk.r.name)}</div>
       <div class="xp" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Progress to next rank"><i style="width:${pct}%"></i></div>
       <span class="small muted">${rk.next?`${S.points} / ${hi} points to ${esc(rk.next.name)}`:"Top rank reached"}</span></div></div>
-    <p id="mapSay">${sayHTML(mapLine())}</p>
+    <p id="mapSay">${partsHTML(mapLine())}</p>
     <div class="row">${listenBtn("Hear this","hearHome")}</div></section>
   <section class="card"><div class="row between"><button class="btn" id="allSub">All subjects</button></div><div class="lvhead">${art(SUB.icon,64)}<h1>${esc(SUB.name)} season</h1></div><p class="small muted">Tap a level to play. Locked levels open as you win.</p><div class="map">${path}</div></section>
   ${SUB.id==="gr"?`<section class="card"><h2>Color key</h2><p class="small muted">The same colors are used everywhere in the app.</p><div class="legend">${legend}</div></section>`:""}`);
   $("allSub").onclick = subjects;
-  $("hearHome").onclick = e => speakEl($("mapSay"), e.currentTarget);
+  $("hearHome").onclick = e => readParts($("mapSay"), e.currentTarget);
   document.querySelectorAll(".node").forEach(b => b.onclick = () => {
     const i = +b.dataset.u, open = i === UNITS.length ? bossOpen() : isOpen(i);
     if (!open) { SFX.no(); speak(i === UNITS.length ? `Locked. Finish all ${UNITS.length} levels to unlock the Championship Game.` : `Locked. Get one star on Level ${i} first.`, null, null); return; }
@@ -723,13 +728,13 @@ function learn(){
 }
 /* read several blocks one after another, each with its own highlighting */
 function readSequence(els, btn){
-  if (!synth) return; stop(); let k = 0;
-  const next = () => { if (k >= els.length) { clearHighlights(); return; } const el = els[k++];
+  if (!synth) return; stop(); let k = 0; const my = readTok;
+  const next = () => { if (my !== readTok) return; if (k >= els.length) { clearHighlights(); return; } const el = els[k++];
     const u = new SpeechSynthesisUtterance(spoken(el.dataset.text||el.textContent)); u.rate = S.rate; if (voice) u.voice = voice;
     let list = [...el.querySelectorAll("[data-o]")]; const tx = el.dataset.text||el.textContent;
     if (changes(tx)) { list = []; el.classList.add("reading"); }
     u.onboundary = e => { if (e.name === "sentence") return; let hit = null; for (const s of list) { if (+s.dataset.o <= e.charIndex) hit = s; else break; } list.forEach(s=>s.classList.remove("cur","speaking")); if (hit) hit.classList.add(hit.classList.contains("w")?"speaking":"cur"); };
-    u.onend = () => { list.forEach(s=>s.classList.remove("cur","speaking")); el.classList.remove("reading"); next(); }; u.onerror = () => clearHighlights();
+    u.onend = () => { list.forEach(s=>s.classList.remove("cur","speaking")); el.classList.remove("reading"); setTimeout(next, k < els.length ? Math.round(700 / (S.rate||0.8)) : 0); }; u.onerror = () => clearHighlights();
     if (typeof V2 !== "undefined" && V2.recMain(spoken(tx), (i,n) => hlWord(list, i, n), ok => { if (ok) u.onend(); else synth.speak(u); })) return;
     synth.speak(u); };
   if (btn) { speakingBtn = btn; btn.classList.add("playing"); }
@@ -855,16 +860,16 @@ function done(){
   const wasPassed = passed(id), wasBossOpen = bossOpen(), rankBefore = rankOf(S.points - qset.right*2).i;
   S.best[id] = Math.max(S.best[id] || 0, pct); save();
   const nowPassed = passed(id);
-  let unlockHTML = "", unlockSay = "";
+  let unlockHTML = "", unlockSay = [];
   if (!wasPassed && nowPassed) {
-    if (!isBoss && unitI+1 < UNITS.length) { const nx = UNITS[unitI+1]; unlockHTML = `<div class="unlock">${art(nx.id,72)}<div><span class="pill">Unlocked</span><b>Level ${unitI+2}: ${esc(nx.name)}</b></div></div>`; unlockSay = ` Level ${unitI+2}, ${nx.name}, is unlocked.`; }
-    if (!isBoss && !wasBossOpen && bossOpen()) { unlockHTML = `<div class="unlock">${art("boss",72)}<div><span class="pill">Unlocked</span><b>The Championship Game</b></div></div>`; unlockSay = " The Championship Game is unlocked."; }
-    if (isBoss) unlockSay = " You won the championship!";
+    if (!isBoss && unitI+1 < UNITS.length) { const nx = UNITS[unitI+1]; unlockHTML = `<div class="unlock">${art(nx.id,72)}<div><span class="pill">Unlocked</span><b>Level ${unitI+2}: ${esc(nx.name)}</b></div></div>`; unlockSay = [`Level ${unitI+2}, ${nx.name}, is unlocked.`]; }
+    if (!isBoss && !wasBossOpen && bossOpen()) { unlockHTML = `<div class="unlock">${art("boss",72)}<div><span class="pill">Unlocked</span><b>The Championship Game</b></div></div>`; unlockSay = ["The Championship Game is unlocked."]; }
+    if (isBoss) unlockSay = ["You won the championship!"];
   }
   const rk = rankOf(S.points), rankUp = rk.i > rankBefore;
-  if (rankUp) unlockSay += ` New rank: ${rk.r.name}.`;
+  if (rankUp) unlockSay.push(`New rank: ${rk.r.name}.`);
   const msg = (pct>=0.7?"Bayo! ":"") + (!nowPassed ? `You need ${Math.ceil(PASS*qset.qs.length)} right to win this level. Run it back, you've got this.` : pct >= 0.9 ? (isBoss ? "Champion. That's a title run." : "Game over, and you won big.") : pct >= 0.7 ? "Strong game. A little more practice and it's three stars." : "You won the level. Run it back for more stars.");
-  const party = nowPassed && (unlockSay || pct >= 0.9);
+  const party = nowPassed && (unlockSay.length || pct >= 0.9);
   const colors = ["var(--accent)","var(--noun)","var(--verb)","var(--adj)","var(--adv)","var(--pron)"];
   const burst = party ? `<div class="burst" aria-hidden="true">${Array.from({length:28},(_,k)=>`<i style="left:${(k*37)%100}%;background:${colors[k%6]};animation-delay:${(k%7)*0.09}s"></i>`).join("")}</div>` : "";
   go(`<section class="card ${party?"celebrate":""}" ${party?"":"style=\"align-items:flex-start\""}>${burst}
@@ -874,13 +879,13 @@ function done(){
     ${starsHTML(id)}
     ${rankUp?`<span class="pill" style="background:var(--accent);color:var(--accent-ink)">New rank: ${esc(rk.r.name)}</span>`:""}
     ${unlockHTML}
-    <p id="dmsg">${sayHTML(`${qset.right} out of ${qset.qs.length}. ${msg}${unlockSay}`)}</p>
+    <p id="dmsg">${partsHTML([`${qset.right} out of ${qset.qs.length}.`, msg, ...unlockSay])}</p>
     <div class="row">${listenBtn("Hear it","hearDone")}</div>
     <div class="row">${unlockHTML&&!isBoss?`<button class="btn go" id="nextLv">Play next level</button>`:""}${unit.v2&&V2.misses()?`<button class="btn ${unlockHTML?"":"go"}" id="vMiss">🔁 Replay my ${V2.misses()} miss${V2.misses()>1?"es":""}</button>`:""}<button class="btn ${unlockHTML||(unit.v2&&V2.misses())?"":"go"}" id="again">Run it back</button>${isBoss?"":`<button class="btn" id="relearn">${unit.v2?"▶ Watch again":"Review the lesson"}</button>`}<button class="btn" id="homeB">Season map</button><button class="btn" id="subB">All subjects</button></div>
   </section>`);
   if (party) SFX.win();
   syncNow();
-  $("hearDone").onclick = e => speakEl($("dmsg"), e.currentTarget);
+  $("hearDone").onclick = e => readParts($("dmsg"), e.currentTarget);
   $("again").onclick = () => unit.v2 ? (isBoss ? V2.boss() : V2.open(unitI, 4)) : isBoss ? openUnit(UNITS.length) : startPractice();
   if ($("vMiss")) $("vMiss").onclick = () => V2.replayMisses();
   if ($("relearn")) $("relearn").onclick = () => unit.v2 ? V2.open(unitI, 0) : (slideI = 0, learn());
@@ -898,7 +903,7 @@ $("rec").checked = S.rec !== false; $("rec").onchange = e => { S.rec = e.target.
 $("sfx").checked = S.sfx !== false; $("sfx").onchange = e => { S.sfx = e.target.checked; save(); if (S.sfx) SFX.ok(); };
 $("voice").onchange = e => { S.voice = e.target.value; voice = voices.find(v => v.name === S.voice) || voice; save(); speak("Hi Bayo. This is my voice."); };
 $("testVoice").innerHTML = `${SPK}<span>Test the voice</span>`; $("testVoice").onclick = e => speak("Hi Bayo. Let's get to work.", null, e.currentTarget);
-if (![0.75,0.9,1.1].includes(S.rate)) S.rate = 0.9;
+if (S.speedV !== 2 || ![0.7,0.8,0.9,1].includes(S.rate)) { S.rate = 0.8; S.speedV = 2; }
 /* =====================================================================
    NEW-STYLE LESSONS: Watch → Explore → Words → Beat → Play
    Listen-first, hands-on. Uses the app's voice, points, unlocks and sync.
@@ -917,15 +922,18 @@ let REC = {}; const AU = typeof Audio !== "undefined" ? new Audio() : null;
 try { fetch("/audio/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(j => { REC = j || {}; }).catch(() => {}); } catch(e) {}
 document.addEventListener("click", function unlock(){ if (AU && !AU.src) { try { AU.muted = true; AU.play().catch(()=>{}); AU.muted = false; } catch(e) {} } document.removeEventListener("click", unlock, true); }, true);
 function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} try { if (AU) { AU.pause(); AU.ontimeupdate = null; } } catch(e) {} document.querySelectorAll(".v-w.now").forEach(w => w.classList.remove("now")); }
+/* slower playback keeps the voice's pitch natural (preservesPitch) */
+function setRate(){ const r = Math.max(0.6, Math.min(1.2, S.rate || 0.8)); try { AU.preservesPitch = true; AU.webkitPreservesPitch = true; AU.defaultPlaybackRate = r; AU.playbackRate = r; } catch(e) {} }
+AU && AU.addEventListener("loadedmetadata", () => setRate());
 function wordSpans(el, text){ if (!el) return []; el.innerHTML = text.split(/\s+/).map(w => `<span class="v-w">${E(w)}</span>`).join(" "); return [...el.querySelectorAll(".v-w")]; }
 function playRec(text, el){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return null; const id = talkId;
   return new Promise(res => { const ws = wordSpans(el, text), T = rec[1] || []; let fin = false; const end = ok => { if (!fin) { fin = true; ws.forEach(w => w.classList.remove("now")); res(ok && id === talkId); } };
-    AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
+    AU.src = "/audio/" + rec[0]; setRate();
     AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; ws.forEach((w,i) => w.classList.toggle("now", !!T[i] && t >= T[i][0] && t < T[i][1] + 0.05)); };
     AU.onended = () => end(true); AU.onerror = () => end(false);
     AU.play().catch(() => { end(false); }); }); }
 function sayRaw(text, el){ hush(); const id = talkId, p = playRec(String(text||""), el); if (p) return p.then(ok => ok ? true : (id === talkId ? ttsRaw(text) : false)); return ttsRaw(text); }
-async function saySeq(parts){ for (const [t, el] of parts) { if (!t) continue; const id0 = talkId; const ok = await sayRaw(t, el); if (!ok) return false; } return true; }
+async function saySeq(parts){ let last = null; for (const [t, el] of parts) { if (!t) continue; if (last !== null) { await sleep(450); if (talkId !== last) return false; } const ok = await sayRaw(t, el); if (!ok) return false; last = talkId; } return true; }
 function ttsRaw(text){ const id = talkId; return new Promise(res => {
   if (!synth || !text) { setTimeout(() => res(id === talkId), 30); return; }
   const u = new SpeechSynthesisUtterance(text); u.rate = S.rate; if (voice) u.voice = voice; u.lang = voice ? voice.lang : "en-US";
@@ -1090,7 +1098,7 @@ function watch(){
     document.querySelectorAll("#wDots i").forEach((d,j) => d.className = j<k?"ok":j===k?"now":""); };
   show(0);
   const run = async () => { playing = true; $("wPlay").textContent = "⏸ Pause";
-    while (playing && i < LV.watch.length && my === tok) { show(i); const ok = await sayRaw(LV.watch[i][0]); if (!ok || !playing || my !== tok) return; await sleep(400); if (my !== tok) return; i++; }
+    while (playing && i < LV.watch.length && my === tok) { show(i); const ok = await sayRaw(LV.watch[i][0]); if (!ok || !playing || my !== tok) return; await sleep(Math.round(1300 / (S.rate||0.8))); if (my !== tok) return; i++; }
     if (my === tok && i >= LV.watch.length) { playing = false; i = 0; doneSt.add(0); $("wPlay").textContent = "▶ Watch again"; } };
   $("wPlay").onclick = () => { if (playing) { playing = false; hush(); $("wPlay").textContent = "▶ Play"; } else run(); };
   $("wAgain").onclick = () => { playing = false; hush(); $("wPlay").textContent = "▶ Play"; show(i); sayRaw(LV.watch[i][0]); };
@@ -1234,7 +1242,7 @@ function beat(){
     <p class="small muted">Play it twice. The second time, say it with the voice.</p>`, "Play");
   const my = tok; let on = false;
   const sing = async withBeat => { on = true; if (withBeat) beatStart(); await sleep(withBeat ? 1400 : 0); const ps = [...document.querySelectorAll("#bLyr p")];
-    for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i], ps[i]); if (!ok) break; }
+    for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i], ps[i]); if (!ok) break; await sleep(250); }
     if (my !== tok) return; ps.forEach(p=>p.classList.remove("now")); beatStop(); on = false; $("bPlay").textContent = "🎤 Play the beat"; doneSt.add(3); };
   $("bPlay").onclick = () => { if (on) { on = false; hush(); beatStop(); $("bPlay").textContent = "🎤 Play the beat"; } else { $("bPlay").textContent = "⏹ Stop"; sing(true); } };
   $("bVoice").onclick = () => { if (!on) sing(false); };
@@ -1391,7 +1399,7 @@ function replayMisses(){ if (!unit.boss) { unit = UNITS[unitI]; LV = unit.v2; } 
 /* lets the rest of the app (Grammar, map, scores) use the recordings too */
 function recMain(text, onWord, onEnd){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return false;
   hush(); const id = talkId, T = rec[1] || [];
-  AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
+  AU.src = "/audio/" + rec[0]; setRate();
   AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; let i = -1; T.forEach((w,k) => { if (t >= w[0]) i = k; }); onWord(i, T.length); };
   AU.onended = () => { if (id === talkId) onEnd(true); }; AU.onerror = () => { if (id === talkId) onEnd(false); };
   AU.play().catch(() => { if (id === talkId) onEnd(false); }); return true; }

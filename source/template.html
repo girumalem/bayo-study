@@ -215,163 +215,7 @@ label.chk input{width:24px;height:24px;accent-color:var(--accent)}
 .notice{font-size:16px;border:2px dashed var(--line);border-radius:12px;padding:10px 14px}
 @media (max-width:480px){:root{--size:19px}.sent{font-size:22px}.brand{font-size:19px}h1{font-size:24px}}
 @media (prefers-reduced-motion:reduce){.prog i{transition:none}}
-/* ===== new-style lessons (v-*) ===== */
-:root{--blue:#2463b5;--cyto:#fdf3d7;--mem:#d98a1f;--nuc:#7b5cc4;--mito:#e2681f;--ribo:#1d3557;--chl:#2f9a4d;--vac:#7fb8e6;--wall:#7a8b3a;--bark-l:#d9cfbf;--bark-d:#3b3530}
-@media (prefers-color-scheme:dark){:root{--blue:#7fb2f0;--cyto:#3a3320;--mem:#f0a94a;--nuc:#b39cf0;--mito:#f0823a;--ribo:#cfe0f5;--chl:#6fd39b;--vac:#5c8fbf;--wall:#b9c96a;--bark-l:#cfc4b2;--bark-d:#2a2522}}
-.v-track{display:flex;gap:4px}
-.v-track button{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:4px 0;cursor:pointer}
-.v-track i{width:46px;height:46px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:21px;background:var(--card)}
-.v-track .on{color:var(--ink)} .v-track .on i{border-color:var(--accent);background:var(--accent)}
-.v-track .done i{border-color:var(--good);background:var(--good-bg);color:var(--good)}
-.v-stage{position:relative;border-radius:18px;background:var(--bg);border:2px solid var(--line);overflow:hidden;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px}
-.v-stage > svg.v-scene{display:block;width:100%;height:auto}
-.v-cap{min-height:64px;font-size:24px;font-weight:700;line-height:1.35;text-align:center;padding:4px 8px}
-.v-cap .k,.v-prompt .k{color:var(--accent)}
-.v-center{justify-content:center}
-.v-big{min-height:72px!important;font-size:22px!important;padding:0 26px!important}
-.v-part{transition:opacity .7s ease, transform .7s ease;transform-box:fill-box;transform-origin:center}
-.v-part.off{opacity:0;transform:scale(.5);pointer-events:none}
-.v-part.dim{opacity:.25}
-.v-part.glow{filter:drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 4px var(--accent))}
-@media (prefers-reduced-motion:no-preference){.v-part.glow{animation:vpulse 1.2s ease-in-out infinite}@keyframes vpulse{50%{transform:scale(1.08)}}
-  .v-pop{animation:vpop .5s ease both}@keyframes vpop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}}
-.v-part.right{filter:drop-shadow(0 0 10px var(--good)) drop-shadow(0 0 4px var(--good))}
-.v-part.wrong{filter:drop-shadow(0 0 10px var(--bad))}
-.v-tappable .v-part{cursor:pointer}
-.v-bubble{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--card);border:3px solid var(--accent);border-radius:16px;padding:8px 16px;font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px;white-space:nowrap;max-width:94%}
-.v-bubble svg{width:34px;height:34px;flex:none}
-.v-emo{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;line-height:1}
-.v-erow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;font-size:64px;padding:16px 4px}
-.v-erow.many{font-size:46px}
-.v-bigtxt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px}
-.v-bigtxt div{font-size:34px;font-weight:800;letter-spacing:.03em;text-align:center}
-.v-bigtxt div:last-child{color:var(--accent)}
-/* balance */
-.v-bal{width:100%;max-width:440px}
-.v-bal text{font:800 22px Lexend,sans-serif;fill:var(--ink)}
-.v-bal .act{font-size:18px;fill:var(--accent)}
-/* timeline */
-.v-tl{display:flex;flex-direction:column;gap:6px;width:100%}
-.v-tl button{display:flex;align-items:center;gap:12px;border:3px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:18px;padding:6px 12px;text-align:left;cursor:pointer;min-height:54px}
-.v-tl button b{font-size:20px;min-width:56px;color:var(--navy)}
-.v-tl button .v-emo{font-size:28px}
-.v-tl button.hi{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--card))}
-.v-tl button.dimmed{opacity:.55}
-/* chain, pyramid, acronym */
-.v-chain{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;padding:10px}
-.v-chain .n{display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:700;font-size:15px;padding:6px 8px;border-radius:14px;border:3px solid transparent}
-.v-chain .n .v-emo{font-size:46px}
-.v-chain .n.hi{border-color:var(--accent);background:var(--card)}
-.v-chain .ar{font-size:26px;color:var(--muted)}
-.v-pyr{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;padding:8px}
-.v-pyr div{display:flex;align-items:center;justify-content:center;gap:10px;background:color-mix(in srgb,var(--good) 22%,var(--card));border-radius:10px;font-weight:800;font-size:20px;padding:6px}
-.v-pyr .v-emo{font-size:34px}
-.v-acr{display:flex;flex-direction:column;gap:6px;width:100%;padding:8px}
-.v-acr div{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;opacity:.4;transition:opacity .4s}
-.v-acr div b{width:52px;height:52px;border-radius:12px;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:30px}
-.v-acr div.hi,.v-acr.all div{opacity:1}.v-acr div.hi b{background:var(--accent);color:var(--accent-ink)}
-/* dna */
-.v-dna{display:flex;flex-direction:column;gap:6px;align-items:center;padding:8px}
-.v-dna .r{display:flex;align-items:center;gap:8px}
-.v-dna .b{width:54px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:26px;font-weight:800;color:#fff}
-.v-dna .bar{width:60px;height:6px;border-radius:3px;background:var(--line)}
-.v-dna .hi .bar{background:var(--accent)} .v-dna .mut .b:first-child{outline:4px solid var(--bad)}
-.bA{background:#d9534f}.bT{background:#2f9a4d}.bG{background:#2463b5}.bC{background:#e2a21f;color:#1c2430!important}.bq{background:var(--line);color:var(--muted)!important}
-/* punnett */
-.v-pun{border-collapse:separate;border-spacing:6px;font-size:26px;font-weight:800}
-.v-pun th{width:70px;height:52px;color:var(--navy);font-size:24px}
-.v-pun td{width:76px;height:64px;text-align:center;border-radius:12px;background:var(--card);border:2px solid var(--line)}
-.v-pun td.dom{color:var(--verb)} .v-pun td.rec{color:var(--noun)} .v-pun td.sel{border-color:var(--accent);border-width:4px}
-.v-pun td.ok{background:var(--good-bg);border-color:var(--good)} .v-pun td.no{background:var(--bad-bg);border-color:var(--bad)}
-.v-pun td button{width:100%;height:100%;border:0;background:transparent;font:inherit;color:inherit;cursor:pointer}
-/* number line, machine */
-.v-nl{width:100%;max-width:440px}
-.v-nl text{font:700 15px Lexend,sans-serif;fill:var(--ink)}
-.v-mach{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;flex-wrap:wrap}
-.v-mach .io{width:76px;height:76px;border-radius:50%;border:4px solid var(--blue);display:grid;place-items:center;font-size:30px;font-weight:800;background:var(--card)}
-.v-mach .io.out{border-color:var(--accent)}
-.v-mach .box{min-width:140px;height:96px;border-radius:18px;background:var(--navy);color:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:24px;padding:0 12px}
-.v-mach .box small{font-size:13px;opacity:.8;letter-spacing:.08em}
-.v-mach .ar{font-size:30px;color:var(--muted)}
-/* moths */
-.v-moths{width:100%;max-width:440px}
-/* word power */
-.v-word{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;font-size:42px;font-weight:800;letter-spacing:.04em}
-.v-chunk{border:0;font:inherit;padding:2px 10px;border-radius:12px;cursor:pointer;color:#fff}
-.v-chunk.c0{background:var(--blue)} .v-chunk.c1{background:var(--accent)} .v-chunk.c2{background:var(--good)}
-.v-mean{text-align:center;font-size:24px;font-weight:700;min-height:40px}
-.v-wcards{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.v-wcards button{font:inherit;font-size:16px;font-weight:700;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;cursor:pointer}
-.v-wcards button.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
-/* beat */
-.v-lyrics{display:flex;flex-direction:column;gap:6px;font-size:22px;font-weight:700;line-height:1.35}
-.v-lyrics p{margin:0;padding:6px 12px;border-radius:12px;transition:background .2s}
-.v-lyrics p.now{background:var(--accent);color:var(--accent-ink)}
-.v-beatviz{display:flex;gap:6px;justify-content:center}
-.v-beatviz i{width:18px;height:18px;border-radius:50%;background:var(--line)} .v-beatviz i.hit{background:var(--accent)}
-/* play */
-.v-qtop{display:flex;align-items:flex-start;gap:12px}
-.v-qtop .btn{flex:none}
-.v-prompt{font-size:24px;font-weight:800;line-height:1.3;margin:0}
-.v-tf{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.v-tf button{min-height:104px;font:inherit;font-size:23px;font-weight:800;border-radius:20px;border:3px solid var(--line);background:var(--card);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:8px}
-.v-tf svg{width:44px;height:44px}
-.v-mc{display:flex;flex-direction:column;gap:10px}
-.v-mc button{min-height:64px;font:inherit;font-size:22px;font-weight:800;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink);display:flex;align-items:center;gap:12px;padding:6px 16px;text-align:left;cursor:pointer}
-.v-mc .lt{flex:none;width:36px;height:36px;border-radius:50%;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:16px}
-.v-chips{display:flex;flex-wrap:wrap;gap:10px}
-.v-chip{font:inherit;font-weight:700;font-size:19px;min-height:54px;border-radius:14px;border:3px solid var(--accent);background:var(--card);color:var(--ink);padding:6px 14px;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
-.v-chip svg{width:30px;height:30px} .v-chip .v-emo{font-size:26px}
-.v-chip.sel{background:var(--accent);color:var(--accent-ink)}
-.v-chip.ok{border-color:var(--good);background:var(--good-bg);color:var(--ink)} .v-chip.no{border-color:var(--bad);background:var(--bad-bg);color:var(--ink)}
-.v-bins{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.v-bin{min-height:150px;border:3px dashed var(--navy);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:8px;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
-.v-bin > b{font-size:18px}
-.v-bin .v-chips{gap:6px}.v-bin .v-chip{min-height:44px;font-size:16px}
-.v-match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.v-match .col{display:flex;flex-direction:column;gap:10px}
-.v-mi{font:inherit;font-weight:700;font-size:18px;min-height:64px;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer}
-.v-mi svg{width:34px;height:34px;flex:none} .v-mi .v-emo{font-size:28px}
-.v-mi.sel{border-color:var(--accent);border-width:4px}
-.v-mi.p0{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 15%,var(--card))} .v-mi.p1{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--card))}
-.v-mi.p2{border-color:var(--good);background:var(--good-bg)} .v-mi.p3{border-color:var(--nuc);background:color-mix(in srgb,var(--nuc) 15%,var(--card))} .v-mi.no{border-color:var(--bad);background:var(--bad-bg)}
-.v-pics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-.v-pic{font:inherit;font-weight:800;font-size:19px;border:3px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
-.v-pic svg{width:100%;max-width:170px;height:auto} .v-pic .v-emo{font-size:60px}
-.v-seq{display:flex;flex-direction:column;gap:8px}
-.v-slot{min-height:58px;border:3px dashed var(--line);border-radius:14px;display:flex;align-items:center;gap:10px;padding:0 10px;font-weight:700}
-.v-slot .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:16px}
-.v-slot.filled{border-style:solid;border-color:var(--navy)} .v-slot.ok{border-color:var(--good);background:var(--good-bg)} .v-slot.no{border-color:var(--bad);background:var(--bad-bg)}
-.v-slot button{flex:1;border:0;background:transparent;font:inherit;text-align:left;display:flex;align-items:center;gap:10px;min-height:52px;color:inherit;padding:0;cursor:pointer}
-.v-slot svg{width:34px;height:34px} .v-slot .v-emo{font-size:28px}
-.v-fb{border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:21px;font-weight:700}
-.v-fb.ok{background:var(--good-bg);border:3px solid var(--good)} .v-fb.no{background:var(--bad-bg);border:3px solid var(--bad)}
-.v-fb svg{flex:none;width:40px;height:40px}
-.v-dots{display:flex;gap:6px;justify-content:center}
-.v-dots i{width:14px;height:14px;border-radius:50%;background:var(--line)} .v-dots i.ok{background:var(--good)} .v-dots i.no{background:var(--bad)} .v-dots i.now{background:var(--accent)}
-svg.v-graph{display:block;width:100%;max-width:400px;margin:0 auto;height:auto}
-.v-graph .grid{stroke:var(--line);stroke-width:1} .v-graph .ax{stroke:var(--ink);stroke-width:2.5}
-.v-graph text{font:700 13px Lexend,sans-serif;fill:var(--muted)}
-.v-eq{text-align:center;font-size:38px;font-weight:800;letter-spacing:.03em}
-.v-eq .m{color:var(--accent)} .v-eq .b{color:var(--blue)}
-.v-knobs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.v-knob{border:3px solid var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.v-knob b{font-size:17px} .v-knob .v{font-size:32px;font-weight:800}
-.v-knob.m .v{color:var(--accent)} .v-knob.b .v{color:var(--blue)}
-.v-knob .row{justify-content:center}
-.v-knob .btn{min-width:64px;justify-content:center;font-size:28px;padding:0}
-.v-ydot{cursor:pointer}
-.v-moves{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.v-moves button{min-height:60px;font:inherit;font-weight:800;font-size:19px;border-radius:14px;border:3px solid var(--accent);background:var(--card);color:var(--ink);cursor:pointer}
-.v-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.v-gallery button{border:3px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:16px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;text-align:center}
-.v-gallery button .v-emo{font-size:40px}
-.v-gallery button.seen{border-color:var(--good)}
-
-.v-w{border-radius:6px;padding:0 2px;transition:background .1s}
-.v-w.now{background:var(--accent);color:var(--accent-ink)}
-.v-lyrics p.now .v-w.now{background:var(--card);color:var(--ink)}
-
+__V2CSS__
 </style>
 </head>
 <body>
@@ -389,7 +233,7 @@ svg.v-graph{display:block;width:100%;max-width:400px;margin:0 auto;height:auto}
 
   <section class="card" id="settings" hidden>
     <h2>Sound settings</h2>
-    <div class="row"><span style="font-weight:700">Speed</span><div class="seg" id="speed"><button data-r="0.75">Slow</button><button data-r="0.9">Normal</button><button data-r="1.1">Fast</button></div></div>
+    <div class="row"><span style="font-weight:700">Speed</span><div class="seg" id="speed"><button data-r="0.7">Slowest</button><button data-r="0.8">Slow</button><button data-r="0.9">Calm</button><button data-r="1">Normal</button></div></div>
     <label class="chk"><input type="checkbox" id="auto"> Read each question out loud automatically</label>
     <label class="chk"><input type="checkbox" id="sfx"> Game sounds (cheer when you get it right)</label>
     <label class="chk"><input type="checkbox" id="rec"> Recorded voice (sounds like a real person)</label>
@@ -412,7 +256,7 @@ const CHEERS_NO = ["Close, Bayo. Check the replay.","Not this time. Watch the re
 
 /* ---------- saved progress (this device only) ---------- */
 const KEY = "bayo-grammar-v1";
-let S = {points:0, streak:0, best:{}, seen:{}, rate:0.9, auto:false, voice:"", days:{}, sfx:true, sub:"", miss:[]};
+let S = {points:0, streak:0, best:{}, seen:{}, rate:0.8, speedV:2, auto:false, voice:"", days:{}, sfx:true, sub:"", miss:[]};
 try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
 const today = () => { const d = new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); };
@@ -440,7 +284,8 @@ function loadVoices(){
 if (synth) { loadVoices(); synth.onvoiceschanged = loadVoices; } else { $("noTTS").hidden = false; }
 
 function clearHighlights(){ document.querySelectorAll(".reading").forEach(e=>e.classList.remove("reading")); document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur")); document.querySelectorAll(".w.speaking").forEach(e=>e.classList.remove("speaking")); if (speakingBtn) speakingBtn.classList.remove("playing"); speakingBtn = null; }
-function stop(){ if (synth) synth.cancel(); if (typeof V2 !== "undefined") V2.quiet(); clearHighlights(); }
+let readTok = 0;
+function stop(){ readTok++; if (synth) synth.cancel(); if (typeof V2 !== "undefined") V2.quiet(); clearHighlights(); }
 /* speak(text, spans?) — spans: elements each with data-o (char offset in text) for word highlighting */
 function speak(text, spans, btn){
   if (!synth) return;
@@ -461,6 +306,9 @@ function hlWord(list, i, n){ if (!list.length) return; list.forEach(s => s.class
   const s = list[Math.min(list.length-1, list.length === n ? i : Math.floor(i * list.length / n))]; if (s) s.classList.add(s.classList.contains("w")?"speaking":"cur"); }
 /* Turn plain text into word spans that can be highlighted while spoken */
 function spansFrom(text, base){ let o = base||0, out = ""; for (const part of text.split(/(\s+)/)) { if (!part) continue; if (/^\s+$/.test(part)) { out += part; o += part.length; continue; } out += `<span data-o="${o}">${esc(part)}</span>`; o += part.length; } return out; }
+/* several sentences, each read (and recorded) on its own */
+function partsHTML(arr){ return arr.filter(Boolean).map(t => `<span class="say vpart">${spansFrom(t,0)}</span>`).join(" "); }
+const readParts = (el, btn) => readSequence([...el.querySelectorAll(".vpart")], btn);
 function sayHTML(text){ return `<span class="say">${spansFrom(text,0)}</span>`; }
 function speakEl(el, btn){ const spans = el.querySelectorAll("[data-o]"); const text = el.dataset.text || el.textContent; speak(text, spans, btn); }
 function listenBtn(label, id){ return `<button class="listen" ${id?`id="${id}"`:""}>${SPK}<span>${label}</span></button>`; }
@@ -468,6 +316,7 @@ function listenBtn(label, id){ return `<button class="listen" ${id?`id="${id}"`:
 /* ---------- tagged sentences ---------- */
 const SUP = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9"};
 function mathSpeak(t){
+  t = t.replace(/\(([^()]+)\)([²³⁴⁵⁶⁷⁸⁹])/g, (m, inner, p) => `the quantity ${inner}, ${p==="²"?"squared":p==="³"?"cubed":"to the "+SUP[p]+"th power"}`);
   t = t.replace(/([A-Za-z0-9)])([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (m,b,p) => { const n = [...p].map(c=>SUP[c]).join(""); return b + (n==="2"?" squared":n==="3"?" cubed":n==="0"?" to the zero power":" to the "+n+(n==="1"?"st":"th")+" power"); })
    .replace(/ˣ/g," to the x power")
    .replace(/\((−?[\d.]+), (−?[\d.]+)\)/g,"the point $1, $2")
@@ -655,15 +504,15 @@ function linkSVG(fromSide, done){ const d = fromSide==="l" ? "M60 4 C 60 30, 300
 function mapLine(){ const k = currentLevel(), rk = rankOf(S.points);
   const where = k === -1 ? "" : k === UNITS.length ? `Bayo, you're in the ${SUB.name} Championship Game.` : `Bayo, you're on Level ${k+1} of ${SUB.name}: ${UNITS[k].name}.`;
   const allDone = UNITS.every(u=>passed(u.id)) && passed(SUB.boss);
-  return `${allDone?"You won the championship. Go for three stars on every level.":where} Your rank is ${rk.r.name}.${rk.next?` ${rk.next.at-S.points} more points to ${rk.next.name}.`:" That's the top rank."} Each right answer is 2 points.`; }
+  return [allDone ? "You won the championship. Go for three stars on every level." : where, `Your rank is ${rk.r.name}.`, rk.next ? `Keep stacking points to reach ${rk.next.name}.` : "That's the top rank.", "Each right answer is 2 points."]; }
 function subStats(s){ const won = s.units.filter(u => (S.best[u.id]||0) >= PASS).length; const stars = s.units.reduce((t,u)=>{ const b = S.best[u.id]; return t + (b==null?0:b>=0.9?3:b>=0.7?2:b>=0.5?1:0); },0); return {won, stars, champ:(S.best[s.boss]||0)>=PASS}; }
 function subjects(){
   const rk = rankOf(S.points), d = S.days[today()];
-  const greet = `What's up, Bayo! ${d&&d.q?`You've done ${d.q} plays today. Keep it going.`:"Pick a subject and let's get to work."} Your rank is ${rk.r.name}.`;
-  go(`<section class="card"><h1 id="hiH">${sayHTML(greet)}</h1><div class="row">${listenBtn("Hear this","hearSub")}</div></section>
+  const greet = ["What's up, Bayo!", d&&d.q ? "You're putting in work today. Keep it going." : "Pick a subject and let's get to work.", `Your rank is ${rk.r.name}.`];
+  go(`<section class="card"><h1 id="hiH">${partsHTML(greet)}</h1><div class="row">${listenBtn("Hear this","hearSub")}</div></section>
   <div class="subjects">${SUBJ.map(s => { const st = subStats(s); return `<button class="subj" data-s="${s.id}">${art(s.icon,76)}<span style="flex:1;min-width:0"><span class="nm">${esc(s.name)}</span>
     <span class="st">${st.champ?"Champion · ":""}${st.won} of ${s.units.length} levels won · ${st.stars} ★</span><span class="xp"><i style="width:${Math.round(st.won/s.units.length*100)}%"></i></span></span></button>`; }).join("")}</div>`);
-  $("hearSub").onclick = e => readSequence([$("hiH"), ...SUBJ.map(s => Object.assign(document.createElement("span"), {textContent: `${s.name}: ${subStats(s).won} of ${s.units.length} levels won.`}))], e.currentTarget);
+  $("hearSub").onclick = e => readSequence([...$("hiH").querySelectorAll(".vpart"), ...SUBJ.map(s => Object.assign(document.createElement("span"), {textContent: `${s.name}: ${subStats(s).won} of ${s.units.length} levels won.`}))], e.currentTarget);
   document.querySelectorAll(".subj").forEach(b => b.onclick = () => { setSub(b.dataset.s); home(); });
 }
 function home(){
@@ -677,12 +526,12 @@ function home(){
       <div class="rankname">${esc(rk.r.name)}</div>
       <div class="xp" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Progress to next rank"><i style="width:${pct}%"></i></div>
       <span class="small muted">${rk.next?`${S.points} / ${hi} points to ${esc(rk.next.name)}`:"Top rank reached"}</span></div></div>
-    <p id="mapSay">${sayHTML(mapLine())}</p>
+    <p id="mapSay">${partsHTML(mapLine())}</p>
     <div class="row">${listenBtn("Hear this","hearHome")}</div></section>
   <section class="card"><div class="row between"><button class="btn" id="allSub">All subjects</button></div><div class="lvhead">${art(SUB.icon,64)}<h1>${esc(SUB.name)} season</h1></div><p class="small muted">Tap a level to play. Locked levels open as you win.</p><div class="map">${path}</div></section>
   ${SUB.id==="gr"?`<section class="card"><h2>Color key</h2><p class="small muted">The same colors are used everywhere in the app.</p><div class="legend">${legend}</div></section>`:""}`);
   $("allSub").onclick = subjects;
-  $("hearHome").onclick = e => speakEl($("mapSay"), e.currentTarget);
+  $("hearHome").onclick = e => readParts($("mapSay"), e.currentTarget);
   document.querySelectorAll(".node").forEach(b => b.onclick = () => {
     const i = +b.dataset.u, open = i === UNITS.length ? bossOpen() : isOpen(i);
     if (!open) { SFX.no(); speak(i === UNITS.length ? `Locked. Finish all ${UNITS.length} levels to unlock the Championship Game.` : `Locked. Get one star on Level ${i} first.`, null, null); return; }
@@ -723,13 +572,13 @@ function learn(){
 }
 /* read several blocks one after another, each with its own highlighting */
 function readSequence(els, btn){
-  if (!synth) return; stop(); let k = 0;
-  const next = () => { if (k >= els.length) { clearHighlights(); return; } const el = els[k++];
+  if (!synth) return; stop(); let k = 0; const my = readTok;
+  const next = () => { if (my !== readTok) return; if (k >= els.length) { clearHighlights(); return; } const el = els[k++];
     const u = new SpeechSynthesisUtterance(spoken(el.dataset.text||el.textContent)); u.rate = S.rate; if (voice) u.voice = voice;
     let list = [...el.querySelectorAll("[data-o]")]; const tx = el.dataset.text||el.textContent;
     if (changes(tx)) { list = []; el.classList.add("reading"); }
     u.onboundary = e => { if (e.name === "sentence") return; let hit = null; for (const s of list) { if (+s.dataset.o <= e.charIndex) hit = s; else break; } list.forEach(s=>s.classList.remove("cur","speaking")); if (hit) hit.classList.add(hit.classList.contains("w")?"speaking":"cur"); };
-    u.onend = () => { list.forEach(s=>s.classList.remove("cur","speaking")); el.classList.remove("reading"); next(); }; u.onerror = () => clearHighlights();
+    u.onend = () => { list.forEach(s=>s.classList.remove("cur","speaking")); el.classList.remove("reading"); setTimeout(next, k < els.length ? Math.round(700 / (S.rate||0.8)) : 0); }; u.onerror = () => clearHighlights();
     if (typeof V2 !== "undefined" && V2.recMain(spoken(tx), (i,n) => hlWord(list, i, n), ok => { if (ok) u.onend(); else synth.speak(u); })) return;
     synth.speak(u); };
   if (btn) { speakingBtn = btn; btn.classList.add("playing"); }
@@ -855,16 +704,16 @@ function done(){
   const wasPassed = passed(id), wasBossOpen = bossOpen(), rankBefore = rankOf(S.points - qset.right*2).i;
   S.best[id] = Math.max(S.best[id] || 0, pct); save();
   const nowPassed = passed(id);
-  let unlockHTML = "", unlockSay = "";
+  let unlockHTML = "", unlockSay = [];
   if (!wasPassed && nowPassed) {
-    if (!isBoss && unitI+1 < UNITS.length) { const nx = UNITS[unitI+1]; unlockHTML = `<div class="unlock">${art(nx.id,72)}<div><span class="pill">Unlocked</span><b>Level ${unitI+2}: ${esc(nx.name)}</b></div></div>`; unlockSay = ` Level ${unitI+2}, ${nx.name}, is unlocked.`; }
-    if (!isBoss && !wasBossOpen && bossOpen()) { unlockHTML = `<div class="unlock">${art("boss",72)}<div><span class="pill">Unlocked</span><b>The Championship Game</b></div></div>`; unlockSay = " The Championship Game is unlocked."; }
-    if (isBoss) unlockSay = " You won the championship!";
+    if (!isBoss && unitI+1 < UNITS.length) { const nx = UNITS[unitI+1]; unlockHTML = `<div class="unlock">${art(nx.id,72)}<div><span class="pill">Unlocked</span><b>Level ${unitI+2}: ${esc(nx.name)}</b></div></div>`; unlockSay = [`Level ${unitI+2}, ${nx.name}, is unlocked.`]; }
+    if (!isBoss && !wasBossOpen && bossOpen()) { unlockHTML = `<div class="unlock">${art("boss",72)}<div><span class="pill">Unlocked</span><b>The Championship Game</b></div></div>`; unlockSay = ["The Championship Game is unlocked."]; }
+    if (isBoss) unlockSay = ["You won the championship!"];
   }
   const rk = rankOf(S.points), rankUp = rk.i > rankBefore;
-  if (rankUp) unlockSay += ` New rank: ${rk.r.name}.`;
+  if (rankUp) unlockSay.push(`New rank: ${rk.r.name}.`);
   const msg = (pct>=0.7?"Bayo! ":"") + (!nowPassed ? `You need ${Math.ceil(PASS*qset.qs.length)} right to win this level. Run it back, you've got this.` : pct >= 0.9 ? (isBoss ? "Champion. That's a title run." : "Game over, and you won big.") : pct >= 0.7 ? "Strong game. A little more practice and it's three stars." : "You won the level. Run it back for more stars.");
-  const party = nowPassed && (unlockSay || pct >= 0.9);
+  const party = nowPassed && (unlockSay.length || pct >= 0.9);
   const colors = ["var(--accent)","var(--noun)","var(--verb)","var(--adj)","var(--adv)","var(--pron)"];
   const burst = party ? `<div class="burst" aria-hidden="true">${Array.from({length:28},(_,k)=>`<i style="left:${(k*37)%100}%;background:${colors[k%6]};animation-delay:${(k%7)*0.09}s"></i>`).join("")}</div>` : "";
   go(`<section class="card ${party?"celebrate":""}" ${party?"":"style=\"align-items:flex-start\""}>${burst}
@@ -874,13 +723,13 @@ function done(){
     ${starsHTML(id)}
     ${rankUp?`<span class="pill" style="background:var(--accent);color:var(--accent-ink)">New rank: ${esc(rk.r.name)}</span>`:""}
     ${unlockHTML}
-    <p id="dmsg">${sayHTML(`${qset.right} out of ${qset.qs.length}. ${msg}${unlockSay}`)}</p>
+    <p id="dmsg">${partsHTML([`${qset.right} out of ${qset.qs.length}.`, msg, ...unlockSay])}</p>
     <div class="row">${listenBtn("Hear it","hearDone")}</div>
     <div class="row">${unlockHTML&&!isBoss?`<button class="btn go" id="nextLv">Play next level</button>`:""}${unit.v2&&V2.misses()?`<button class="btn ${unlockHTML?"":"go"}" id="vMiss">🔁 Replay my ${V2.misses()} miss${V2.misses()>1?"es":""}</button>`:""}<button class="btn ${unlockHTML||(unit.v2&&V2.misses())?"":"go"}" id="again">Run it back</button>${isBoss?"":`<button class="btn" id="relearn">${unit.v2?"▶ Watch again":"Review the lesson"}</button>`}<button class="btn" id="homeB">Season map</button><button class="btn" id="subB">All subjects</button></div>
   </section>`);
   if (party) SFX.win();
   syncNow();
-  $("hearDone").onclick = e => speakEl($("dmsg"), e.currentTarget);
+  $("hearDone").onclick = e => readParts($("dmsg"), e.currentTarget);
   $("again").onclick = () => unit.v2 ? (isBoss ? V2.boss() : V2.open(unitI, 4)) : isBoss ? openUnit(UNITS.length) : startPractice();
   if ($("vMiss")) $("vMiss").onclick = () => V2.replayMisses();
   if ($("relearn")) $("relearn").onclick = () => unit.v2 ? V2.open(unitI, 0) : (slideI = 0, learn());
@@ -898,506 +747,8 @@ $("rec").checked = S.rec !== false; $("rec").onchange = e => { S.rec = e.target.
 $("sfx").checked = S.sfx !== false; $("sfx").onchange = e => { S.sfx = e.target.checked; save(); if (S.sfx) SFX.ok(); };
 $("voice").onchange = e => { S.voice = e.target.value; voice = voices.find(v => v.name === S.voice) || voice; save(); speak("Hi Bayo. This is my voice."); };
 $("testVoice").innerHTML = `${SPK}<span>Test the voice</span>`; $("testVoice").onclick = e => speak("Hi Bayo. Let's get to work.", null, e.currentTarget);
-if (![0.75,0.9,1.1].includes(S.rate)) S.rate = 0.9;
-/* =====================================================================
-   NEW-STYLE LESSONS: Watch → Explore → Words → Beat → Play
-   Listen-first, hands-on. Uses the app's voice, points, unlocks and sync.
-   ===================================================================== */
-const V2 = (() => {
-const E = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const capHTML = s => E(s).replace(/\*([^*]+)\*/g, "<span class='k'>$1</span>");
-const plain = s => String(s).replace(/\*/g, "");
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const mix = a => shuffle(a);
-
-/* ---------- voice: authored lines are read as written; labels go through the app's math/genetics reader ---------- */
-let talkId = 0;
-/* recorded voice: /audio/manifest.json maps each line to [file, [[start,end] per word]] */
-let REC = {}; const AU = typeof Audio !== "undefined" ? new Audio() : null;
-try { fetch("/audio/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(j => { REC = j || {}; }).catch(() => {}); } catch(e) {}
-document.addEventListener("click", function unlock(){ if (AU && !AU.src) { try { AU.muted = true; AU.play().catch(()=>{}); AU.muted = false; } catch(e) {} } document.removeEventListener("click", unlock, true); }, true);
-function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} try { if (AU) { AU.pause(); AU.ontimeupdate = null; } } catch(e) {} document.querySelectorAll(".v-w.now").forEach(w => w.classList.remove("now")); }
-function wordSpans(el, text){ if (!el) return []; el.innerHTML = text.split(/\s+/).map(w => `<span class="v-w">${E(w)}</span>`).join(" "); return [...el.querySelectorAll(".v-w")]; }
-function playRec(text, el){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return null; const id = talkId;
-  return new Promise(res => { const ws = wordSpans(el, text), T = rec[1] || []; let fin = false; const end = ok => { if (!fin) { fin = true; ws.forEach(w => w.classList.remove("now")); res(ok && id === talkId); } };
-    AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
-    AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; ws.forEach((w,i) => w.classList.toggle("now", !!T[i] && t >= T[i][0] && t < T[i][1] + 0.05)); };
-    AU.onended = () => end(true); AU.onerror = () => end(false);
-    AU.play().catch(() => { end(false); }); }); }
-function sayRaw(text, el){ hush(); const id = talkId, p = playRec(String(text||""), el); if (p) return p.then(ok => ok ? true : (id === talkId ? ttsRaw(text) : false)); return ttsRaw(text); }
-async function saySeq(parts){ for (const [t, el] of parts) { if (!t) continue; const id0 = talkId; const ok = await sayRaw(t, el); if (!ok) return false; } return true; }
-function ttsRaw(text){ const id = talkId; return new Promise(res => {
-  if (!synth || !text) { setTimeout(() => res(id === talkId), 30); return; }
-  const u = new SpeechSynthesisUtterance(text); u.rate = S.rate; if (voice) u.voice = voice; u.lang = voice ? voice.lang : "en-US";
-  let fin = false; const end = () => { if (!fin) { fin = true; res(id === talkId); } };
-  u.onend = end; u.onerror = end; setTimeout(end, 2500 + text.length * 110 / (S.rate||0.9));
-  synth.speak(u); }); }
-const sayLabel = t => sayRaw(spoken(String(t)));
-const tick = () => tone([[520,.06]]);
-
-/* ---------- small svg icons (anything else is shown as an emoji) ---------- */
-const IC = {
- coach:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 20a9 9 0 1 0 18 0v-4h10v-5H17a9 9 0 0 0-9 9z" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="17" cy="20" r="3.5" fill="var(--accent)"/></svg>`,
- power:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M23 3L9 23h10l-3 14 15-21H21z" fill="var(--accent)" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
- shield:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4l13 5v9c0 9-6 15-13 18C13 33 7 27 7 18V9z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20l4 4 8-9" fill="none" stroke="var(--good)" stroke-width="3.5" stroke-linecap="round"/></svg>`,
- hammer:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 10h16l4 4-4 4H8z" fill="var(--accent)"/><path d="M18 18l-10 16" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
- sun:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="8" fill="var(--accent)"/><path d="M20 3v6M20 31v6M3 20h6M31 20h6M8 8l4 4M28 28l4 4M32 8l-4 4M12 28l-4 4" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/></svg>`,
- brick:`<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="8" width="32" height="24" rx="3" fill="var(--wall)"/><path d="M4 16h32M4 24h32M14 8v8M26 8v8M20 16v8M10 24v8M30 24v8" stroke="var(--card)" stroke-width="2"/></svg>`,
- drop:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4C14 14 9 20 9 26a11 11 0 0 0 22 0c0-6-5-12-11-22z" fill="var(--vac)"/></svg>`,
- yes:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="var(--good)"/><path d="M12 21l6 6 11-13" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
- nope:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="var(--bad)"/><path d="M13 13l14 14M27 13L13 27" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`,
- cell1:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="15" fill="var(--cyto)" stroke="var(--mem)" stroke-width="3"/><circle cx="20" cy="20" r="5" fill="var(--nuc)"/></svg>`,
- tissue:`<svg viewBox="0 0 40 40" aria-hidden="true">${[[10,12],[22,10],[32,16],[12,26],[24,24],[32,30],[18,34]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6" fill="var(--cyto)" stroke="var(--mem)" stroke-width="2"/>`).join("")}</svg>`,
- heart:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 34S5 25 5 14a8 8 0 0 1 15-4 8 8 0 0 1 15 4c0 11-15 20-15 20z" fill="var(--bad)"/></svg>`,
- system:`<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4v32M20 12l-10 8M20 12l10 8M20 22l-8 8M20 22l8 8" stroke="var(--bad)" stroke-width="3" stroke-linecap="round"/></svg>`,
- person:`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="9" r="6" fill="currentColor"/><path d="M8 38c0-10 5-17 12-17s12 7 12 17" fill="var(--accent)"/></svg>`,
-};
-const icon = n => !n ? "" : IC[n] || `<span class="v-emo" aria-hidden="true">${E(n)}</span>`;
-
-/* ---------- the cell ---------- */
-const PARTS = {
- wall:{role:"the strong wall", name:"Cell wall", icon:"brick", say:"Cell wall. Plants only. A strong wall that holds the plant up."},
- membrane:{role:"security", name:"Cell membrane", icon:"shield", say:"Cell membrane. The security. It decides what goes in and out."},
- vacuole:{role:"the water tank", name:"Vacuole", icon:"drop", say:"Vacuole. A big water tank. Plants have a giant one."},
- nucleus:{role:"the coach", name:"Nucleus", icon:"coach", say:"Nucleus. The coach. It holds the DNA playbook."},
- mito:{role:"the power", name:"Mitochondria", icon:"power", say:"Mitochondria. The power. They make energy."},
- ribo:{role:"the builders", name:"Ribosomes", icon:"hammer", say:"Ribosomes. The builders. They make proteins."},
- chloro:{role:"the sun catcher", name:"Chloroplast", icon:"sun", say:"Chloroplast. Plants only. It catches sunlight to make food."},
-};
-const ANIMAL = ["membrane","nucleus","mito","ribo"], PLANT = ["wall","membrane","vacuole","nucleus","mito","ribo","chloro"];
-function cellSVG(id){ return `<svg class="v-scene" id="${id}" viewBox="0 0 400 290" role="img" aria-label="A cell">
-  <g class="v-part off" data-p="wall"><rect x="14" y="10" width="372" height="270" rx="48" fill="none" stroke="var(--wall)" stroke-width="14"/></g>
-  <g class="v-part off" data-p="membrane"><path d="M200 26C310 24 368 70 368 146s-52 122-168 122S30 224 32 146 92 28 200 26z" fill="var(--cyto)" stroke="var(--mem)" stroke-width="8"/></g>
-  <g class="v-part off" data-p="vacuole"><path d="M70 150c0-40 30-60 60-56s40 30 36 60-24 56-56 54-40-24-40-58z" fill="var(--vac)" opacity=".85"/></g>
-  <g class="v-part off" data-p="nucleus"><circle cx="210" cy="140" r="52" fill="var(--nuc)" opacity=".9"/><path d="M182 128c10-14 20 14 30 0s20 14 30 0M182 152c10-14 20 14 30 0s20 14 30 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>
-  <g class="v-part off" data-p="mito"><g transform="rotate(-20 306 96)"><ellipse cx="306" cy="96" rx="34" ry="17" fill="var(--mito)"/><path d="M280 96c6-10 10 10 16 0s10 10 16 0 10 10 16 0" fill="none" stroke="#fff" stroke-width="3"/></g>
-    <g transform="rotate(25 300 206)"><ellipse cx="300" cy="206" rx="30" ry="15" fill="var(--mito)"/><path d="M278 206c6-9 9 9 15 0s9 9 15 0 9 9 15 0" fill="none" stroke="#fff" stroke-width="3"/></g></g>
-  <g class="v-part off" data-p="ribo">${[[120,70],[140,58],[160,224],[180,236],[250,226],[270,60],[110,214],[340,150],[86,96],[236,62]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="16" fill="transparent"/><circle cx="${x}" cy="${y}" r="6" fill="var(--ribo)"/>`).join("")}</g>
-  <g class="v-part off" data-p="chloro">${[[130,232,-15],[300,150,10],[112,62,20]].map(([x,y,r])=>`<g transform="rotate(${r} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="28" ry="14" fill="var(--chl)"/><path d="M${x-14} ${y-6}v12M${x-4} ${y-8}v16M${x+6} ${y-8}v16M${x+16} ${y-6}v12" stroke="#fff" stroke-width="3" opacity=".8"/></g>`).join("")}</g>
-</svg>`; }
-const cellShow = (s, parts) => s.querySelectorAll(".v-part").forEach(g => g.classList.toggle("off", !parts.includes(g.dataset.p)));
-const cellGlow = (s, p) => s.querySelectorAll(".v-part").forEach(g => { g.classList.toggle("glow", g.dataset.p===p); g.classList.toggle("dim", !!p && g.dataset.p!==p && g.dataset.p!=="membrane"); });
-function cellTap(s, fn){ s.parentElement.classList.add("v-tappable"); s.addEventListener("click", e => { const g = e.target.closest(".v-part"); if (g && !g.classList.contains("off")) fn(g.dataset.p, g); }); }
-const proSVG = () => `<svg viewBox="0 0 200 130" aria-hidden="true"><rect x="20" y="30" width="160" height="70" rx="35" fill="var(--cyto)" stroke="var(--mem)" stroke-width="6"/><path d="M60 60c10-12 20 12 30 0s20 12 30 0 20 12 30 0" fill="none" stroke="var(--nuc)" stroke-width="4"/>${[[50,82],[150,50],[130,84],[70,46]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="var(--ribo)"/>`).join("")}</svg>`;
-const euSVG = () => `<svg viewBox="0 0 200 130" aria-hidden="true"><ellipse cx="100" cy="65" rx="84" ry="56" fill="var(--cyto)" stroke="var(--mem)" stroke-width="6"/><circle cx="96" cy="64" r="24" fill="var(--nuc)"/><ellipse cx="150" cy="44" rx="16" ry="8" fill="var(--mito)"/>${[[50,50],[60,90],[140,92]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="var(--ribo)"/>`).join("")}</svg>`;
-
-/* ---------- graphs ---------- */
-let gk = 0;
-function graphSVG(g, opt){ opt = opt || {}; const R = 6, W = 360, sc = W/(2*R), X = x => (x+R)*sc, Y = y => (R-y)*sc; let s = "";
-  for (let i=-R;i<=R;i++) s += `<path class="grid" d="M${X(i)} 0V${W}M0 ${Y(i)}H${W}"/>`;
-  s += `<path class="ax" d="M${X(0)} 0V${W}M0 ${Y(0)}H${W}"/>`;
-  for (const i of [-4,-2,2,4]) s += `<text x="${X(i)}" y="${Y(0)+16}" text-anchor="middle">${i<0?"−"+(-i):i}</text><text x="${X(0)-7}" y="${Y(i)+5}" text-anchor="end">${i<0?"−"+(-i):i}</text>`;
-  const cols = ["var(--accent)","var(--blue)","var(--good)"];
-  (g.lines||[]).forEach((L,k) => { const [m,b,tri,c,w] = L; s += `<path d="M${X(-R)} ${Y(m*-R+b)}L${X(R)} ${Y(m*R+b)}" style="stroke:${c||cols[k%3]};stroke-width:${w||5};stroke-linecap:round"/>`;
-    if (tri!=null && typeof tri === "number") { const x0 = tri; s += `<path d="M${X(x0)} ${Y(m*x0+b)}H${X(x0+1)}V${Y(m*(x0+1)+b)}" style="fill:none;stroke:var(--blue);stroke-width:4;stroke-dasharray:7 5"/>
-      <text x="${X(x0+.5)}" y="${Y(m*x0+b)+(m>=0?20:-10)}" text-anchor="middle" style="fill:var(--blue);font-size:15px">over 1</text>
-      <text x="${X(x0+1)+8}" y="${(Y(m*x0+b)+Y(m*(x0+1)+b))/2+5}" style="fill:var(--accent);font-size:15px">${m>=0?"up":"down"} ${Math.abs(m)}</text>`; } });
-  if (g.quad){ const [a,b,c] = g.quad; let d = ""; for (let x=-R;x<=R+0.001;x+=0.1){ const y = a*x*x+b*x+c; d += (d?"L":"M")+X(x).toFixed(1)+" "+Y(Math.max(-R-2,Math.min(R+2,y))).toFixed(1); } s += `<path d="${d}" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round"/>`; }
-  (g.pts||[]).forEach(([x,y]) => { s += `<circle cx="${X(x)}" cy="${Y(y)}" r="9" style="fill:var(--navy);stroke:var(--card);stroke-width:3"/>`; });
-  (opt.ydots||[]).forEach(v => { s += `<circle class="v-ydot" data-v="${v}" cx="${X(0)}" cy="${Y(v)}" r="15" style="fill:var(--card);stroke:var(--navy);stroke-width:3"/>`; });
-  const id = "gc" + (++gk);
-  return `<svg class="v-graph" viewBox="-4 -4 ${W+8} ${W+8}" role="img" aria-label="${E(opt.label||"Graph")}"><defs><clipPath id="${id}"><rect width="${W}" height="${W}"/></clipPath></defs><g clip-path="url(#${id})">${s}</g></svg>`; }
-const fmtN = n => n<0 ? "−"+(-n) : String(n);
-const eqHTML = (m,b) => `<span class="m">${m===1?"":m===-1?"−":m===0?"0":fmtN(m)}${m===0?"":"x"}</span>${b?` ${b<0?"−":"+"} <span class="b">${Math.abs(b)}</span>`:""}`;
-const eqSay = (m,b) => `y equals ${m===0?"0":(m===1?"":m===-1?"negative ":m<0?"negative "+(-m)+" ":m+" ")+"x"}${b?(b<0?" minus ":" plus ")+Math.abs(b):""}`;
-
-/* ---------- other visuals ---------- */
-function balSVG(L, R, act, win){ const tilt = 0;
-  return `<svg class="v-bal" viewBox="0 0 400 210" role="img" aria-label="${E(L)} equals ${E(R)}">
-   <path d="M200 40V190M150 196h100" style="stroke:var(--navy);stroke-width:8;stroke-linecap:round"/>
-   <path d="M40 60H360" transform="rotate(${tilt} 200 60)" style="stroke:var(--navy);stroke-width:7;stroke-linecap:round"/>
-   <circle cx="200" cy="40" r="10" style="fill:var(--accent)"/>
-   <path d="M60 60l-30 60M60 60l30 60M340 60l-30 60M340 60l30 60" style="stroke:var(--muted);stroke-width:2.5"/>
-   <rect x="10" y="118" width="130" height="54" rx="14" style="fill:var(--card);stroke:${win?"var(--good)":"var(--blue)"};stroke-width:4"/>
-   <rect x="260" y="118" width="130" height="54" rx="14" style="fill:var(--card);stroke:${win?"var(--good)":"var(--accent)"};stroke-width:4"/>
-   <text x="75" y="153" text-anchor="middle">${E(L)}</text><text x="325" y="153" text-anchor="middle">${E(R)}</text>
-   <circle cx="200" cy="145" r="20" style="fill:var(--card);stroke:var(--navy);stroke-width:3"/><text x="200" y="155" text-anchor="middle" style="font-size:30px">=</text>
-   ${act?`<text class="act" x="75" y="196" text-anchor="middle">${E(act)}</text><text class="act" x="325" y="196" text-anchor="middle">${E(act)}</text>`:""}
-  </svg>`; }
-function nlSVG(v, op){ const X = n => 30 + (n+6)*28.3; let s = `<path d="M20 50H380" style="stroke:var(--ink);stroke-width:3"/>`;
-  for (let n=-6;n<=6;n++) s += `<path d="M${X(n)} 42v16" style="stroke:var(--ink);stroke-width:2"/>${n%2===0?`<text x="${X(n)}" y="80" text-anchor="middle">${fmtN(n)}</text>`:""}`;
-  const right = op === ">" || op === "≥", closed = op === "≥" || op === "≤";
-  s += `<path d="M${X(v)} 50H${right?378:22}" style="stroke:var(--accent);stroke-width:8;stroke-linecap:round"/>`;
-  s += `<path d="${right?"M368 40l14 10-14 10":"M32 40l-14 10 14 10"}" style="fill:var(--accent)"/>`;
-  s += `<circle cx="${X(v)}" cy="50" r="10" style="fill:${closed?"var(--accent)":"var(--card)"};stroke:var(--accent);stroke-width:4"/>`;
-  return `<svg class="v-nl" viewBox="0 0 400 96" role="img" aria-label="x ${op} ${v}">${s}</svg>`; }
-function punHTML(a, b, fill, opt){ opt = opt || {};
-  const cell = (x,y) => [x,y].sort((m,n)=>(m===m.toUpperCase()?0:1)-(n===n.toUpperCase()?0:1)).join("");
-  const td = (x,y,k) => { const p = cell(x,y); if (opt.ask) return `<td data-k="${k}" class="${opt.marks&&opt.marks[k]||""}"><button aria-label="Box ${k+1}">${opt.vals&&opt.vals[k]?E(opt.vals[k]):"?"}</button></td>`;
-    return `<td class="${fill?(p===p.toLowerCase()?"rec":"dom"):""}">${fill?p:""}</td>`; };
-  return `<table class="v-pun" aria-label="Punnett square ${E(a)} by ${E(b)}"><tr><th></th><th>${a[0]}</th><th>${a[1]}</th></tr>
-    <tr><th>${b[0]}</th>${td(a[0],b[0],0)}${td(a[1],b[0],1)}</tr><tr><th>${b[1]}</th>${td(a[0],b[1],2)}${td(a[1],b[1],3)}</tr></table>`; }
-const PAIR = {A:"T",T:"A",G:"C",C:"G"};
-function dnaHTML(str, hi, mut){ return `<div class="v-dna">${[...str].map((c,i)=>`<div class="r ${hi&&(c===hi||c===PAIR[hi])?"hi":""} ${mut===i?"mut":""}"><span class="b b${mut===i?"A":c}">${mut===i?(c==="A"?"G":"A"):c}</span><span class="bar"></span><span class="b b${PAIR[c]}">${PAIR[c]}</span></div>`).join("")}</div>`; }
-function machHTML(m){ return `<div class="v-mach"><span class="io">${m.in!=null?E(m.in):"?"}</span><span class="ar">➜</span><span class="box"><small>RULE</small>${E(m.rule)}</span><span class="ar">➜</span><span class="io out">${m.out!=null?E(m.out):"?"}</span></div>`; }
-function mothSVG(dark){ return `<svg viewBox="0 0 60 40" aria-hidden="true"><path d="M30 20C20 4 4 6 6 18s14 14 24 4c10 10 22 8 24-4S40 4 30 20z" fill="${dark?"#2b2622":"#e8e0d0"}" stroke="#7a6a5a" stroke-width="2"/><path d="M30 12v18" stroke="#5a4a3a" stroke-width="3"/></svg>`; }
-function mothsSVG(m){ const pos = [[60,40],[150,30],[240,50],[330,36],[90,120],[190,110],[290,128],[360,100],[40,180],[140,190],[250,176],[340,184]];
-  const list = [...Array(m.l).fill(0), ...Array(m.d).fill(1)]; let s = `<rect width="400" height="220" rx="14" fill="var(--bark-${m.bark==="dark"?"d":"l"})"/>`;
-  s += `<path d="M120 0c-10 60 10 120-6 220M280 0c14 70-8 140 8 220" stroke="${m.bark==="dark"?"#4a433c":"#bfb39f"}" stroke-width="6" fill="none"/>`;
-  list.forEach((d,i) => { const [x,y] = pos[i % pos.length]; s += `<g transform="translate(${x-30} ${y-20})">${mothSVG(d).replace(/<\/?svg[^>]*>/g,"")}</g>`; });
-  if (m.bird) s += `<text x="360" y="210" font-size="44">🐦</text>`;
-  return `<svg class="v-moths" viewBox="0 0 400 220" role="img" aria-label="${m.l} light moths and ${m.d} dark moths on a ${m.bark} tree">${s}</svg>`; }
-function tlHTML(tl, hi, opt){ opt = opt || {}; const H = Array.isArray(hi) ? hi : hi==null ? [] : [hi];
-  return `<div class="v-tl">${tl.map(([y,l,e],k)=>`<button data-k="${k}" class="${H.includes(k)?"hi":""} ${H.length&&!H.includes(k)&&!opt.ask?"dimmed":""}" ${opt.ask?"":"tabindex=\"-1\""}><b>${E(y)}</b>${icon(e)}<span>${opt.ask?"":E(l)}</span></button>`).join("")}</div>`; }
-function visHTML(v, LV){ if (!v) return "";
-  if (v.e) return `<div class="v-erow ${v.e.length>4?"many":""}">${v.e.map((x,i)=>`<span class="v-emo v-pop" style="animation-delay:${i*0.25}s" aria-hidden="true">${E(x)}</span>`).join("")}</div>`;
-  if (v.big) return `<div class="v-bigtxt">${v.big.map((x,i)=>`<div class="v-pop" style="animation-delay:${i*0.4}s">${E(x)}</div>`).join("")}</div>`;
-  if (v.g) return graphSVG(v.g) + (v.eq ? `<div class="v-eq">y = ${eqHTML(v.eq[0], v.eq[1])}</div>` : "");
-  if (v.bal) return balSVG(v.bal[0], v.bal[1], v.act, v.win);
-  if (v.tl != null) return tlHTML(LV.tl, v.tl);
-  if (v.pun) return punHTML(v.pun[0], v.pun[1], v.fill);
-  if (v.chain) return `<div class="v-chain">${v.chain.map(([e,l],k)=>`${k?`<span class="ar" aria-hidden="true">→</span>`:""}<span class="n ${k===v.hi?"hi":""} v-pop" style="animation-delay:${k*0.3}s">${icon(e)}<span>${E(l)}</span></span>`).join("")}</div>`;
-  if (v.dna) return dnaHTML(v.dna, v.hi, v.mut);
-  if (v.pyr) return `<div class="v-pyr">${v.pyr.map(([e,l],k)=>`<div style="width:${36+k*30}%">${icon(e)}<span>${E(l)}</span></div>`).join("")}</div>`;
-  if (v.nl) return nlSVG(v.nl.v, v.nl.op);
-  if (v.mach) return machHTML(v.mach);
-  if (v.acr) return `<div class="v-acr ${v.hi===-1?"all":""}">${v.acr.map((w,k)=>`<div class="${k===v.hi?"hi":""}"><b>${w[0]}</b>${E(w)}</div>`).join("")}</div>`;
-  if (v.moths) return mothsSVG(v.moths);
-  return ""; }
-/* pictures for "pick" answers: "@eu", "@pro", "@mothd", "@mothl", "@nl:v:op", "@g:m:b", "@g2:m1:b1:m2:b2", "@q:a:c" or an emoji */
-function picHTML(p){ if (!p || p[0] !== "@") return icon(p); const [k,...a] = p.slice(1).split(":");
-  if (k==="eu") return euSVG(); if (k==="pro") return proSVG(); if (k==="mothd") return mothSVG(true); if (k==="mothl") return mothSVG(false);
-  if (k==="nl") return nlSVG(+a[0], a[1]); if (k==="g") return graphSVG({lines:[[+a[0],+a[1]]]}); if (k==="g2") return graphSVG({lines:[[+a[0],+a[1]],[+a[2],+a[3]]]});
-  if (k==="q") return graphSVG({quad:[+a[0],0,+a[1]]}); return ""; }
-
-/* =====================================================================
-   FLOW
-   ===================================================================== */
-const STAGES = [["▶","Watch"],["👆","Explore"],["🧩","Words"],["🎤","Beat"],["🏀","Play"]];
-let LV = null, stage = 0, doneSt = new Set(), tok = 0, P = null, lastMiss = [];
-function frame(inner, nextLabel){
-  tok++; hush(); beatStop();
-  go(`<div class="v2" style="display:flex;flex-direction:column;gap:18px"><section class="card"><div class="row between"><button class="btn" id="vMap">← Map</button><span class="small muted" style="font-weight:700">${unit.boss?"Final":"Level "+(unitI+1)} · ${E(unit.name)}</span></div>
-    ${unit.boss?"":`<nav class="v-track" aria-label="Steps">${STAGES.map(([ic,nm],i)=>`<button data-i="${i}" class="${i===stage?"on":""} ${doneSt.has(i)&&i!==stage?"done":""}" ${i===stage?'aria-current="step"':""}><i>${doneSt.has(i)&&i!==stage?"✓":ic}</i>${nm}</button>`).join("")}</nav>`}</section>
-    <section class="card" id="vCard">${inner}</section>
-    ${nextLabel?`<div class="row" style="justify-content:flex-end"><button class="btn go v-big" id="vNext">${nextLabel} →</button></div>`:""}</div>`);
-  $("vMap").onclick = home; document.querySelectorAll(".v-track button").forEach(b => b.onclick = () => openStage(+b.dataset.i));
-  if ($("vNext")) $("vNext").onclick = () => { doneSt.add(stage); openStage(stage+1); };
-}
-function open(i, st){ unitI = i; unit = UNITS[i]; LV = unit.v2; doneSt = new Set(); S.seen[unit.id] = true; save(); openStage(st||0); }
-function openStage(i){ stage = i; [watch, explore, words, beat, play][i](); }
-
-/* 1. Watch */
-function watch(){
-  frame(`<div class="v-stage" id="vStage"></div><div class="v-cap" id="vCap" aria-live="polite">Tap Play. I'll walk you through it.</div>
-    <div class="row v-center"><button class="btn go v-big" id="wPlay">▶ Play</button><button class="btn" id="wBack">⏮ Back</button><button class="btn" id="wAgain">🔁 Again</button></div>
-    <div class="v-dots" id="wDots">${LV.watch.map(()=>"<i></i>").join("")}</div>`, "Explore");
-  const my = tok; let i = 0, playing = false;
-  const show = k => { const [, cap, v] = LV.watch[k]; $("vCap").innerHTML = capHTML(cap);
-    const st = $("vStage"), cur = st.querySelector("#wcell");
-    if (v.cell) { if (!cur) { st.innerHTML = cellSVG("wcell"); requestAnimationFrame(() => { const s = $("wcell"); if (s) { cellShow(s, v.cell); cellGlow(s, v.glow||null); } }); } else { cellShow(cur, v.cell); cellGlow(cur, v.glow||null); } }
-    else st.innerHTML = visHTML(v, LV);
-    document.querySelectorAll("#wDots i").forEach((d,j) => d.className = j<k?"ok":j===k?"now":""); };
-  show(0);
-  const run = async () => { playing = true; $("wPlay").textContent = "⏸ Pause";
-    while (playing && i < LV.watch.length && my === tok) { show(i); const ok = await sayRaw(LV.watch[i][0]); if (!ok || !playing || my !== tok) return; await sleep(400); if (my !== tok) return; i++; }
-    if (my === tok && i >= LV.watch.length) { playing = false; i = 0; doneSt.add(0); $("wPlay").textContent = "▶ Watch again"; } };
-  $("wPlay").onclick = () => { if (playing) { playing = false; hush(); $("wPlay").textContent = "▶ Play"; } else run(); };
-  $("wAgain").onclick = () => { playing = false; hush(); $("wPlay").textContent = "▶ Play"; show(i); sayRaw(LV.watch[i][0]); };
-  $("wBack").onclick = () => { playing = false; hush(); $("wPlay").textContent = "▶ Play"; i = Math.max(0, i-1); show(i); sayRaw(LV.watch[i][0]); };
-  setTimeout(() => { if (my === tok && !playing) run(); }, 600);
-}
-
-/* 2. Explore */
-function explore(){ const ex = LV.explore || {type:"cards"};
-  const T = {cell:exCell, slope:exSlope, quad:exQuad, sys:exSys, nl:exNl, mach:exMach, pow:exPow, balance:exBalance, dna:exDna, pun:exPun, moths:exMoths, tl:exTl, cards:exCards}[ex.type] || exCards;
-  T(ex);
-}
-function exFrame(prompt, inner, intro){ frame(`<p class="v-prompt">${prompt}</p>${inner}`, "Word power"); sayRaw(intro || plain(prompt)); }
-function exCell(){
-  exFrame("Tap any part. I'll tell you what it is.", `<div class="row"><button class="btn" id="eA">Animal cell</button><button class="btn" id="eP">Plant cell</button></div><div class="v-stage" id="eStage">${cellSVG("ecell")}</div><p class="small muted" id="eCount">0 of 7 parts found</p>`,
-    "Tap any part of the cell. I'll tell you what it is. Switch between animal and plant cells.");
-  const s = $("ecell"), found = new Set(); requestAnimationFrame(() => cellShow(s, PLANT));
-  const set = p => { cellShow(s, p); cellGlow(s, null); $("eStage").querySelector(".v-bubble")?.remove(); };
-  $("eA").onclick = () => { set(ANIMAL); sayRaw("Animal cell. No wall, no chloroplasts, and small vacuoles."); };
-  $("eP").onclick = () => { set(PLANT); sayRaw("Plant cell. It has a wall, chloroplasts, and a big vacuole."); };
-  cellTap(s, p => { const X = PARTS[p]; found.add(p); cellGlow(s, p); tick(); $("eStage").querySelector(".v-bubble")?.remove();
-    $("eStage").insertAdjacentHTML("beforeend", `<div class="v-bubble">${icon(X.icon)}${E(X.name)}</div>`); sayRaw(X.say); $("eCount").textContent = `${found.size} of 7 parts found`; });
-}
-function knob(cls, label, val, minus, plus){ return `<div class="v-knob ${cls}"><b>${label}</b><span class="v">${val}</span><div class="row"><button class="btn" data-a="${minus}" aria-label="Less">−</button><button class="btn" data-a="${plus}" aria-label="More">+</button></div></div>`; }
-function exSlope(){ let m = 1, b = 0;
-  exFrame("Change <span style='color:var(--accent)'>m</span> and <span style='color:var(--blue)'>b</span>. Watch the line move.", `<div class="v-stage" id="eG"></div><div class="v-eq" id="eEq"></div><div class="v-knobs" id="eK"></div>`, "Use the plus and minus buttons. Change m and b, and watch the line move.");
-  const draw = talk => { $("eG").innerHTML = graphSVG({lines:[[m,b,m?0:null]], pts:[[0,b]]}, {label:eqSay(m,b)}); $("eEq").innerHTML = "y = " + eqHTML(m,b);
-    $("eK").innerHTML = knob("m","m = slope",fmtN(m),"m-","m+") + knob("b","b = start",fmtN(b),"b-","b+");
-    $("eK").querySelectorAll("[data-a]").forEach(x => x.onclick = () => { const a = x.dataset.a; if (a[0]==="m") m = Math.max(-4,Math.min(4, m + (a[1]==="+"?1:-1))); else b = Math.max(-5,Math.min(5, b + (a[1]==="+"?1:-1))); tick(); draw(1); });
-    if (talk) sayRaw(`${eqSay(m,b)}. ${m>0?"Up "+m+" for every 1 over.":m<0?"Down "+(-m)+" for every 1 over.":"Flat. Slope zero."} Starts at ${b<0?"negative "+(-b):b}.`); };
-  draw(0); }
-function exQuad(){ const AS = [-2,-1,-0.5,0.5,1,2]; let ai = 4, c = -4;
-  exFrame("Change the shape. Watch the parabola.", `<div class="v-stage" id="eG"></div><div class="v-eq" id="eEq"></div><div class="v-knobs" id="eK"></div>`, "Change the number in front of x squared, and the starting point. Watch what the parabola does.");
-  const draw = talk => { const a = AS[ai]; $("eG").innerHTML = graphSVG({quad:[a,0,c], pts:[[0,c]]}); $("eEq").innerHTML = `y = <span class="m">${a===1?"":a===-1?"−":fmtN(a)}x²</span>${c?` ${c<0?"−":"+"} <span class="b">${Math.abs(c)}</span>`:""}`;
-    $("eK").innerHTML = knob("m","x² number",fmtN(a),"a-","a+") + knob("b","vertex height",fmtN(c),"c-","c+");
-    $("eK").querySelectorAll("[data-a]").forEach(x => x.onclick = () => { const k = x.dataset.a; if (k[0]==="a") ai = Math.max(0,Math.min(AS.length-1, ai + (k[1]==="+"?1:-1))); else c = Math.max(-5,Math.min(5, c + (k[1]==="+"?1:-1))); tick(); draw(1); });
-    if (talk) sayRaw(`${a<0?"Negative, so it opens down, like a frown.":"Positive, so it opens up, like a smile."} ${Math.abs(a)>1?"Skinny.":Math.abs(a)<1?"Wide.":""} The vertex is at ${c<0?"negative "+(-c):c}.`); };
-  draw(0); }
-function exSys(){ let m = -1, b = 4;
-  exFrame("Move the <span style='color:var(--blue)'>blue</span> line. Where do they cross?", `<div class="v-stage" id="eG"></div><div class="v-cap" id="eX"></div><div class="v-knobs" id="eK"></div>`, "The orange line stays still. Move the blue line, and see where the two lines cross.");
-  const draw = talk => { let msg; if (m === 1) msg = b === 1 ? "Same line. Every point works." : "Parallel. They never cross. No solution.";
-    else { const x = (b - 1) / (1 - m), y = x + 1; msg = Number.isInteger(x) && Number.isInteger(y) ? `They cross at (${fmtN(x)}, ${fmtN(y)}).` : "They cross between grid lines."; }
-    const X = m!==1 ? (b-1)/(1-m) : null; $("eG").innerHTML = graphSVG({lines:[[1,1],[m,b]], pts: X!=null && Number.isInteger(X) ? [[X, X+1]] : []});
-    $("eX").textContent = msg; $("eK").innerHTML = knob("m","blue slope",fmtN(m),"m-","m+") + knob("b","blue start",fmtN(b),"b-","b+");
-    $("eK").querySelectorAll("[data-a]").forEach(x => x.onclick = () => { const a = x.dataset.a; if (a[0]==="m") m = Math.max(-3,Math.min(3, m + (a[1]==="+"?1:-1))); else b = Math.max(-5,Math.min(5, b + (a[1]==="+"?1:-1))); tick(); draw(1); });
-    if (talk) sayLabel(msg.replace(/[()]/g,"")); };
-  draw(0); }
-function exNl(){ let v = 2, op = ">"; const OPS = [">","≥","<","≤"], SAY = {">":"is greater than","≥":"is greater than or equal to","<":"is less than","≤":"is less than or equal to"};
-  exFrame("Pick a sign and a number. See the answers.", `<div class="v-bigtxt"><div id="eT"></div></div><div class="v-stage" id="eN"></div><div class="row v-center" id="eOps">${OPS.map(o=>`<button class="btn v-big" data-o="${o}">${o}</button>`).join("")}</div>${knob("b","number",`<span id="eV"></span>`,"v-","v+")}`, "Pick a sign and a number. I'll show you all the answers on the number line.");
-  const draw = talk => { $("eT").textContent = `x ${op} ${fmtN(v)}`; $("eN").innerHTML = nlSVG(v, op); $("eV").textContent = fmtN(v);
-    if (talk) sayRaw(`x ${SAY[op]} ${v<0?"negative "+(-v):v}. ${op==="≥"||op==="≤"?"Closed circle. It counts.":"Open circle. It doesn't count."} The arrow goes ${op===">"||op==="≥"?"right":"left"}.`); };
-  document.querySelectorAll("#eOps button").forEach(b => b.onclick = () => { op = b.dataset.o; tick(); draw(1); });
-  document.querySelectorAll("[data-a^=v]").forEach(x => x.onclick = () => { v = Math.max(-5,Math.min(5, v + (x.dataset.a[1]==="+"?1:-1))); tick(); draw(1); });
-  draw(0); }
-function exMach(){ const RULES = [["2x + 1", x=>2*x+1, "times 2, plus 1"], ["x²", x=>x*x, "times itself"], ["3x − 2", x=>3*x-2, "times 3, minus 2"]]; let r = 0;
-  exFrame("Pick a rule. Drop a number in.", `<div class="row v-center" id="eR">${RULES.map((R,k)=>`<button class="btn" data-r="${k}">${E(R[0])}</button>`).join("")}</div><div class="v-stage" id="eM"></div><div class="row v-center" id="eIn">${[0,1,2,3,4,5].map(n=>`<button class="btn v-big" data-n="${n}">${n}</button>`).join("")}</div>`, "Pick a rule. Then tap a number to drop it in the machine.");
-  const draw = (n, out) => { if (!$("eM")) return; $("eM").innerHTML = machHTML({rule:RULES[r][0], in:n, out}); document.querySelectorAll("#eR button").forEach((b,k)=>b.classList.toggle("go", k===r)); };
-  document.querySelectorAll("#eR button").forEach(b => b.onclick = () => { r = +b.dataset.r; draw(); sayRaw(`Rule: ${RULES[r][2]}.`); });
-  document.querySelectorAll("#eIn button").forEach(b => b.onclick = async () => { const n = +b.dataset.n, o = RULES[r][1](n); draw(n); tick(); await sleep(500); if (!$("eM")) return; draw(n, o); sayRaw(`${n} goes in. ${RULES[r][2]}. ${o} comes out.`); });
-  draw(); }
-function exPow(){ let base = 2, n = 1;
-  exFrame("Multiply again and again.", `<div class="row v-center" id="eB">${[2,3,5].map(x=>`<button class="btn" data-b="${x}">Base ${x}</button>`).join("")}</div><div class="v-bigtxt" id="eP"></div><div class="row v-center"><button class="btn go v-big" id="eMore">× ${base} again</button><button class="btn" id="eReset">Start over</button></div>`, "Pick a base. Then tap times again, and watch the number grow.");
-  const draw = talk => { const val = Math.pow(base, n); $("eP").innerHTML = `<div>${base}<sup>${n}</sup></div><div style="font-size:24px">${Array(n).fill(base).join(" × ")}</div><div>= ${val.toLocaleString()}</div>`; $("eMore").textContent = `× ${base} again`;
-    if (talk) sayRaw(`${base} to the ${n===1?"first":n===2?"second":n===3?"third":n+"th"} power. ${Array(n).fill(base).join(" times ")}. That's ${val}.`); };
-  document.querySelectorAll("#eB button").forEach(b => b.onclick = () => { base = +b.dataset.b; n = 1; tick(); draw(1); });
-  $("eMore").onclick = () => { if (n < 6) n++; tick(); draw(1); }; $("eReset").onclick = () => { n = 1; draw(1); };
-  draw(0); }
-function exBalance(ex){ let k = 0;
-  exFrame("Pick the move that gets x alone.", `<div id="eBal"></div>`, "Pick the move that gets x alone. Same move on both sides.");
-  const run = () => { const pz = ex.puzzles[k % ex.puzzles.length]; balGame($("eBal"), pz.start, pz.steps, pz.choices, () => { setTimeout(() => { if (!$("eBal") || $("eNextP")) return; k++; $("eBal").insertAdjacentHTML("beforeend", `<div class="row v-center"><button class="btn go" id="eNextP">Next puzzle →</button></div>`); $("eNextP").onclick = run; }, 300); }, true); };
-  run(); }
-function balGame(host, start, steps, choices, onEnd, practice){ let cur = start, s = 0, wrong = 0;
-  const draw = (act, win) => { host.innerHTML = `<div class="v-stage">${balSVG(cur[0], cur[1], act, win)}</div><div class="v-moves">${choices.map(c=>`<button data-c="${E(c)}">${E(c)}</button>`).join("")}</div>`;
-    host.querySelectorAll(".v-moves button").forEach(b => b.onclick = () => { if (s >= steps.length) return; const c = b.dataset.c, want = steps[s][0];
-      if (c === want) { cur = steps[s][1]; s++; tick(); const done = s >= steps.length; draw(c.replace(/^(Subtract|Add|Divide by|Multiply by) /, m => ({"Subtract ":"− ","Add ":"+ ","Divide by ":"÷ ","Multiply by ":"× "})[m]), done);
-        sayLabel(`${c} from both sides. ${cur[0]} = ${cur[1]}.`.replace("from both sides", /Divide|Multiply/.test(c) ? "on both sides" : "from both sides"));
-        if (done) { host.querySelectorAll(".v-moves button").forEach(x => x.disabled = true); onEnd(wrong === 0); } }
-      else { wrong++; b.style.borderColor = "var(--bad)"; SFX.no(); sayRaw(practice || true ? "That doesn't get x alone yet. Try another move." : ""); } }); };
-  draw(); }
-function exDna(){ const S0 = "ATGCGTAC"; let shown = new Set();
-  exFrame("Tap a letter. See its partner.", `<div class="v-stage"><div class="v-dna" id="eD"></div></div><p class="small muted">Apple in the Tree: A–T. Car in the Garage: C–G.</p>`, "Tap a letter on the left side. I'll show you its partner.");
-  const draw = () => { $("eD").innerHTML = [...S0].map((c,i)=>`<div class="r"><button class="b b${c}" data-i="${i}" style="border:0;font:inherit;font-weight:800;font-size:26px;cursor:pointer">${c}</button><span class="bar"></span><span class="b ${shown.has(i)?"b"+PAIR[c]:"bq"}">${shown.has(i)?PAIR[c]:"?"}</span></div>`).join("");
-    $("eD").querySelectorAll("button").forEach(b => b.onclick = () => { const i = +b.dataset.i, c = S0[i]; shown.add(i); tick(); draw(); sayRaw(`${c} pairs with ${PAIR[c]}. ${c==="A"||c==="T"?"Apple in the Tree.":"Car in the Garage."}`); }); };
-  draw(); }
-function exPun(){ const G = ["BB","Bb","bb"]; let a = 1, b = 1;
-  exFrame("Pick the parents. Watch the kids.", `<div class="v-knobs"><div class="v-knob m"><b>Parent 1</b><div class="row" id="eA">${G.map((g,k)=>`<button class="btn" data-k="${k}">${g}</button>`).join("")}</div></div><div class="v-knob b"><b>Parent 2</b><div class="row" id="eB">${G.map((g,k)=>`<button class="btn" data-k="${k}">${g}</button>`).join("")}</div></div></div><div class="v-stage" id="eS"></div><div class="v-cap" id="eR"></div>`, "Pick each parent's letters. The Punnett square fills in, and I'll tell you how many kids show each trait.");
-  const say2 = g => g.split("").map(c => (c===c.toUpperCase()?"big ":"small ")+c.toUpperCase()).join(", ");
-  const draw = talk => { const A = G[a], B = G[b]; $("eS").innerHTML = punHTML(A, B, 1); let dom = 0; for (const x of A) for (const y of B) if (x==="B"||y==="B") dom++;
-    $("eR").innerHTML = `<span class='k'>${dom} of 4</span> dominant · <span class='k'>${4-dom} of 4</span> recessive`;
-    document.querySelectorAll("#eA button").forEach((x,k)=>x.classList.toggle("go",k===a)); document.querySelectorAll("#eB button").forEach((x,k)=>x.classList.toggle("go",k===b));
-    if (talk) sayRaw(`${say2(A)}, times ${say2(B)}. ${dom} out of 4 kids show the dominant trait. ${4-dom} out of 4 show the recessive trait.`); };
-  document.querySelectorAll("#eA button").forEach(x => x.onclick = () => { a = +x.dataset.k; tick(); draw(1); });
-  document.querySelectorAll("#eB button").forEach(x => x.onclick = () => { b = +x.dataset.k; tick(); draw(1); });
-  draw(0); }
-function exMoths(){ let m = {bark:"light", l:6, d:2};
-  exFrame("Run the experiment.", `<div class="v-stage" id="eM"></div><div class="v-cap" id="eC"></div><div class="row v-center"><button class="btn" id="eBark">🌳 Change the tree</button><button class="btn" id="eBird">🐦 Birds hunt</button><button class="btn go" id="eGen">👶 Next generation</button></div>`, "Run the experiment. Change the tree color, let the birds hunt, then make the next generation.");
-  const draw = () => { $("eM").innerHTML = mothsSVG(m); $("eC").textContent = `${m.l} light · ${m.d} dark on a ${m.bark} tree`; };
-  $("eBark").onclick = () => { m.bark = m.bark==="light"?"dark":"light"; tick(); draw(); sayRaw(`Now the tree is ${m.bark}. Which moths stand out?`); };
-  $("eBird").onclick = () => { const k = m.bark==="dark" ? "l" : "d"; const ate = Math.min(2, m[k]); m[k] -= ate; draw(); sayRaw(ate ? `The birds ate ${ate} ${k==="l"?"light":"dark"} moths. They stood out on the ${m.bark} tree.` : "The birds can't find any moths that stand out."); };
-  $("eGen").onclick = () => { const t = m.l + m.d; if (!t) { m = {bark:m.bark, l:4, d:4}; } else { const L = Math.round(m.l / t * 8); m.l = L; m.d = 8 - L; } tick(); draw(); sayRaw(`The survivors had babies. Now ${m.l} light and ${m.d} dark. The moths that blend in take over.`); };
-  draw(); }
-function exTl(){ const seen = new Set();
-  exFrame("Tap each event to hear what happened.", `<div id="eT">${tlHTML(LV.tl, null, {})}</div>`, "Tap each event on the timeline to hear what happened.");
-  const lines = LV.watch.filter(w => w[2].tl != null);
-  $("eT").querySelectorAll("button").forEach(b => { b.tabIndex = 0; b.onclick = () => { const k = +b.dataset.k; seen.add(k); b.classList.add("hi"); tick();
-    const line = lines.find(w => [].concat(w[2].tl).includes(k)); sayRaw(`${LV.tl[k][0]}. ${LV.tl[k][1].replace(/;/g, ".")}. ${line ? line[0] : ""}`); }; });
-}
-const cardEmo = v => (v.e || (v.chain||v.pyr||[]).map(x=>x[0]) || []).slice(0,3).join("") || (v.cell?"🔬":v.g?"📈":v.big?"🔢":v.bal?"⚖️":v.dna?"🧬":v.pun?"🔲":v.moths?"🦋":v.acr?"🔤":"💡");
-function exCards(){ const seen = new Set();
-  exFrame("Tap each card to hear it again.", `<div class="v-gallery">${LV.watch.map((w,k)=>`<button data-k="${k}"><span class="v-emo">${E(cardEmo(w[2]))}</span><span>${capHTML(w[1])}</span></button>`).join("")}</div>`, "Tap each card to hear it again. Try to say it back out loud.");
-  document.querySelectorAll(".v-gallery button").forEach(b => b.onclick = () => { const k = +b.dataset.k; seen.add(k); b.classList.add("seen"); tick(); sayRaw(LV.watch[k][0]); });
-}
-
-/* 3. Word power */
-function words(){ let k = 0;
-  const draw = () => { const [ps, ms, say, sum] = LV.words[k];
-    $("wBox").innerHTML = `<div class="v-word">${ps.map((p,i)=>`<button class="v-chunk c${i}" data-i="${i}">${E(p)}</button>`).join("")}</div>
-      <div class="v-mean">${ms.map((m,i)=>m?`<span style="color:${["var(--blue)","var(--accent)","var(--good)"][i]}">${E(m)}</span>`:"").filter(Boolean).join(" + ")}</div><div class="v-cap" style="font-size:21px">${E(sum)}</div>`;
-    document.querySelectorAll(".v-chunk").forEach(c => c.onclick = () => { const i = +c.dataset.i; tick(); sayRaw(`${ps[i]}. ${ms[i] ? "Means " + ms[i] + "." : ""}`); });
-    document.querySelectorAll(".v-wcards button").forEach((b,i) => b.classList.toggle("on", i===k)); sayRaw(say); };
-  frame(`<p class="v-prompt">Big words are just small parts. Tap each colored part.</p><div class="v-wcards">${LV.words.map((w,i)=>`<button data-i="${i}">${E(w[0].join(""))}</button>`).join("")}</div>
-    <div id="wBox" style="display:flex;flex-direction:column;gap:12px"></div><div class="row v-center"><button class="btn" id="wAgain">🔁 Hear it again</button><button class="btn go" id="wNext">Next word →</button></div>`, "The beat");
-  document.querySelectorAll(".v-wcards button").forEach(b => b.onclick = () => { k = +b.dataset.i; draw(); });
-  $("wAgain").onclick = () => sayRaw(LV.words[k][2]); $("wNext").onclick = () => { k = (k+1) % LV.words.length; draw(); };
-  draw(); }
-
-/* 4. Beat */
-let beatT = null, bctx = null;
-function drum(kind){ try { const a = bctx = bctx || new (window.AudioContext||window.webkitAudioContext)(), t = a.currentTime, g = a.createGain(); g.connect(a.destination);
-  if (kind==="k"){ const o=a.createOscillator(); o.frequency.setValueAtTime(140,t); o.frequency.exponentialRampToValueAtTime(40,t+.15); g.gain.setValueAtTime(.5,t); g.gain.exponentialRampToValueAtTime(.001,t+.18); o.connect(g); o.start(t); o.stop(t+.2); }
-  else { const len = kind==="s"?.15:.04, b = a.createBuffer(1, a.sampleRate*len, a.sampleRate), d = b.getChannelData(0); for (let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
-    const s = a.createBufferSource(), f = a.createBiquadFilter(); f.type = kind==="s"?"bandpass":"highpass"; f.frequency.value = kind==="s"?1800:7000; s.buffer=b; s.connect(f).connect(g);
-    g.gain.setValueAtTime(kind==="s"?.35:.12,t); g.gain.exponentialRampToValueAtTime(.001,t+len); s.start(t); } } catch(e) {} }
-function beatStart(){ beatStop(); let n = 0; beatT = setInterval(() => { const k = n++ % 8; if (k===0||k===3||k===5) drum("k"); if (k===2||k===6) drum("s"); drum("h");
-  document.querySelectorAll(".v-beatviz i").forEach((e,i) => e.classList.toggle("hit", i===k)); }, 60000/88/2); }
-function beatStop(){ clearInterval(beatT); beatT = null; document.querySelectorAll(".v-beatviz i").forEach(e => e.classList.remove("hit")); }
-function beat(){
-  frame(`<p class="v-prompt">Learn it like a song. Play the beat and follow along.</p><div class="v-beatviz" aria-hidden="true">${"<i></i>".repeat(8)}</div>
-    <div class="v-lyrics" id="bLyr">${LV.beat.map(l=>`<p>${E(l)}</p>`).join("")}</div>
-    <div class="row v-center"><button class="btn go v-big" id="bPlay">🎤 Play the beat</button><button class="btn" id="bVoice">🗣 Words only</button></div>
-    <p class="small muted">Play it twice. The second time, say it with the voice.</p>`, "Play");
-  const my = tok; let on = false;
-  const sing = async withBeat => { on = true; if (withBeat) beatStart(); await sleep(withBeat ? 1400 : 0); const ps = [...document.querySelectorAll("#bLyr p")];
-    for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i], ps[i]); if (!ok) break; }
-    if (my !== tok) return; ps.forEach(p=>p.classList.remove("now")); beatStop(); on = false; $("bPlay").textContent = "🎤 Play the beat"; doneSt.add(3); };
-  $("bPlay").onclick = () => { if (on) { on = false; hush(); beatStop(); $("bPlay").textContent = "🎤 Play the beat"; } else { $("bPlay").textContent = "⏹ Stop"; sing(true); } };
-  $("bVoice").onclick = () => { if (!on) sing(false); };
-}
-
-/* 5. Play */
-function play(items, replay){ items = items || LV.play.map(q => Object.assign({}, q, {_lv:LV}));
-  P = {items, i:0, right:0, res:[], miss:[], replay:!!replay};
-  if (!replay) qset = {qs: items.map((_,i)=>i), n:0, right:0};
-  ask(); }
-function ask(){ const q = P.items[P.i];
-  frame(`<div class="v-dots">${P.items.map((_,j)=>`<i class="${P.res[j]===true?"ok":P.res[j]===false?"no":j===P.i?"now":""}"></i>`).join("")}</div>
-    <div class="v-qtop"><button class="btn" id="qHear" aria-label="Hear it again">🔊</button><p class="v-prompt">${capHTML(q.cap)}</p></div>
-    <div id="qBody" style="display:flex;flex-direction:column;gap:12px"></div><div id="qFb"></div>`, "");
-  $("qHear").onclick = () => sayRaw(q.say);
-  const fin = (ok, why, show) => answered(q, ok, why, show);
-  ({tap:qTap, tf:qTf, sort:qSort, match:qMatch, seq:qSeq, pick:qPick, mc:qMc, build:qBuild, pickline:qPickLine, ydot:qYdot, balance:qBal, dna:qDna, pun:qPun, tltap:qTl})[q.t](q, $("qBody"), fin);
-  sayRaw(q.say);
-}
-function answered(q, ok, why, show){
-  if (P.res[P.i] !== undefined) return; P.res[P.i] = ok; if (ok) P.right++; else P.miss.push(q);
-  if (P.replay) { ok ? SFX.ok() : SFX.no(); if (ok) { S.points += 1; save(); paintBoard(); } } else score(ok, {prompt: plain(q.cap)});
-  const cheer = ok ? CHEERS_OK[Math.floor(Math.random()*CHEERS_OK.length)] : CHEERS_NO[Math.floor(Math.random()*CHEERS_NO.length)];
-  const last = P.i + 1 >= P.items.length;
-  $("qFb").innerHTML = `<div class="v-fb ${ok?"ok":"no"}">${ok?IC.yes:IC.nope}<div><div>${E(cheer)}${ok&&!P.replay?" +2":""}</div>${why?`<div style="font-weight:500" id="fbWhy">${E(why)}</div>`:""}</div></div>
-    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="fbHear">🔊 Hear it</button><button class="btn go v-big" id="qNext">${last?"See my score":"Next"} →</button></div>`;
-  if (show) show();
-  const talk = () => saySeq([[cheer], [why, $("fbWhy")]]); talk(); $("fbHear").onclick = talk;
-  $("qNext").onclick = () => { P.i++; if (P.i < P.items.length) ask(); else finish(); };
-  $("qNext").focus({preventScroll:true}); $("qBody").style.pointerEvents = "none";
-  const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; $("qFb").scrollIntoView({behavior: calm ? "auto" : "smooth", block:"nearest"});
-}
-function finish(){ lastMiss = P.miss.slice();
-  if (!P.replay) { doneSt.add(4); qset.right = P.right; done(); return; }
-  const n = P.items.length;
-  frame(`<p class="small muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.08em">Replay round</p><h1 style="font-size:52px;line-height:1;text-align:center">${P.right} / ${n}</h1>
-    <p class="v-cap">${P.right===n?"All fixed, Bayo. That's growth.":"Getting there. Run them back once more."}</p>
-    <div class="row v-center">${P.miss.length?`<button class="btn go v-big" id="rAgain">🔁 Replay ${P.miss.length} more</button>`:""}<button class="btn" id="rAll">Play the full level</button><button class="btn" id="rMap">Season map</button></div>`, "");
-  sayRaw(P.right===n ? "All fixed, Bayo. That's growth." : "Getting there. Let's run those back once more.");
-  if ($("rAgain")) $("rAgain").onclick = () => play(mix(P.miss), true);
-  $("rAll").onclick = () => openStage(4); $("rMap").onclick = home;
-}
-
-/* ---- question types ---- */
-function qTap(q, body, fin){
-  body.innerHTML = `<div class="v-stage">${cellSVG("tcell")}</div>`; const s = $("tcell"); requestAnimationFrame(() => cellShow(s, q.cell));
-  cellTap(s, (p, g) => { const ok = p === q.target, T = PARTS[q.target], H = PARTS[p];
-    fin(ok, ok ? T.say : `That's the ${H.name.toLowerCase()}, ${H.role}. You wanted ${T.role}: the ${T.name.toLowerCase()}. It's glowing green now.`,
-      () => { cellGlow(s, null); s.querySelector(`.v-part[data-p="${q.target}"]`).classList.add("right"); if (!ok) g.classList.add("wrong"); }); });
-}
-function qTf(q, body, fin){
-  body.innerHTML = `${q.vis?`<div class="v-stage">${visHTML(q.vis, q._lv)}</div>`:""}<div class="v-tf"><button data-v="1">${IC.yes}True</button><button data-v="0">${IC.nope}False</button></div>`;
-  body.querySelectorAll(".v-tf button").forEach(b => b.onclick = () => { const v = b.dataset.v==="1"; b.style.borderColor = v===q.ans ? "var(--good)" : "var(--bad)"; fin(v===q.ans, q.why); });
-}
-function qMc(q, body, fin){ const opts = mix(q.opts);
-  body.innerHTML = `${q.vis?`<div class="v-stage">${visHTML(q.vis, q._lv)}</div>`:""}<div class="v-mc">${opts.map((o,j)=>`<button data-j="${j}"><span class="lt">${"ABC"[j]}</span>${E(o[0])}</button>`).join("")}</div>`;
-  body.querySelectorAll(".v-mc button").forEach(b => b.onclick = () => { const o = opts[+b.dataset.j]; b.style.borderColor = o[1] ? "var(--good)" : "var(--bad)";
-    if (!o[1]) body.querySelectorAll(".v-mc button").forEach((x,j) => { if (opts[j][1]) x.style.borderColor = "var(--good)"; });
-    fin(!!o[1], o[1] ? q.why : `The answer is ${spoken(opts.find(x=>x[1])[0])}. ${q.why}`); });
-}
-function qSort(q, body, fin){
-  let sel = null; const where = {}; const items = mix(q.items.map((it,i)=>({t:it[0], ic:it[1], bin:it[2], say:it[3]||it[0], k:i})));
-  const chip = it => `<button class="v-chip ${sel===it.k?"sel":""}" data-k="${it.k}">${icon(it.ic)}${E(it.t)}</button>`;
-  const draw = () => { body.innerHTML = `<div class="v-chips" id="sPool">${items.filter(it=>where[it.k]==null).map(chip).join("")}</div>
-    <div class="v-bins">${q.bins.map((b,j)=>`<button class="v-bin" data-b="${j}"><b>${E(b)}</b><span class="v-chips">${items.filter(it=>where[it.k]===j).map(chip).join("")}</span></button>`).join("")}</div>
-    <div class="row"><button class="btn go" id="sCheck" ${Object.keys(where).length<items.length?"disabled":""}>Check</button></div>`;
-    body.querySelectorAll("#sPool .v-chip").forEach(c => c.onclick = () => { sel = +c.dataset.k; sayLabel(items.find(x=>x.k===sel).say); draw(); });
-    body.querySelectorAll(".v-bin").forEach(bn => bn.onclick = e => { const ic = e.target.closest(".v-chip");
-      if (ic) { delete where[+ic.dataset.k]; draw(); return; }
-      if (sel==null) { sayRaw("Tap one first, then tap a box."); return; } where[sel] = +bn.dataset.b; tick(); sayLabel(q.bins[+bn.dataset.b].replace(/[↗↘]/g,"")); sel = null; draw(); });
-    $("sCheck").onclick = () => { const wrong = items.filter(it => where[it.k] !== it.bin);
-      body.querySelectorAll(".v-bin .v-chip").forEach(c => { const it = items.find(x=>x.k===+c.dataset.k); c.classList.add(where[it.k]===it.bin?"ok":"no"); });
-      fin(!wrong.length, wrong.length ? q.bins.map((b,j)=>`${b.replace(/[↗↘]/g,"").trim()}: ${q.items.filter(it=>it[2]===j).map(it=>it[3]||it[0]).join(", ")}.`).join(" ") : "All sorted right."); }; };
-  draw();
-}
-function qMatch(q, body, fin){
-  const left = q.pairs.map((p,i)=>({i,t:p[0],ic:p[1]})), right = mix(q.pairs.map((p,i)=>({i,t:p[2]})));
-  let sel = null, made = {}, n = 0, wrongs = 0; const pc = {};
-  const draw = () => { body.innerHTML = `<div class="v-match"><div class="col">${left.map(l=>`<button class="v-mi ${pc[l.i]!=null?"p"+pc[l.i]:""} ${sel===l.i?"sel":""}" data-l="${l.i}">${icon(l.ic)}${E(l.t)}</button>`).join("")}</div>
-    <div class="col">${right.map(r=>`<button class="v-mi ${made[r.i]?"p"+pc[r.i]:""}" data-r="${r.i}">${E(r.t)}</button>`).join("")}</div></div>`;
-    body.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { const i = +b.dataset.l; if (made[i]) return; sel = i; sayLabel(left[i].t); draw(); });
-    body.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { const i = +b.dataset.r; if (made[i]) return; const r = right.find(x=>x.i===i);
-      if (sel==null) { sayLabel(r.t + ". Tap one on the left first."); return; }
-      if (i === sel) { made[i] = true; pc[i] = n++ % 4; tick(); sayLabel(r.t); sel = null; draw();
-        if (n === left.length) fin(wrongs === 0, wrongs ? "All matched. Some took a second try. Run it back for a clean sweep." : "Every match on the first try."); }
-      else { wrongs++; SFX.no(); b.classList.add("no"); sayRaw("Not that one. Try again."); setTimeout(draw, 700); } }); };
-  draw();
-}
-function qSeq(q, body, fin){
-  let order; do { order = mix(q.items.map((_,i)=>i)); } while (order.length > 1 && order.every((v,i)=>v===i));
-  const pk = [];
-  const draw = () => { body.innerHTML = `<div class="v-seq">${q.items.map((_,j)=>pk[j]!=null?`<div class="v-slot filled"><span class="n">${j+1}</span><button data-p="${j}">${icon(q.items[pk[j]][1])}${E(q.items[pk[j]][0])}</button></div>`:`<div class="v-slot"><span class="n">${j+1}</span><span class="muted small">tap one below</span></div>`).join("")}</div>
-    <div class="v-chips">${order.filter(k=>!pk.includes(k)).map(k=>`<button class="v-chip" data-k="${k}">${icon(q.items[k][1])}${E(q.items[k][0])}</button>`).join("")}</div>
-    <div class="row"><button class="btn go" id="qCheck" ${pk.length<q.items.length?"disabled":""}>Check</button></div>`;
-    body.querySelectorAll(".v-chip").forEach(c => c.onclick = () => { pk.push(+c.dataset.k); tick(); sayLabel(q.items[+c.dataset.k][0]); draw(); });
-    body.querySelectorAll(".v-slot button").forEach(b => b.onclick = () => { pk.splice(+b.dataset.p,1); draw(); });
-    $("qCheck").onclick = () => { body.querySelectorAll(".v-slot").forEach((s,j)=>s.classList.add(pk[j]===j?"ok":"no")); const ok = pk.every((k,j)=>k===j);
-      fin(ok, (ok ? "" : "The right order: ") + q.items.map(x=>spoken(x[0])).join(", then ") + "."); }; };
-  draw();
-}
-function qPick(q, body, fin){ const opts = mix(q.opts);
-  body.innerHTML = `${q.vis?`<div class="v-stage">${visHTML(q.vis, q._lv)}</div>`:""}<div class="v-pics">${opts.map((o,j)=>`<button class="v-pic" data-j="${j}">${picHTML(o[1])}<span>${E(o[0])}</span></button>`).join("")}</div>`;
-  body.querySelectorAll(".v-pic").forEach(b => b.onclick = () => { const o = opts[+b.dataset.j]; b.style.borderColor = o[2] ? "var(--good)" : "var(--bad)";
-    if (!o[2]) body.querySelectorAll(".v-pic").forEach((x,j) => { if (opts[j][2]) x.style.borderColor = "var(--good)"; }); fin(!!o[2], q.why); });
-}
-function qBuild(q, body, fin){ let m = 0, b = 0;
-  const draw = () => { body.innerHTML = `<div class="v-stage">${graphSVG({lines:[[q.m,q.b,null,"var(--line)",10],[m,b]], pts:[[0,b]]},{label:"Your line"})}</div><div class="v-eq">y = ${eqHTML(m,b)}</div>
-    <div class="v-knobs">${knob("m","m = slope",fmtN(m),"m-","m+")}${knob("b","b = start",fmtN(b),"b-","b+")}</div>
-    <p class="small muted" style="text-align:center">Match the thick gray line.</p><div class="row v-center"><button class="btn go v-big" id="bLock">Lock it in</button></div>`;
-    body.querySelectorAll("[data-a]").forEach(x => x.onclick = () => { const a = x.dataset.a; if (a[0]==="m") m = Math.max(-4,Math.min(4, m + (a[1]==="+"?1:-1))); else b = Math.max(-5,Math.min(5, b + (a[1]==="+"?1:-1))); tick(); draw(); sayRaw(eqSay(m,b)); });
-    $("bLock").onclick = () => { const ok = m===q.m && b===q.b; fin(ok, ok ? `${eqSay(m,b)}. Starts at ${q.b}, ${m>0?"up":"down"} ${Math.abs(m)} each step.` : `The line was ${eqSay(q.m,q.b)}. Start at ${q.b}, then ${q.m>0?"up":"down"} ${Math.abs(q.m)} for every 1 over.`); }; };
-  draw();
-}
-function qPickLine(q, body, fin){
-  body.innerHTML = `<div class="v-stage">${graphSVG({lines:q.lines.map(l=>[l[0],l[1],null,l[2]])})}</div><div class="v-tf">${q.lines.map((l,j)=>`<button data-j="${j}" style="border-color:${l[2]}"><span style="width:60px;height:8px;border-radius:4px;background:${l[2]}"></span>${E(l[3])}</button>`).join("")}</div>`;
-  body.querySelectorAll(".v-tf button").forEach(b => b.onclick = () => fin(+b.dataset.j===q.ans, q.why));
-}
-function qYdot(q, body, fin){
-  body.innerHTML = `<div class="v-stage">${graphSVG({lines:[[q.m,q.b]]},{ydots:[-4,-2,0,2,4]})}</div><p class="small muted" style="text-align:center">Tap a circle on the y axis.</p>`;
-  body.querySelectorAll(".v-ydot").forEach(d => d.onclick = () => { const v = +d.dataset.v; d.style.fill = v===q.b ? "var(--good)" : "var(--bad)"; fin(v===q.b, q.why); });
-}
-function qBal(q, body, fin){ balGame(body, q.start, q.steps, q.choices, clean => {
-  const last = q.steps[q.steps.length-1][1]; fin(clean, clean ? `${last[0]} = ${last[1]}. Perfect moves.` : `You got there: ${last[0]} = ${last[1]}. Next time, pick ${q.steps.map(s=>s[0].toLowerCase()).join(", then ")} first.`); }); }
-function qDna(q, body, fin){ const got = []; let wrong = 0;
-  const draw = () => { const i = got.length;
-    body.innerHTML = `<div class="v-stage"><div class="v-dna">${[...q.strand].map((c,k)=>`<div class="r ${k===i?"hi":""}"><span class="b b${c}">${c}</span><span class="bar"></span><span class="b ${k<i?"b"+PAIR[c]:"bq"}">${k<i?PAIR[c]:"?"}</span></div>`).join("")}</div></div>
-      ${i<q.strand.length?`<p class="small muted" style="text-align:center">Partner for <b>${q.strand[i]}</b>?</p><div class="v-tf" style="grid-template-columns:repeat(4,1fr)">${"ATGC".split("").map(c=>`<button data-c="${c}" style="min-height:72px"><span class="b b${c}" style="width:46px;height:40px;border-radius:10px;display:grid;place-items:center;color:#fff">${c}</span></button>`).join("")}</div>`:""}`;
-    body.querySelectorAll("[data-c]").forEach(b => b.onclick = () => { const c = b.dataset.c, want = PAIR[q.strand[got.length]];
-      if (c === want) { got.push(c); tick(); sayRaw(`${q.strand[got.length-1]} with ${c}.`); draw(); if (got.length === q.strand.length) fin(wrong === 0, wrong ? "Built it, with a slip. Remember: A with T, C with G." : "Perfect. A with T, C with G."); }
-      else { wrong++; SFX.no(); b.style.borderColor = "var(--bad)"; sayRaw(`Not ${c}. ${q.strand[got.length]==="A"||q.strand[got.length]==="T"?"Apple in the Tree.":"Car in the Garage."}`); } }); };
-  draw(); }
-function qPun(q, body, fin){ const [a,b] = q.p, vals = [null,null,null,null], marks = {}; let cur = 0;
-  const want = [[a[0],b[0]],[a[1],b[0]],[a[0],b[1]],[a[1],b[1]]].map(xy => xy.sort((m,n)=>(m===m.toUpperCase()?0:1)-(n===n.toUpperCase()?0:1)).join(""));
-  const draw = () => { body.innerHTML = `<div class="v-stage">${punHTML(a, b, 0, {ask:1, vals, marks:Object.assign({}, marks, {[cur]:(marks[cur]||"")+" sel"})})}</div>
-    <p class="small muted" style="text-align:center">Box ${cur+1}: one letter from the top, one from the side.</p>
-    <div class="v-tf" style="grid-template-columns:repeat(3,1fr)">${["BB","Bb","bb"].map(g=>`<button data-g="${g}" style="min-height:72px">${g}</button>`).join("")}</div>
-    <div class="row"><button class="btn go" id="pCheck" ${vals.includes(null)?"disabled":""}>Check</button></div>`;
-    body.querySelectorAll("td[data-k]").forEach(td => td.onclick = () => { cur = +td.dataset.k; draw(); });
-    body.querySelectorAll("[data-g]").forEach(x => x.onclick = () => { vals[cur] = x.dataset.g; sayLabel(x.dataset.g); tick(); const nx = vals.indexOf(null); if (nx >= 0) cur = nx; draw(); });
-    $("pCheck").onclick = () => { want.forEach((w,k)=>marks[k] = vals[k]===w ? "ok" : "no"); cur = -1; draw(); const ok = want.every((w,k)=>vals[k]===w);
-      const dom = want.filter(w=>w.includes("B")).length; fin(ok, `${ok?"":"The boxes are " + want.map(w=>spoken(w)).join("; ") + ". "}${dom} out of 4 show the dominant trait.`); }; };
-  draw(); }
-function qTl(q, body, fin){ const tl = q._lv.tl;
-  body.innerHTML = `<div class="v-stage">${tlHTML(tl, null, {ask:1})}</div>`;
-  body.querySelectorAll(".v-tl button").forEach(b => b.onclick = () => { const k = +b.dataset.k; b.classList.add("hi"); b.style.borderColor = k===q.ans ? "var(--good)" : "var(--bad)";
-    body.querySelectorAll(".v-tl button").forEach((x,j) => { x.querySelector("span:last-child").textContent = tl[j][1]; if (j===q.ans) x.style.borderColor = "var(--good)"; }); fin(k===q.ans, q.why); });
-}
-
-/* championship: two plays from every level */
-function boss(){ unit = Object.assign({}, bossU(), {v2:true}); unitI = UNITS.length; stage = 4;
-  const items = mix(UNITS.flatMap(u => mix(u.v2.play).slice(0,2).map(q => Object.assign({}, q, {_lv:u.v2}))));
-  play(items); }
-function replayMisses(){ if (!unit.boss) { unit = UNITS[unitI]; LV = unit.v2; } stage = 4; play(mix(lastMiss), true); }
-/* lets the rest of the app (Grammar, map, scores) use the recordings too */
-function recMain(text, onWord, onEnd){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return false;
-  hush(); const id = talkId, T = rec[1] || [];
-  AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
-  AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; let i = -1; T.forEach((w,k) => { if (t >= w[0]) i = k; }); onWord(i, T.length); };
-  AU.onended = () => { if (id === talkId) onEnd(true); }; AU.onerror = () => { if (id === talkId) onEnd(false); };
-  AU.play().catch(() => { if (id === talkId) onEnd(false); }); return true; }
-return {recMain, quiet: () => hush(), get P(){ return P; }, open, boss, hush: () => { tok++; hush(); beatStop(); }, misses: () => lastMiss.length, replayMisses};
-})();
-
+if (S.speedV !== 2 || ![0.7,0.8,0.9,1].includes(S.rate)) { S.rate = 0.8; S.speedV = 2; }
+__V2JS__
 paintSpeed(); paintBoard(); if (!Array.isArray(S.miss)) S.miss = []; setSub(S.sub || "gr"); subjects(); setTimeout(syncNow, 1500);
 </script>
 </body>
