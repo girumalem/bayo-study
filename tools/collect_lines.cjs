@@ -43,6 +43,9 @@ async function answer(q,right){const body=$("qBody");
  // drop lines with scores or points (they change every time), then add every authored line no matter what
  let lines=[...heard].map(t=>t.trim()).filter(t=>t&&!/\b\d+ out of \d+\b.*(Bayo!|Run it back|won|game)|\+2|points? to |Your rank/.test(t));
  const authored=w.eval(`SUBJ.slice(1).flatMap(s=>s.units.flatMap(u=>{const L=u.v2;return [...L.watch.map(x=>x[0]),...L.words.map(x=>x[2]),...L.beat,...L.play.flatMap(q=>[q.say,q.why||""])];})).concat(CHEERS_OK,CHEERS_NO)`);
- lines=[...new Set(lines.concat(authored.filter(Boolean).map(t=>t.trim())))].sort();
+ // order: authored lines level by level first (so a partial recording covers the first levels), then everything else
+ const first=[...new Set(authored.filter(Boolean).map(t=>t.trim()))];
+ const rest=lines.filter(t=>!first.includes(t)&&!/^[,.;:]/.test(t)).sort();
+ lines=first.concat(rest);
  fs.writeFileSync(path.join(__dirname,"lines.json"),JSON.stringify(lines,null,0));
  console.log("\n"+lines.length+" lines, "+lines.reduce((a,t)=>a+t.length,0)+" characters");process.exit(0);})();

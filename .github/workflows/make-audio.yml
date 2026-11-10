@@ -9,6 +9,12 @@ on:
         description: "Voice ID for the raps (leave empty to use the same voice)"
         required: false
         default: ""
+      model:
+        description: "Voice model"
+        required: true
+        default: "eleven_multilingual_v2"
+        type: choice
+        options: ["eleven_multilingual_v2", "eleven_flash_v2_5"]
       max_chars:
         description: "Stop after this many characters (0 = record everything)"
         required: false
@@ -32,6 +38,7 @@ jobs:
           VOICE_ID: ${{ inputs.voice_id }}
           BEAT_VOICE_ID: ${{ inputs.beat_voice_id }}
           MAX_CHARS: ${{ inputs.max_chars }}
+          MODEL_ID: ${{ inputs.model }}
         run: python tools/make_audio.py
       - name: Save the audio to the repo
         if: always()

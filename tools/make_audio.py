@@ -57,7 +57,8 @@ try:
             failed += 1
             msg = r.text[:300]
             print(f"FAILED ({r.status_code}): {t[:60]!r} {msg}")
-            if r.status_code in (401, 402) or "quota" in msg.lower(): print("Stopping: check the API key or character quota."); break
+            if "paid_plan_required" in msg: print("STOPPED: this voice is from the Voice Library, which needs a paid ElevenLabs plan for the API. Pick a Default voice, or upgrade."); break
+            if r.status_code in (401, 402) or "quota" in msg.lower(): print("STOPPED: check the API key, or you are out of ElevenLabs credits this month."); break
             continue
         j = r.json(); f = fid(t, v)
         (OUT / f).write_bytes(base64.b64decode(j["audio_base64"]))
