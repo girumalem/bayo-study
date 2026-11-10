@@ -1,0 +1,218 @@
+{
+ "al1": {
+  "subject": "Algebra 1",
+  "level": "Solving Equations",
+  "lines": [
+   "Keep it balanced, both sides the same,",
+   "What you do to the left, do to the right, that's the game,",
+   "Plus becomes minus, times becomes divide,",
+   "Get x by itself, then check it, that's pride."
+  ]
+ },
+ "al2": {
+  "subject": "Algebra 1",
+  "level": "Multi-Step & Inequalities",
+  "lines": [
+   "Outside the parentheses? Pass it to each one,",
+   "Open circle: not included, closed: it counts, son,",
+   "The arrow shows the answers, left or right it goes,",
+   "Divide by a negative? Flip it, now you know."
+  ]
+ },
+ "al3": {
+  "subject": "Algebra 1",
+  "level": "Slope & Lines",
+  "lines": [
+   "Rise over run, that's the slope, that's the rule,",
+   "Climbing from the left? That's positive, cool,",
+   "Going down the hill? Then it's negative, son,",
+   "b is where you start, m is how you run."
+  ]
+ },
+ "al4": {
+  "subject": "Algebra 1",
+  "level": "Functions",
+  "lines": [
+   "Put it in the machine, one number comes out,",
+   "f of x, the rule, that's what it's about,",
+   "Domain is the input, range is what you get,",
+   "One in, two out? That's no function yet."
+  ]
+ },
+ "al5": {
+  "subject": "Algebra 1",
+  "level": "Systems of Equations",
+  "lines": [
+   "Two lines, one answer, where they cross is the spot,",
+   "Sub it in like a bench player, give it a shot,",
+   "Add 'em up, eliminate, watch a letter disappear,",
+   "Same slope? Parallel. No answer here."
+  ]
+ },
+ "al6": {
+  "subject": "Algebra 1",
+  "level": "Exponents & Polynomials",
+  "lines": [
+   "Times it again, that's what the power's about,",
+   "Multiply? Add 'em. Divide? Take 'em out,",
+   "Power to a power? Multiply that, son,",
+   "Anything to the zero, the answer is one."
+  ]
+ },
+ "al7": {
+  "subject": "Algebra 1",
+  "level": "Quadratics",
+  "lines": [
+   "x squared makes a U, that's a parabola, see,",
+   "Jump shot arc, up and down, nothing but net, that's me,",
+   "Vertex at the top, zeros hit the floor,",
+   "Factor it to zero, now you solve for more."
+  ]
+ },
+ "bi1": {
+  "subject": "Biology",
+  "level": "Cells",
+  "lines": [
+   "Nucleus the coach, got the DNA play,",
+   "Mitochondria the power, keep it running all day,",
+   "Membrane at the door, says who gets inside,",
+   "Ribosomes the builders, making proteins, that's the vibe.",
+   "Plants got extra: wall, vacuole, chloroplast too,",
+   "Catching all that sunlight, now you know it, it's true."
+  ]
+ },
+ "bi2": {
+  "subject": "Biology",
+  "level": "Molecules of Life",
+  "lines": [
+   "Carbs for the quick burn, pasta 'fore the game,",
+   "Lipids store it long, fats and oils the same,",
+   "Proteins build the muscle, every rep and every set,",
+   "Nucleic acids, DNA, the instructions you get,",
+   "Enzymes speed it up, like a key inside a lock,",
+   "Too much heat? It breaks, and the reaction stops."
+  ]
+ },
+ "bi3": {
+  "subject": "Biology",
+  "level": "Energy in Living Things",
+  "lines": [
+   "Sunlight, water, CO2, the plant puts in work,",
+   "Sugar and oxygen, that's the photosynthesis perk,",
+   "I eat it, I breathe it, mitochondria burn,",
+   "ATP the energy, now it's the plant's turn."
+  ]
+ },
+ "bi4": {
+  "subject": "Biology",
+  "level": "DNA & Cell Division",
+  "lines": [
+   "A with the T, apple in the tree,",
+   "C with the G, car in the garage, see,",
+   "DNA to RNA, transcription's the name,",
+   "Ribosome translates, protein in the game,",
+   "Mitosis makes two, that's how you heal and grow,",
+   "Mutation's a change in the letters, now you know."
+  ]
+ },
+ "bi5": {
+  "subject": "Biology",
+  "level": "Heredity",
+  "lines": [
+   "Big B the starter, shows up with just one,",
+   "Little b's the bench, needs two to get it done,",
+   "Mom gives one, Dad gives one, put 'em in the square,",
+   "Three to one, that's the ratio, now you're there."
+  ]
+ },
+ "bi6": {
+  "subject": "Biology",
+  "level": "Ecosystems",
+  "lines": [
+   "Sun to the grass, grass to the hare,",
+   "Hawk at the top, but there's not many there,",
+   "Ten percent moves up, the rest is lost as heat,",
+   "Mushrooms break it down, recycle complete."
+  ]
+ },
+ "bi7": {
+  "subject": "Biology",
+  "level": "Natural Selection",
+  "lines": [
+   "Moths on the bark, light ones blend in,",
+   "Soot turns it dark, now the dark ones win,",
+   "Variation, competition, survive and pass it on,",
+   "Generation after generation, the light ones are gone."
+  ]
+ },
+ "wh1": {
+  "subject": "World History",
+  "level": "Age of Revolutions",
+  "lines": [
+   "Kings said God picked 'em, power all their own,",
+   "Locke said life, liberty, property, you're grown,",
+   "Seventeen seventy-six, then eighty-nine in France,",
+   "Haiti broke the chains, Napoleon lost his chance."
+  ]
+ },
+ "wh2": {
+  "subject": "World History",
+  "level": "Industrial Revolution",
+  "lines": [
+   "Seventeen-sixty Britain, machines take the stage,",
+   "Steam engine and coal, factories for a wage,",
+   "Farm kids to the city, smoky, crowded, rough,",
+   "Unions stood together and said that's enough."
+  ]
+ },
+ "wh3": {
+  "subject": "World History",
+  "level": "Imperialism",
+  "lines": [
+   "Factories hungry, Europe on the hunt,",
+   "Berlin split Africa, didn't ask, that's blunt,",
+   "But Adwa, ninety-six, Ethiopia stood tall,",
+   "Menelik held the line, never took the fall."
+  ]
+ },
+ "wh4": {
+  "subject": "World History",
+  "level": "World War One",
+  "lines": [
+   "M-A-I-N, that's the cause, now spell it out,",
+   "Militarism, Alliances, that's what it's about,",
+   "Imperialism, Nationalism, then the shot in '14,",
+   "Trenches for four years, Versailles, the angriest scene."
+  ]
+ },
+ "wh5": {
+  "subject": "World History",
+  "level": "Depression & Dictators",
+  "lines": [
+   "Twenty-nine the crash, the money disappeared,",
+   "Hard times, strongmen, people full of fear,",
+   "Stalin, Mussolini, Hitler took control,",
+   "Appeasement didn't work, that's a lesson to hold."
+  ]
+ },
+ "wh6": {
+  "subject": "World History",
+  "level": "World War Two",
+  "lines": [
+   "Thirty-nine, Poland, the blitz came fast,",
+   "Forty-one, Pearl Harbor, the U.S. in at last,",
+   "Forty-four, D-Day, Normandy shore,",
+   "Forty-five it's over, U.N. to stop the war."
+  ]
+ },
+ "wh7": {
+  "subject": "World History",
+  "level": "The Cold War",
+  "lines": [
+   "U.S. versus Soviets, cold but never hot,",
+   "NATO on one side, Warsaw Pact they got,",
+   "Sixty-one the Wall went up, Berlin split in two,",
+   "Eighty-nine it came down, ninety-one, the Cold War's through."
+  ]
+ }
+}

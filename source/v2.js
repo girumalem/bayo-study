@@ -13,6 +13,7 @@ const mix = a => shuffle(a);
 let talkId = 0;
 /* recorded voice: /audio/manifest.json maps each line to [file, [[start,end] per word]] */
 let REC = {}; const AU = typeof Audio !== "undefined" ? new Audio() : null;
+let BEATS = {}; try { fetch("/audio/beat/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(x => { BEATS = x || {}; }).catch(() => {}); } catch(e) {}
 try { fetch("/audio/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(j => { REC = j || {}; }).catch(() => {}); } catch(e) {}
 document.addEventListener("click", function unlock(){ if (AU && !AU.src) { try { AU.muted = true; AU.play().catch(()=>{}); AU.muted = false; } catch(e) {} } document.removeEventListener("click", unlock, true); }, true);
 function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} try { if (AU) { AU.pause(); AU.ontimeupdate = null; } } catch(e) {} document.querySelectorAll(".v-w.now").forEach(w => w.classList.remove("now")); }
@@ -407,16 +408,36 @@ function beatStart(){ beatStop(); let n = 0; beatT = setInterval(() => { const k
   document.querySelectorAll(".v-beatviz i").forEach((e,i) => e.classList.toggle("hit", i===k)); }, 60000/88/2); }
 function beatStop(){ clearInterval(beatT); beatT = null; document.querySelectorAll(".v-beatviz i").forEach(e => e.classList.remove("hit")); }
 function beat(){
-  frame(`<p class="v-prompt">Learn it like a song. Play the beat and follow along.</p><div class="v-beatviz" aria-hidden="true">${"<i></i>".repeat(8)}</div>
-    <div class="v-lyrics" id="bLyr">${LV.beat.map(l=>`<p>${E(l)}</p>`).join("")}</div>
-    <div class="row v-center"><button class="btn go v-big" id="bPlay">🎤 Play the beat</button><button class="btn" id="bVoice">🗣 Words only</button></div>
-    <p class="small muted">Play it twice. The second time, say it with the voice.</p>`, "Play");
+  const tr = BEATS[unit.id], lastWord = l => l.trim().split(/\s+/).pop();
+  const lineHTML = (l, hide) => { const ws = l.trim().split(/\s+/); const last = ws.pop(); return `${E(ws.join(" "))} <span class="v-rhyme ${hide?"hid":""}">${E(last)}</span>`; };
+  frame(`<p class="v-prompt">${tr ? "Press play. Nod your head. Rap it with him." : "Learn it like a song. Play the beat and follow along."}</p>
+    <div class="v-beatviz" aria-hidden="true">${"<i></i>".repeat(8)}</div>
+    <div class="v-lyrics" id="bLyr">${LV.beat.map(l=>`<p>${lineHTML(l, false)}</p>`).join("")}</div>
+    <div class="row v-center">${tr ? `<button class="btn go v-big" id="bTrack">🎵 Play the track</button><button class="btn v-big" id="bRhyme">🧠 Finish the rhyme</button>` : `<button class="btn go v-big" id="bPlay">🎤 Play the beat</button>`}<button class="btn" id="bVoice">🗣 Words only</button></div>
+    <p class="small muted">${tr ? "Finish the rhyme: the last word of each line is hidden. Say it out loud before it pops up." : "Play it twice. The second time, say it with the voice."}</p>`, "Play");
   const my = tok; let on = false;
+  const paint = (i, reveal) => document.querySelectorAll("#bLyr p").forEach((p,j) => { p.classList.toggle("now", j===i); if (reveal != null && j===i && reveal) p.querySelector(".v-rhyme")?.classList.remove("hid"); });
+  const setBtns = () => { if ($("bTrack")) $("bTrack").textContent = "🎵 Play the track"; if ($("bRhyme")) $("bRhyme").textContent = "🧠 Finish the rhyme"; if ($("bPlay")) $("bPlay").textContent = "🎤 Play the beat"; };
+  const stopAll = () => { on = false; hush(); beatStop(); paint(-1); setBtns(); };
+  /* the real track: each lyric line has its own timed section */
+  const playTrack = rhyme => { if (on) { stopAll(); return; } hush(); on = true; const id = talkId, [f, intro, lineMs] = tr;
+    document.querySelectorAll("#bLyr p").forEach((p,i) => p.innerHTML = lineHTML(LV.beat[i], rhyme));
+    (rhyme ? $("bRhyme") : $("bTrack")).textContent = "⏹ Stop";
+    AU.src = "/audio/beat/" + f; try { AU.playbackRate = 1; AU.defaultPlaybackRate = 1; } catch(e) {}
+    let beatN = -1;
+    AU.ontimeupdate = () => { if (id !== talkId) return; const ms = AU.currentTime * 1000, i = Math.floor((ms - intro) / lineMs), into = ((ms - intro) % lineMs) / lineMs;
+      const k = Math.floor(AU.currentTime * 88 / 60 * 2) % 8; if (k !== beatN) { beatN = k; document.querySelectorAll(".v-beatviz i").forEach((e,x) => e.classList.toggle("hit", x===k)); }
+      if (i >= 0 && i < LV.beat.length) paint(i, !rhyme || into > 0.55); else paint(-1); };
+    AU.onended = () => { if (id !== talkId) return; on = false; paint(-1); setBtns(); document.querySelectorAll(".v-rhyme").forEach(r => r.classList.remove("hid")); document.querySelectorAll(".v-beatviz i").forEach(e => e.classList.remove("hit")); doneSt.add(3); };
+    AU.play().catch(() => { on = false; setBtns(); }); };
+  /* the recorded voice reads each line (or the drum loop when there's no track) */
   const sing = async withBeat => { on = true; if (withBeat) beatStart(); await sleep(withBeat ? 1400 : 0); const ps = [...document.querySelectorAll("#bLyr p")];
     for (let i=0;i<ps.length && on && my===tok;i++){ ps.forEach((p,j)=>p.classList.toggle("now", j===i)); const ok = await sayRaw(LV.beat[i], ps[i]); if (!ok) break; await sleep(250); }
-    if (my !== tok) return; ps.forEach(p=>p.classList.remove("now")); beatStop(); on = false; $("bPlay").textContent = "🎤 Play the beat"; doneSt.add(3); };
-  $("bPlay").onclick = () => { if (on) { on = false; hush(); beatStop(); $("bPlay").textContent = "🎤 Play the beat"; } else { $("bPlay").textContent = "⏹ Stop"; sing(true); } };
-  $("bVoice").onclick = () => { if (!on) sing(false); };
+    if (my !== tok) return; document.querySelectorAll("#bLyr p").forEach((p,i) => { p.classList.remove("now"); p.innerHTML = lineHTML(LV.beat[i], false); }); beatStop(); on = false; setBtns(); doneSt.add(3); };
+  if ($("bTrack")) $("bTrack").onclick = () => playTrack(false);
+  if ($("bRhyme")) $("bRhyme").onclick = () => playTrack(true);
+  if ($("bPlay")) $("bPlay").onclick = () => { if (on) stopAll(); else { $("bPlay").textContent = "⏹ Stop"; sing(true); } };
+  $("bVoice").onclick = () => { if (on) stopAll(); else sing(false); };
 }
 
 /* 5. Play */
