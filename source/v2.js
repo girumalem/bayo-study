@@ -487,5 +487,12 @@ function boss(){ unit = Object.assign({}, bossU(), {v2:true}); unitI = UNITS.len
   const items = mix(UNITS.flatMap(u => mix(u.v2.play).slice(0,2).map(q => Object.assign({}, q, {_lv:u.v2}))));
   play(items); }
 function replayMisses(){ if (!unit.boss) { unit = UNITS[unitI]; LV = unit.v2; } stage = 4; play(mix(lastMiss), true); }
-return {get P(){ return P; }, open, boss, hush: () => { tok++; hush(); beatStop(); }, misses: () => lastMiss.length, replayMisses};
+/* lets the rest of the app (Grammar, map, scores) use the recordings too */
+function recMain(text, onWord, onEnd){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return false;
+  hush(); const id = talkId, T = rec[1] || [];
+  AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
+  AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; let i = -1; T.forEach((w,k) => { if (t >= w[0]) i = k; }); onWord(i, T.length); };
+  AU.onended = () => { if (id === talkId) onEnd(true); }; AU.onerror = () => { if (id === talkId) onEnd(false); };
+  AU.play().catch(() => { if (id === talkId) onEnd(false); }); return true; }
+return {recMain, quiet: () => hush(), get P(){ return P; }, open, boss, hush: () => { tok++; hush(); beatStop(); }, misses: () => lastMiss.length, replayMisses};
 })();

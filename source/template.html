@@ -440,7 +440,7 @@ function loadVoices(){
 if (synth) { loadVoices(); synth.onvoiceschanged = loadVoices; } else { $("noTTS").hidden = false; }
 
 function clearHighlights(){ document.querySelectorAll(".reading").forEach(e=>e.classList.remove("reading")); document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur")); document.querySelectorAll(".w.speaking").forEach(e=>e.classList.remove("speaking")); if (speakingBtn) speakingBtn.classList.remove("playing"); speakingBtn = null; }
-function stop(){ if (synth) synth.cancel(); clearHighlights(); }
+function stop(){ if (synth) synth.cancel(); if (typeof V2 !== "undefined") V2.quiet(); clearHighlights(); }
 /* speak(text, spans?) — spans: elements each with data-o (char offset in text) for word highlighting */
 function speak(text, spans, btn){
   if (!synth) return;
@@ -453,8 +453,12 @@ function speak(text, spans, btn){
     list.forEach(s => s.classList.remove("cur","speaking")); if (hit) hit.classList.add(hit.classList.contains("w")?"speaking":"cur"); };
   u.onend = u.onerror = () => clearHighlights();
   if (btn) { speakingBtn = btn; btn.classList.add("playing"); }
+  if (typeof V2 !== "undefined" && V2.recMain(spoken(text), (i,n) => hlWord(list, i, n), ok => { if (ok) clearHighlights(); else synth.speak(u); })) return;
   synth.speak(u);
 }
+/* highlight word i of n (from a recording's timing) on the matching span */
+function hlWord(list, i, n){ if (!list.length) return; list.forEach(s => s.classList.remove("cur","speaking")); if (i < 0) return;
+  const s = list[Math.min(list.length-1, list.length === n ? i : Math.floor(i * list.length / n))]; if (s) s.classList.add(s.classList.contains("w")?"speaking":"cur"); }
 /* Turn plain text into word spans that can be highlighted while spoken */
 function spansFrom(text, base){ let o = base||0, out = ""; for (const part of text.split(/(\s+)/)) { if (!part) continue; if (/^\s+$/.test(part)) { out += part; o += part.length; continue; } out += `<span data-o="${o}">${esc(part)}</span>`; o += part.length; } return out; }
 function sayHTML(text){ return `<span class="say">${spansFrom(text,0)}</span>`; }
@@ -726,6 +730,7 @@ function readSequence(els, btn){
     if (changes(tx)) { list = []; el.classList.add("reading"); }
     u.onboundary = e => { if (e.name === "sentence") return; let hit = null; for (const s of list) { if (+s.dataset.o <= e.charIndex) hit = s; else break; } list.forEach(s=>s.classList.remove("cur","speaking")); if (hit) hit.classList.add(hit.classList.contains("w")?"speaking":"cur"); };
     u.onend = () => { list.forEach(s=>s.classList.remove("cur","speaking")); el.classList.remove("reading"); next(); }; u.onerror = () => clearHighlights();
+    if (typeof V2 !== "undefined" && V2.recMain(spoken(tx), (i,n) => hlWord(list, i, n), ok => { if (ok) u.onend(); else synth.speak(u); })) return;
     synth.speak(u); };
   if (btn) { speakingBtn = btn; btn.classList.add("playing"); }
   next();
@@ -1383,7 +1388,14 @@ function boss(){ unit = Object.assign({}, bossU(), {v2:true}); unitI = UNITS.len
   const items = mix(UNITS.flatMap(u => mix(u.v2.play).slice(0,2).map(q => Object.assign({}, q, {_lv:u.v2}))));
   play(items); }
 function replayMisses(){ if (!unit.boss) { unit = UNITS[unitI]; LV = unit.v2; } stage = 4; play(mix(lastMiss), true); }
-return {get P(){ return P; }, open, boss, hush: () => { tok++; hush(); beatStop(); }, misses: () => lastMiss.length, replayMisses};
+/* lets the rest of the app (Grammar, map, scores) use the recordings too */
+function recMain(text, onWord, onEnd){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return false;
+  hush(); const id = talkId, T = rec[1] || [];
+  AU.src = "/audio/" + rec[0]; AU.playbackRate = Math.max(0.6, Math.min(1.4, (S.rate || 0.9) / 0.9));
+  AU.ontimeupdate = () => { if (id !== talkId) return; const t = AU.currentTime; let i = -1; T.forEach((w,k) => { if (t >= w[0]) i = k; }); onWord(i, T.length); };
+  AU.onended = () => { if (id === talkId) onEnd(true); }; AU.onerror = () => { if (id === talkId) onEnd(false); };
+  AU.play().catch(() => { if (id === talkId) onEnd(false); }); return true; }
+return {recMain, quiet: () => hush(), get P(){ return P; }, open, boss, hush: () => { tok++; hush(); beatStop(); }, misses: () => lastMiss.length, replayMisses};
 })();
 
 paintSpeed(); paintBoard(); if (!Array.isArray(S.miss)) S.miss = []; setSub(S.sub || "gr"); subjects(); setTimeout(syncNow, 1500);
