@@ -15,6 +15,12 @@ on:
         default: "eleven_multilingual_v2"
         type: choice
         options: ["eleven_multilingual_v2", "eleven_flash_v2_5"]
+      source:
+        description: "Record new audio, or download clips you already made from your ElevenLabs History (free)"
+        required: true
+        default: "record"
+        type: choice
+        options: ["record", "recover from History"]
       max_chars:
         description: "Stop after this many characters (0 = record everything)"
         required: false
@@ -31,7 +37,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install requests==2.32.3
+      - run: pip install requests==2.32.3 mutagen==1.47.0
       - name: Record lines
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
@@ -39,6 +45,7 @@ jobs:
           BEAT_VOICE_ID: ${{ inputs.beat_voice_id }}
           MAX_CHARS: ${{ inputs.max_chars }}
           MODEL_ID: ${{ inputs.model }}
+          FROM_HISTORY: ${{ inputs.source == 'recover from History' }}
         run: python tools/make_audio.py
       - name: Save the audio to the repo
         if: always()
@@ -47,4 +54,12 @@ jobs:
           git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
           git add public/audio
           git commit -m "Record voice audio" || echo "Nothing new to save"
-          git push
+          for i in 1 2 3 4 5; do git pull --rebase -X theirs origin main && git push && exit 0; sleep 5; done
+          exit 1
+      - name: Keep a backup copy of the audio
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: voice-audio
+          path: public/audio
+          retention-days: 30

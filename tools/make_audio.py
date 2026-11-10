@@ -40,6 +40,48 @@ def word_times(text, al):
     out = (out + [out[-1]] * n)[:n] if out else []
     return [[round(a, 3), round(b, 3)] for a, b in out]
 
+FROM_HISTORY = os.environ.get("FROM_HISTORY", "") in ("1", "true", "yes")
+
+def mp3_seconds(b):
+    try:
+        from mutagen.mp3 import MP3; import io
+        return MP3(io.BytesIO(b)).info.length
+    except Exception:
+        return len(b) / 16000  # 128 kbps
+
+def est_times(text, secs):
+    """No timing data in History, so spread the words across the clip by length."""
+    words = text.split(); pad = 0.12; span = max(0.3, secs - 2 * pad)
+    w = [len(x) + 1 for x in words]; tot = sum(w) or 1; t = pad; out = []
+    for x in w:
+        d = span * x / tot; out.append([round(t, 3), round(t + d, 3)]); t += d
+    return out
+
+if FROM_HISTORY:
+    # Download clips already made (they're in your ElevenLabs History). Downloading doesn't use credits.
+    s = requests.Session(); s.headers.update({"xi-api-key": KEY})
+    want = set(lines); got = 0; after = None; seen = 0
+    while True:
+        q = {"page_size": 1000, "voice_id": VOICE}
+        if after: q["start_after_history_item_id"] = after
+        r = s.get("https://api.elevenlabs.io/v1/history", params=q, timeout=60)
+        if r.status_code != 200: sys.exit(f"History request failed ({r.status_code}): {r.text[:300]}")
+        j = r.json(); items = j.get("history", [])
+        for it in items:
+            seen += 1; t = (it.get("text") or "").strip()
+            if t not in want or (t in manifest and (OUT / manifest[t][0]).exists()): continue
+            a = s.get(f"https://api.elevenlabs.io/v1/history/{it['history_item_id']}/audio", timeout=60)
+            if a.status_code != 200: print("skip", a.status_code, t[:50]); continue
+            f = fid(t, it.get("voice_id") or VOICE); (OUT / f).write_bytes(a.content)
+            manifest[t] = [f, est_times(t, mp3_seconds(a.content))]; got += 1
+            if got % 50 == 0: print(f"  {got} downloaded...")
+        if not j.get("has_more") or not items: break
+        after = j.get("last_history_item_id") or items[-1]["history_item_id"]
+    man_path.write_text(json.dumps({k: v for k, v in manifest.items() if k in want}, ensure_ascii=False, separators=(",", ":")))
+    print(f"Recovered {got} clips from History ({seen} History items checked). {sum(1 for k in manifest if k in want)} of {len(lines)} lines have audio.")
+    if not got and not manifest: sys.exit("Nothing found in History for this voice.")
+    sys.exit(0)
+
 todo = [t for t in lines if not (t in manifest and manifest[t][0] == fid(t, BEAT_VOICE if t in beat else VOICE) and (OUT / manifest[t][0]).exists())]
 print(f"{len(lines)} lines, {len(todo)} to record ({sum(map(len, todo))} characters). Voice {VOICE}, model {MODEL}.")
 used, done, failed = 0, 0, 0
