@@ -207,7 +207,12 @@ function mothsSVG(m){ const pos = [[60,40],[150,30],[240,50],[330,36],[90,120],[
   return `<svg class="v-moths" viewBox="0 0 400 220" role="img" aria-label="${m.l} light moths and ${m.d} dark moths on a ${m.bark} tree">${s}</svg>`; }
 function tlHTML(tl, hi, opt){ opt = opt || {}; const H = Array.isArray(hi) ? hi : hi==null ? [] : [hi];
   return `<div class="v-tl">${tl.map(([y,l,e],k)=>`<button data-k="${k}" class="${H.includes(k)?"hi":""} ${H.length&&!H.includes(k)&&!opt.ask?"dimmed":""}" ${opt.ask?"":"tabindex=\"-1\""}><b>${E(y)}</b>${icon(e)}<span>${opt.ask?"":E(l)}</span></button>`).join("")}</div>`; }
+function sentHTML(s, hi, mode){ return `<div class="v-sent ${hi?"has-hi":""}">${toks(s).map((t,i) => { const colored = "nvarp".includes(t.tag), pos = TAGS[t.tag] || ["",""];
+    const cls = `w ${t.tag==="x"?"punct":colored?t.tag:"plain"} ${t.tag===hi?"hi":""}`;
+    if (mode === "tap" && t.tag !== "x") return `<button class="${cls.replace(/ (n|v|a|r|p) /," plain ")} v-tw" data-i="${i}"><span class="t">${E(t.w)}</span><span class="lb">&nbsp;</span></button>`;
+    return `<span class="${cls}" data-i="${i}"><span class="t">${E(t.w)}</span><span class="lb">${colored?pos[0]:"&nbsp;"}</span></span>`; }).join("")}</div>`; }
 function visHTML(v, LV){ if (!v) return "";
+  if (v.sent) return sentHTML(v.sent, v.hi);
   if (v.e) return `<div class="v-erow ${v.e.length>4?"many":""}">${v.e.map((x,i)=>`<span class="v-emo v-pop" style="animation-delay:${i*0.25}s" aria-hidden="true">${E(x)}</span>`).join("")}</div>`;
   if (v.big) return `<div class="v-bigtxt">${v.big.map((x,i)=>`<div class="v-pop" style="animation-delay:${i*0.4}s">${E(x)}</div>`).join("")}</div>`;
   if (v.g) return graphSVG(v.g) + (v.eq ? `<div class="v-eq">y = ${eqHTML(v.eq[0], v.eq[1])}</div>` : "");
@@ -268,7 +273,7 @@ function watch(){
 
 /* 2. Explore */
 function explore(){ const ex = LV.explore || {type:"cards"};
-  const T = {cell:exCell, slope:exSlope, quad:exQuad, sys:exSys, nl:exNl, mach:exMach, pow:exPow, balance:exBalance, dna:exDna, pun:exPun, moths:exMoths, tl:exTl, cards:exCards}[ex.type] || exCards;
+  const T = {lab:exLab, swap:exSwap, cell:exCell, slope:exSlope, quad:exQuad, sys:exSys, nl:exNl, mach:exMach, pow:exPow, balance:exBalance, dna:exDna, pun:exPun, moths:exMoths, tl:exTl, cards:exCards}[ex.type] || exCards;
   T(ex);
 }
 function exFrame(prompt, inner, intro){ frame(`<p class="v-prompt">${prompt}</p>${inner}`, "Word power"); sayRaw(intro || plain(prompt)); }
@@ -378,7 +383,23 @@ function exTl(){ const seen = new Set();
   $("eT").querySelectorAll("button").forEach(b => { b.tabIndex = 0; b.onclick = () => { const k = +b.dataset.k; seen.add(k); b.classList.add("hi"); tick();
     const line = lines.find(w => [].concat(w[2].tl).includes(k)); sayRaw(`${LV.tl[k][0]}. ${LV.tl[k][1].replace(/;/g, ".")}. ${line ? line[0] : ""}`); }; });
 }
-const cardEmo = v => (v.e || (v.chain||v.pyr||[]).map(x=>x[0]) || []).slice(0,3).join("") || (v.cell?"🔬":v.g?"📈":v.big?"🔢":v.bal?"⚖️":v.dna?"🧬":v.pun?"🔲":v.moths?"🦋":v.acr?"🔤":"💡");
+const cardEmo = v => v.sent ? "🔤" : (v.e || (v.chain||v.pyr||[]).map(x=>x[0]) || []).slice(0,3).join("") || (v.cell?"🔬":v.g?"📈":v.big?"🔢":v.bal?"⚖️":v.dna?"🧬":v.pun?"🔲":v.moths?"🦋":v.acr?"🔤":"💡");
+function exLab(ex){ const seen = new Set();
+  exFrame("Tap any word. I'll tell you what it is.", `<div id="eLab" style="display:flex;flex-direction:column;gap:14px">${ex.sents.map((s,k)=>`<div class="v-lab" data-s="${k}">${sentHTML(s,null)}</div>`).join("")}</div>`, "Tap any word. I'll tell you what part of speech it is, and the color will show up.");
+  document.querySelectorAll(".v-lab .w:not(.punct)").forEach(w => w.onclick = () => { const s = ex.sents[+w.closest(".v-lab").dataset.s], t = toks(s)[+w.dataset.i], pos = TAGS[t.tag] || ["word",""];
+    w.classList.add("open"); tick(); sayRaw(`${t.w}. ${pos[0][0].toUpperCase()+pos[0].slice(1)}. ${pos[1][0].toUpperCase()+pos[1].slice(1)}.`); }); }
+function exSwap(ex){ let k = 0;
+  exFrame("Try each word in the sentence. Hear which one fits.", `<div id="eSw"></div>`, "Try each word in the sentence. Listen to which one fits.");
+  const draw = () => { const it = ex.items[k];
+    $("eSw").innerHTML = `<div class="v-stage"><p class="v-swaps" id="eS">${E(it.s).replace("[___]", `<span class="v-slot2">___</span>`)}</p></div>
+      <div class="v-mc">${it.opts.map((o,i)=>`<button data-i="${i}">${E(o[0])}</button>`).join("")}</div><div class="v-cap" id="eC" style="font-size:20px"></div>
+      ${ex.items.length>1?`<div class="row v-center"><button class="btn go" id="eNx">Next sentence →</button></div>`:""}`;
+    $("eSw").querySelectorAll(".v-mc button").forEach(b => b.onclick = async () => { const o = it.opts[+b.dataset.i], full = it.s.replace("[___]", o[0]);
+      $("eS").innerHTML = E(it.s).replace("[___]", `<span class="v-slot2 in">${E(o[0])}</span>`); $("eC").textContent = o[1];
+      const good = /fits\.|works|That's it|complete sentence\./i.test(o[1]) && !/Doesn't|doesn't/.test(o[1]); b.style.borderColor = good ? "var(--good)" : "var(--bad)"; tick();
+      saySeq([[full], [o[1], $("eC")]]); });
+    if ($("eNx")) $("eNx").onclick = () => { k = (k+1) % ex.items.length; draw(); }; };
+  draw(); }
 function exCards(){ const seen = new Set();
   exFrame("Tap each card to hear it again.", `<div class="v-gallery">${LV.watch.map((w,k)=>`<button data-k="${k}"><span class="v-emo">${E(cardEmo(w[2]))}</span><span>${capHTML(w[1])}</span></button>`).join("")}</div>`, "Tap each card to hear it again. Try to say it back out loud.");
   document.querySelectorAll(".v-gallery button").forEach(b => b.onclick = () => { const k = +b.dataset.k; seen.add(k); b.classList.add("seen"); tick(); sayRaw(LV.watch[k][0]); });
@@ -451,21 +472,23 @@ function ask(){ const q = P.items[P.i];
     <div id="qBody" style="display:flex;flex-direction:column;gap:12px"></div><div id="qFb"></div>`, "");
   $("qHear").onclick = () => sayRaw(q.say);
   const fin = (ok, why, show) => answered(q, ok, why, show);
-  ({tap:qTap, tf:qTf, sort:qSort, match:qMatch, seq:qSeq, pick:qPick, mc:qMc, build:qBuild, pickline:qPickLine, ydot:qYdot, balance:qBal, dna:qDna, pun:qPun, tltap:qTl})[q.t](q, $("qBody"), fin);
-  sayRaw(q.say);
+  ({tapw:qTapW, fixit:qFix, tap:qTap, tf:qTf, sort:qSort, match:qMatch, seq:qSeq, pick:qPick, mc:qMc, build:qBuild, pickline:qPickLine, ydot:qYdot, balance:qBal, dna:qDna, pun:qPun, tltap:qTl})[q.t](q, $("qBody"), fin);
+  if (q.t === "tapw") saySeq([[q.say], [sentenceText(q.s), $("qS")]]);
+  else if (q.t === "fixit") saySeq([[q.say], ...(q.s ? [[q.s.replace(/[\[\]]/g,"")]] : []), ...q.order.map((k,i)=>[`${"ABCD"[i]}. ${q.ch[k]}.`])]);
+  else sayRaw(q.say);
 }
 function answered(q, ok, why, show){
   if (P.res[P.i] !== undefined) return; P.res[P.i] = ok; if (ok) P.right++; else P.miss.push(q);
   if (P.replay) { ok ? SFX.ok() : SFX.no(); if (ok) { S.points += 1; save(); paintBoard(); } } else score(ok, {prompt: plain(q.cap)});
   const cheer = ok ? CHEERS_OK[Math.floor(Math.random()*CHEERS_OK.length)] : CHEERS_NO[Math.floor(Math.random()*CHEERS_NO.length)];
   const last = P.i + 1 >= P.items.length;
-  $("qFb").innerHTML = `<div class="v-fb ${ok?"ok":"no"}">${ok?IC.yes:IC.nope}<div><div>${E(cheer)}${ok&&!P.replay?" +2":""}</div>${why?`<div style="font-weight:500" id="fbWhy">${E(why)}</div>`:""}</div></div>
+  $("qFb").innerHTML = `<div class="v-fb ${ok?"ok":"no"}">${ok?IC.yes:IC.nope}<div><div>${E(cheer)}${ok&&!P.replay?" +2":""}</div>${why?`<div style="font-weight:500" id="fbWhy">${E([].concat(why).filter(Boolean).join(" "))}</div>`:""}</div></div>
     <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="fbHear">🔊 Hear it</button><button class="btn go v-big" id="qNext">${last?"See my score":"Next"} →</button></div>`;
   if (show) show();
   if (ok) { $("qFb").insertAdjacentHTML("afterbegin", `<div class="v-pop2" aria-hidden="true">+${P.replay?1:2}</div><div class="v-confetti" aria-hidden="true">${Array.from({length:18},(_,k)=>`<i style="left:${5+(k*53)%90}%;background:${["var(--accent)","var(--blue)","var(--good)","var(--nuc)"][k%4]};animation-delay:${(k%6)*0.05}s"></i>`).join("")}</div>`);
     if (S.streak >= 3 && !P.replay) $("qFb").querySelector(".v-fb > div").insertAdjacentHTML("beforeend", `<div class="v-streak">🔥 ${S.streak} in a row</div>`); }
   else { const qb = $("qBody"); qb.classList.remove("v-shake"); void qb.offsetWidth; qb.classList.add("v-shake"); }
-  const talk = () => saySeq([[cheer], [why, $("fbWhy")]]); talk(); $("fbHear").onclick = talk;
+  const talk = () => Array.isArray(why) ? saySeq([[cheer], ...why.filter(Boolean).map(t => [t])]) : saySeq([[cheer], [why, $("fbWhy")]]); talk(); $("fbHear").onclick = talk;
   $("qNext").onclick = () => { P.i++; if (P.i < P.items.length) ask(); else finish(); };
   $("qNext").focus({preventScroll:true}); $("qBody").style.pointerEvents = "none";
   const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; $("qFb").scrollIntoView({behavior: calm ? "auto" : "smooth", block:"nearest"});
@@ -482,6 +505,21 @@ function finish(){ lastMiss = P.miss.slice();
 }
 
 /* ---- question types ---- */
+function qTapW(q, body, fin){
+  body.innerHTML = `<div class="v-stage" id="qS">${sentHTML(q.s, null, "tap")}</div><p class="small muted" style="text-align:center">Tap the word.</p>`;
+  body.querySelectorAll(".v-tw").forEach(b => b.onclick = () => { const t = toks(q.s)[+b.dataset.i], ok = t.tag === q.want, want = TAGS[q.want], got = TAGS[t.tag] || ["word",""];
+    const an = w => (/^[aeiou]/i.test(w) ? "an " : "a ") + w;
+    const whyWrong = ok ? "" : `"${t.w}" is ${got[0]==="word"?"not "+an(want[0]):an(got[0])+", "+got[1]}. We're looking for ${an(want[0])}: ${want[1]}.`;
+    fin(ok, ok ? q.ex : [whyWrong, q.ex], () => { $("qS").innerHTML = sentHTML(q.s, q.want); $("qS").querySelectorAll(".w")[+b.dataset.i]?.classList.add(ok ? "right" : "wrong"); }); });
+}
+function qFix(q, body, fin){
+  body.innerHTML = `${q.s?`<div class="v-stage"><p class="v-swaps">${ulHTML(q.s)}</p></div>`:""}<div class="v-mc">${q.order.map((k,i)=>`<div class="v-fixopt"><button class="pick" data-k="${k}"><span class="lt">${"ABCD"[i]}</span>${E(q.ch[k])}</button>${q.s?`<button class="hear btn" data-k="${k}" aria-label="Hear it in the sentence">🔊</button>`:""}</div>`).join("")}</div>`;
+  body.querySelectorAll(".hear").forEach(b => b.onclick = () => sayRaw(filled(q.s, q.ch[+b.dataset.k])));
+  body.querySelectorAll(".pick").forEach(b => b.onclick = () => { const k = +b.dataset.k, ok = k === q.a;
+    body.querySelectorAll(".pick").forEach(x => { const kk = +x.dataset.k; if (kk === q.a) x.style.borderColor = "var(--good)"; else if (kk === k) x.style.borderColor = "var(--bad)"; });
+    fin(ok, ok ? `The answer is "${q.ch[q.a]}". ${q.ex}` : [`You picked "${q.ch[k]}". ${q.why[k]}`, `The answer is "${q.ch[q.a]}". ${q.ex}`],
+      () => { if (q.s) body.querySelector(".v-swaps").innerHTML = sayHTML(filled(q.s, q.ch[q.a])); }); });
+}
 function qTap(q, body, fin){
   body.innerHTML = `<div class="v-stage">${cellSVG("tcell")}</div>`; const s = $("tcell"); requestAnimationFrame(() => cellShow(s, q.cell));
   cellTap(s, (p, g) => { const ok = p === q.target, T = PARTS[q.target], H = PARTS[p];

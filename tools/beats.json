@@ -1,4 +1,84 @@
 {
+ "nv": {
+  "subject": "Grammar",
+  "level": "Nouns & Verbs",
+  "lines": [
+   "Noun is the name, person, place, or thing,",
+   "Coach, gym, ball, faith, that's the team they bring,",
+   "Verb is the action, what you do on the floor,",
+   "Run, pass, shoot, pray, score some more."
+  ]
+ },
+ "ar": {
+  "subject": "Grammar",
+  "level": "Adjectives & Adverbs",
+  "lines": [
+   "Tall center, loud crowd, adjectives describe,",
+   "What kind, which one, how many, that's the vibe,",
+   "Ran quickly, played hard, adverbs tell how,",
+   "Most end in L Y, you got it now."
+  ]
+ },
+ "pr": {
+  "subject": "Grammar",
+  "level": "Pronouns",
+  "lines": [
+   "Marcus scored, he celebrated, see,",
+   "Pronoun takes the place so you don't repeat me,",
+   "I, he, she, we, they, doing the play,",
+   "Me, him, her, us, them, the ball comes their way."
+  ]
+ },
+ "sv": {
+  "subject": "Grammar",
+  "level": "Subject–Verb Agreement",
+  "lines": [
+   "One player runs, two players run,",
+   "Subject and the verb, they match as one,",
+   "Bag of footballs? Skip the middle part,",
+   "One bag is heavy, play it smart."
+  ]
+ },
+ "cs": {
+  "subject": "Grammar",
+  "level": "Complete Sentences",
+  "lines": [
+   "Subject, verb, and a thought that's done,",
+   "The ball went in, that's a complete one,",
+   "Because the game ran late, then what, I'm stuck,",
+   "Smash two together? Run-on, bad luck."
+  ]
+ },
+ "cm": {
+  "subject": "Grammar",
+  "level": "Commas",
+  "lines": [
+   "Cones, balls, and water, list it with a comma,",
+   "After the game, pause, no need for drama,",
+   "I was tired, comma, but I finished strong,",
+   "Read it out loud, the pause won't steer you wrong."
+  ]
+ },
+ "sa": {
+  "subject": "Grammar",
+  "level": "Sound-Alike Words",
+  "lines": [
+   "There is a place, their means it's theirs,",
+   "They're is they are, now you know the pairs,",
+   "Your is yours, you're means you are,",
+   "It's means it is, keep it up, star."
+  ]
+ },
+ "vt": {
+  "subject": "Grammar",
+  "level": "Verb Tenses",
+  "lines": [
+   "Yesterday I played, today I play,",
+   "Tomorrow I will, that's the future way,",
+   "Run turned to ran, threw not throwed,",
+   "Stay in one time, keep it in the zone."
+  ]
+ },
  "al1": {
   "subject": "Algebra 1",
   "level": "Solving Equations",

@@ -10,7 +10,9 @@ const w=d.window,doc=w.document,$=id=>doc.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));const click=el=>{if(el)el.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));};
 const txt=el=>el?el.textContent.replace(/\s+/g," ").trim():"";
 async function answer(q,right){const body=$("qBody");
-  if(q.t==="tap"){click(doc.querySelector(`#tcell .v-part[data-p="${right?q.target:(q.target==="nucleus"?"mito":"nucleus")}"]`));}
+  if(q.t==="tapw"){const tg=q.s.split(" ").map(x=>x.slice(x.lastIndexOf("/")+1));click([...$("qBody").querySelectorAll(".v-tw")].find(b=>(tg[+b.dataset.i]===q.want)===right));}
+  else if(q.t==="fixit"){click([...$("qBody").querySelectorAll(".pick")].find(b=>(+b.dataset.k===q.a)===right));}
+  else if(q.t==="tap"){click(doc.querySelector(`#tcell .v-part[data-p="${right?q.target:(q.target==="nucleus"?"mito":"nucleus")}"]`));}
   else if(q.t==="tf"){click(body.querySelector(`.v-tf button[data-v="${(q.ans===right)?1:0}"]`));}
   else if(q.t==="mc"){const bs=[...body.querySelectorAll(".v-mc button")];click(bs.find(b=>(b.textContent.slice(1)===q.opts.find(o=>o[1])[0])===right));}
   else if(q.t==="pick"){const bs=[...body.querySelectorAll(".v-pic")];click(bs.find(b=>(b.querySelector("span:last-child").textContent===q.opts.find(o=>o[2])[0])===right));}
@@ -28,7 +30,7 @@ async function answer(q,right){const body=$("qBody");
   await sleep(2);return txt($("qFb"));}
 
 (async()=>{await sleep(30);
- for(const sub of ["al","bi","wh"]){w.eval(`setSub("${sub}")`);
+ for(const sub of (process.env.SUBJECTS||"al,bi,wh").split(",")){w.eval(`setSub("${sub}")`);
   for(let i=0;i<w.eval("UNITS.length");i++){on=true;
    w.eval(`V2.open(${i},0)`);await sleep(5);click($("wPlay"));
    for(let k=0;k<40&&!/Watch again/.test(txt($("wPlay")));k++)await sleep(450);
@@ -40,12 +42,11 @@ async function answer(q,right){const body=$("qBody");
      for(let k=0;k<n;k++){const q=w.eval("V2.P.items[V2.P.i]");try{await answer(q,right);}catch(e){}await sleep(3);click($("qNext"));await sleep(2);}}
    on=false;process.stdout.write(sub+(i+1)+" ");}
  }
- // drop lines with scores or points (they change every time), then add every authored line no matter what
  let lines=[...heard].map(t=>t.trim()).filter(t=>t&&!/\b\d+ out of \d+\b.*(Bayo!|Run it back|won|game)|\+2|points? to |Your rank/.test(t));
- const authored=w.eval(`SUBJ.slice(1).flatMap(s=>s.units.flatMap(u=>{const L=u.v2;return [...L.watch.map(x=>x[0]),...L.words.map(x=>x[2]),...L.beat,...L.play.flatMap(q=>[q.say,q.why||""])];})).concat(CHEERS_OK,CHEERS_NO)`);
- // order: authored lines level by level first (so a partial recording covers the first levels), then everything else
- const first=[...new Set(authored.filter(Boolean).map(t=>t.trim()))];
- const rest=lines.filter(t=>!first.includes(t)&&!/^[,.;:]/.test(t)).sort();
- lines=first.concat(rest);
+ const subs=(process.env.SUBJECTS||"al,bi,wh").split(",");
+ const authored=w.eval(`SUBJ.filter(s=>${JSON.stringify(subs)}.includes(s.id)).flatMap(s=>s.units.flatMap(u=>{const L=u.v2;return [...L.watch.map(x=>x[0]),...L.words.map(x=>x[2]),...L.beat,...L.play.flatMap(q=>[q.say,typeof q.why==="string"?q.why:""])];}))`);
+ // append-only: lines already on the list keep their place
+ const old=JSON.parse(fs.readFileSync(path.join(__dirname,"lines.json"),"utf8"));const have=new Set(old);
+ lines=old.concat([...new Set(authored.filter(Boolean).map(t=>t.trim()).concat(lines))].filter(t=>!have.has(t)&&!/^[,.;:]/.test(t)));
  fs.writeFileSync(path.join(__dirname,"lines.json"),JSON.stringify(lines,null,0));
- console.log("\n"+lines.length+" lines, "+lines.reduce((a,t)=>a+t.length,0)+" characters");process.exit(0);})();
+ console.log("\n"+lines.length+" lines in the list");process.exit(0);})();
