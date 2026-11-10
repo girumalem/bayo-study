@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eaf0f6">
+<title>Bayo's Study Court</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: one thing at a time. Court-floor scoreboard on top, big tap targets, audio on everything.
+   Readability: Lexend, large size, wide line + letter spacing, no italics, soft blue-gray paper (not pure white). */
+:root{
+  --bg:#eaf0f6; --card:#f8fafc; --ink:#1c2430; --muted:#566273; --line:#c9d3df;
+  --accent:#e2681f; --accent-ink:#ffffff; --navy:#1d3557;
+  --good:#1d7a4c; --good-bg:#dcf1e5; --bad:#b4421d; --bad-bg:#fbe5da;
+  --noun:#2563c9; --verb:#c93a52; --adj:#1f8a52; --adv:#7b4bc0; --pron:#0d7f8a; --other:#7a8494;
+  --font:"Lexend",Verdana,Tahoma,system-ui,sans-serif;
+  --size:20px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a22; --card:#1c2430; --ink:#eef2f7; --muted:#a6b1c0; --line:#323e4e;
+  --accent:#f0823a; --accent-ink:#1a0d03; --navy:#9cc3ee;
+  --good:#6fd39b; --good-bg:#143726; --bad:#f39a72; --bad-bg:#3d2116;
+  --noun:#7fb0ff; --verb:#ff8197; --adj:#6fd39b; --adv:#c3a1f7; --pron:#62d3dd; --other:#9aa4b2; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a22; --card:#1c2430; --ink:#eef2f7; --muted:#a6b1c0; --line:#323e4e;
+  --accent:#f0823a; --accent-ink:#1a0d03; --navy:#9cc3ee;
+  --good:#6fd39b; --good-bg:#143726; --bad:#f39a72; --bad-bg:#3d2116;
+  --noun:#7fb0ff; --verb:#ff8197; --adj:#6fd39b; --adv:#c3a1f7; --pron:#62d3dd; --other:#9aa4b2; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:var(--size);line-height:1.7;letter-spacing:.02em;word-spacing:.08em;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 60px;-webkit-text-size-adjust:100%}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+#view{display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;line-height:1.2;letter-spacing:0}
+.brand svg{flex:none}
+.board{display:flex;gap:8px;align-items:stretch;background:var(--navy);color:var(--bg);border-radius:12px;padding:6px 12px;font-weight:700}
+.board div{display:flex;flex-direction:column;align-items:center;line-height:1.1;min-width:52px}
+.board b{font-size:24px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.board small{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;min-width:48px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);font-weight:700;font-size:16px}
+.iconbtn svg{width:24px;height:24px}
+
+/* cards */
+.card{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+h1,h2{margin:0;line-height:1.25;letter-spacing:0}
+h1{font-size:28px;font-weight:800}
+h2{font-size:24px;font-weight:800}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:16px}
+
+/* home */
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.unit{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px;min-height:120px}
+.unit:hover{border-color:var(--accent)}
+.unit .num{font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.unit .nm{font-size:20px;font-weight:800;line-height:1.3}
+.stars{font-size:22px;letter-spacing:.15em;color:var(--line)} .stars .on{color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+
+/* season map */
+.rankcard{display:flex;gap:16px;align-items:center}
+.rankbadge{flex:none;width:72px;height:72px;border-radius:50%;background:var(--navy);display:grid;place-items:center}
+.rankbadge svg{width:56px;height:56px}
+.rankname{font-size:26px;font-weight:800;line-height:1.2}
+.xp{height:16px;border-radius:8px;background:var(--line);overflow:hidden;margin-top:6px}
+.xp i{display:block;height:100%;background:var(--accent);border-radius:8px}
+.map{display:flex;flex-direction:column;align-items:stretch;padding:4px 0}
+.stop{display:flex;align-items:center;gap:14px;width:min(100%,430px)}
+.stop.r{align-self:flex-end;flex-direction:row-reverse;text-align:right}
+.stop.l{align-self:flex-start}
+.link{height:46px;width:100%;display:block}
+.link path{fill:none;stroke:var(--line);stroke-width:6;stroke-dasharray:2 14;stroke-linecap:round}
+.link.done path{stroke:var(--accent)}
+.node{position:relative;flex:none;width:112px;height:112px;border-radius:50%;border:5px solid var(--line);background:var(--card);display:grid;place-items:center;padding:0}
+.node svg{width:84px;height:84px}
+.node.open{border-color:var(--accent)}
+.node.won{border-color:var(--good)}
+.node.locked{background:var(--bg);border-style:dashed}
+.node.locked .art{opacity:.25;filter:grayscale(1)}
+.node .lockic{position:absolute;inset:0;display:grid;place-items:center}
+.node .lockic svg{width:52px;height:52px}
+.node.boss{width:132px;height:132px;border-width:6px}
+.node.boss svg{width:100px;height:100px}
+.lvnum{position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--bg);font-weight:800;font-size:14px;border-radius:10px;padding:2px 10px;white-space:nowrap}
+.here{position:absolute;top:-16px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:13px;letter-spacing:.08em;border-radius:10px;padding:3px 10px;white-space:nowrap}
+.here::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.here{animation:bob 1.4s ease-in-out infinite}@keyframes bob{50%{transform:translate(-50%,-5px)}}}
+.stopinfo{display:flex;flex-direction:column;gap:2px;min-width:0}
+.stopinfo .nm{font-size:20px;font-weight:800;line-height:1.25}
+.stopinfo .st{font-size:15px;font-weight:700;color:var(--muted)}
+.stop.r .stars{text-align:right}
+.lvhead{display:flex;align-items:center;gap:14px}
+.lvhead svg{flex:none;width:72px;height:72px}
+/* celebration */
+.celebrate{position:relative;overflow:hidden;align-items:center;text-align:center}
+.celebrate .big svg{width:150px;height:150px}
+.burst{position:absolute;inset:0;pointer-events:none}
+.burst i{position:absolute;top:-12px;width:10px;height:16px;border-radius:2px;opacity:0}
+@media (prefers-reduced-motion:no-preference){.burst i{animation:fall 1.8s ease-in forwards}@keyframes fall{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(420px) rotate(540deg)}}}
+.unlock{border:3px solid var(--accent);border-radius:16px;padding:14px 16px;display:flex;gap:14px;align-items:center;text-align:left;width:100%}
+.unlock svg{flex:none;width:72px;height:72px}
+.unlock b{font-size:21px;display:block}
+.pill{display:inline-block;background:var(--navy);color:var(--bg);border-radius:999px;padding:4px 14px;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+
+/* subjects */
+.subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.subj{display:flex;gap:14px;align-items:center;text-align:left;background:var(--card);border:3px solid var(--line);border-radius:18px;padding:16px;min-height:120px}
+.subj:hover{border-color:var(--accent)}
+.subj svg{flex:none;width:76px;height:76px}
+.subj .nm{font-size:22px;font-weight:800;line-height:1.2;display:block}
+.subj .st{font-size:15px;font-weight:700;color:var(--muted);display:block;margin:2px 0 6px}
+.subj .xp{margin-top:0}
+/* worked steps */
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{font-size:26px;font-weight:700;line-height:1.35;padding:8px 14px;border-radius:12px;background:var(--bg);border:2px solid var(--line);font-variant-numeric:tabular-nums}
+.step.new{border-color:var(--accent)}
+.mathline{font-size:30px;font-weight:700;line-height:1.35;padding:10px 16px;border-radius:14px;background:var(--bg);border:2px solid var(--line);align-self:flex-start;max-width:100%}
+.reading{outline:4px solid var(--accent);outline-offset:3px;border-radius:10px}
+/* visuals */
+.vis{display:flex;justify-content:center}
+.vis svg.graph{width:100%;max-width:300px;height:auto}
+.graph .grid{stroke:var(--line);stroke-width:1}
+.graph .ax{stroke:var(--ink);stroke-width:2}
+.graph text{font:700 11px Lexend,sans-serif;fill:var(--muted)}
+.pun{border-collapse:separate;border-spacing:6px;font-size:26px;font-weight:800}
+.pun th{width:72px;height:56px;color:var(--navy);font-size:22px}
+.pun td{width:72px;height:64px;text-align:center;border-radius:12px;background:var(--bg);border:2px solid var(--line)}
+.pun td.dom{color:var(--verb)} .pun td.rec{color:var(--noun)}
+.pun caption{caption-side:bottom;font-size:15px;font-weight:700;color:var(--muted);padding-top:6px}
+/* order questions */
+.slots{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:s}
+.slots li{counter-increment:s;display:flex;align-items:center;gap:12px;min-height:56px;border:2px dashed var(--line);border-radius:14px;padding:0 12px;font-size:20px;font-weight:600}
+.slots li::before{content:counter(s);flex:none;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:16px;font-weight:800}
+.slots li button{flex:1;text-align:left;border:0;background:transparent;font:inherit;min-height:52px;padding:0}
+.slots li.filled{border-style:solid;border-color:var(--navy)}
+.slots li.ok{border-color:var(--good);background:var(--good-bg)} .slots li.no{border-color:var(--bad);background:var(--bad-bg)}
+.pool{display:flex;flex-direction:column;gap:8px}
+.pool button{text-align:left;min-height:56px;border:2px solid var(--accent);border-radius:14px;background:var(--card);padding:8px 14px;font-size:20px;font-weight:700}
+.olist{margin:0;padding-left:28px;font-size:19px;font-weight:600;display:flex;flex-direction:column;gap:4px}
+
+/* word chips (colour + label, never colour alone) */
+.sent{display:flex;flex-wrap:wrap;gap:10px 6px;align-items:flex-end;font-size:24px;line-height:1.3}
+.w{display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border-radius:10px;border:2px solid transparent;background:transparent}
+.w .t{font-weight:600}
+.w .lb{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;line-height:1}
+.w.n{border-color:var(--noun)} .w.n .t,.w.n .lb{color:var(--noun)}
+.w.v{border-color:var(--verb)} .w.v .t,.w.v .lb{color:var(--verb)}
+.w.a{border-color:var(--adj)} .w.a .t,.w.a .lb{color:var(--adj)}
+.w.r{border-color:var(--adv)} .w.r .t,.w.r .lb{color:var(--adv)}
+.w.p{border-color:var(--pron)} .w.p .t,.w.p .lb{color:var(--pron)}
+.w.plain .lb{visibility:hidden}
+.w.punct{padding:4px 0;margin-left:-6px}
+.w.punct .lb{visibility:hidden}
+.w.speaking{background:var(--accent);border-color:var(--accent)} .w.speaking .t,.w.speaking .lb{color:var(--accent-ink)}
+button.w{border-color:var(--line);background:var(--card);min-height:56px;min-width:48px;justify-content:center}
+button.w .lb{visibility:hidden}
+button.w:hover{border-color:var(--ink)}
+button.w.pick-ok{background:var(--good-bg);border-color:var(--good)}
+button.w.pick-bad{background:var(--bad-bg);border-color:var(--bad)}
+
+/* readable text with spoken-word highlight */
+.say span.cur{background:var(--accent);color:var(--accent-ink);border-radius:4px}
+.tip{border-left:6px solid var(--accent);padding:6px 0 6px 14px;font-weight:500}
+.ul{text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:6px;text-decoration-color:var(--accent);font-weight:700}
+.sentence{font-size:24px;line-height:1.6}
+
+/* buttons */
+.btn{min-height:56px;border-radius:14px;padding:0 22px;border:2px solid var(--line);background:var(--card);font-weight:800;font-size:19px}
+.btn.go{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.listen{display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 18px;border-radius:14px;border:2px solid var(--navy);background:transparent;font-weight:800;font-size:18px;color:var(--navy)}
+.listen svg{width:26px;height:26px}
+.listen.playing{background:var(--navy);color:var(--bg)}
+
+/* choices */
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:stretch;gap:0;border:2px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+.opt .pick{flex:1;text-align:left;border:0;background:transparent;padding:12px 16px;min-height:60px;font-size:21px;font-weight:600;display:flex;gap:14px;align-items:center}
+.opt .letter{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font-size:16px;font-weight:800}
+.opt .hear{border:0;border-left:2px solid var(--line);background:transparent;width:64px;display:grid;place-items:center;color:var(--navy)}
+.opt .hear svg{width:26px;height:26px}
+.opt.ok{border-color:var(--good);background:var(--good-bg)}
+.opt.no{border-color:var(--bad);background:var(--bad-bg)}
+.opt .pick:disabled{cursor:default;color:inherit}
+
+/* feedback */
+.fb{border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;border:2px solid var(--line)}
+.fb.ok{border-color:var(--good);background:var(--good-bg)}
+.fb.no{border-color:var(--bad);background:var(--bad-bg)}
+.fb .head{font-weight:800;font-size:22px}
+.prog{height:12px;border-radius:6px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.dots{display:flex;gap:6px}
+.dots i{width:14px;height:14px;border-radius:50%;background:var(--line);display:block}
+.dots i.cur{background:var(--navy)}
+
+/* settings */
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:10px 16px;font-weight:700;font-size:16px;min-height:48px}
+.seg button[aria-pressed="true"]{background:var(--navy);color:var(--bg)}
+select{font:inherit;font-size:16px;min-height:48px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:0 10px;max-width:100%}
+label.chk{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;min-height:48px}
+label.chk input{width:24px;height:24px;accent-color:var(--accent)}
+.notice{font-size:16px;border:2px dashed var(--line);border-radius:12px;padding:10px 14px}
+@media (max-width:480px){:root{--size:19px}.sent{font-size:22px}.brand{font-size:19px}h1{font-size:24px}}
+@media (prefers-reduced-motion:reduce){.prog i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="var(--accent)"/><path d="M2 18h32M18 2v32M7 6c5 4 5 20 0 24M29 6c-5 4-5 20 0 24" fill="none" stroke="var(--navy)" stroke-width="2"/></svg>
+      <span>Bayo's Study Court</span>
+    </div>
+    <div class="row" style="gap:8px">
+      <div class="board" aria-label="Scoreboard"><div><b id="pts">0</b><small>Points</small></div><div><b id="streak">0</b><small>Streak</small></div><div><b id="rankShort" style="font-size:16px;line-height:1.9">Rookie</b><small>Rank</small></div></div>
+      <button class="iconbtn" id="setBtn" aria-label="Sound settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>Sound</button>
+    </div>
+  </header>
+
+  <section class="card" id="settings" hidden>
+    <h2>Sound settings</h2>
+    <div class="row"><span style="font-weight:700">Speed</span><div class="seg" id="speed"><button data-r="0.75">Slow</button><button data-r="0.9">Normal</button><button data-r="1.1">Fast</button></div></div>
+    <label class="chk"><input type="checkbox" id="auto"> Read each question out loud automatically</label>
+    <label class="chk"><input type="checkbox" id="sfx"> Game sounds (cheer when you get it right)</label>
+    <div class="row"><span style="font-weight:700">Voice</span><select id="voice" aria-label="Voice"></select></div>
+    <div class="row"><button class="listen" id="testVoice"></button></div>
+    <p class="notice" id="noTTS" hidden>This browser can't read out loud. Try Chrome, Safari, or Edge.</p>
+  </section>
+
+  <main id="view"></main>
+</div>
+<script>
+const SUBJ = __SUBJ__;
+let SUB = SUBJ[0], UNITS = SUB.units;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const TAGS = {n:["noun","a person, place, thing, or idea"],v:["verb","an action, what someone does"],a:["adjective","a word that describes a noun"],r:["adverb","a word that tells how, when, or where"],p:["pronoun","a word that takes the place of a noun"],d:["article","a little word like a, an, or the"],o:["preposition","a word that shows where or when, like in, on, or at"],c:["conjunction","a joining word like and, but, or so"],w:["word",""],x:["",""]};
+const SPK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const CHEERS_OK = ["Bucket!","Nothing but net, Bayo.","Touchdown!","That's a three.","Clutch, Bayo.","Money.","That's my guy, Bayo.","Bars. Straight bars."];
+const CHEERS_NO = ["Close, Bayo. Check the replay.","Not this time. Watch the replay.","Good try. Here's the play.","Shake it off, Bayo. Here's the play."];
+
+/* ---------- saved progress (this device only) ---------- */
+const KEY = "bayo-grammar-v1";
+let S = {points:0, streak:0, best:{}, seen:{}, rate:0.9, auto:false, voice:"", days:{}, sfx:true, sub:"", miss:[]};
+try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
+const today = () => { const d = new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); };
+function paintBoard(){ $("pts").textContent = S.points; $("streak").textContent = S.streak; $("rankShort").textContent = rankOf(S.points).r.name.split(" ")[0]; }
+/* ---------- ranks ---------- */
+const RANKS = [{name:"Rookie",at:0},{name:"Starter",at:40},{name:"All-Star",at:100},{name:"MVP",at:200},{name:"Hall of Famer",at:350},{name:"Legend",at:600},{name:"GOAT",at:1000}];
+function rankOf(p){ let i = 0; RANKS.forEach((r,k) => { if (p >= r.at) i = k; }); return {i, r:RANKS[i], next:RANKS[i+1]||null}; }
+/* ---------- game sounds (short tones, no files) ---------- */
+let actx = null;
+function tone(notes){ if (!S.sfx) return; try { actx = actx || new (window.AudioContext||window.webkitAudioContext)(); let t = actx.currentTime;
+  notes.forEach(([f,d]) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = "triangle"; o.frequency.value = f; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.18,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g).connect(actx.destination); o.start(t); o.stop(t+d+0.02); t += d*0.8; }); } catch(e) {} }
+const SFX = { ok:()=>tone([[660,.12],[990,.2]]), no:()=>tone([[330,.18],[262,.25]]), win:()=>tone([[523,.14],[659,.14],[784,.14],[1047,.35]]) };
+
+/* ---------- read aloud ---------- */
+const synth = window.speechSynthesis || null;
+let voices = [], voice = null, speakingBtn = null;
+function loadVoices(){
+  if (!synth) return;
+  voices = synth.getVoices().filter(v => /^en(-|_|$)/i.test(v.lang));
+  const rank = v => (/natural|neural|enhanced|premium|siri/i.test(v.name)?4:0) + (/google us|samantha|aria|jenny|guy|alex|daniel/i.test(v.name)?2:0) + (/en-US/i.test(v.lang)?1:0);
+  voices.sort((a,b) => rank(b) - rank(a));
+  voice = voices.find(v => v.name === S.voice) || voices[0] || null;
+  $("voice").innerHTML = voices.map(v => `<option ${voice&&v.name===voice.name?"selected":""}>${esc(v.name)}</option>`).join("") || "<option>Default voice</option>";
+}
+if (synth) { loadVoices(); synth.onvoiceschanged = loadVoices; } else { $("noTTS").hidden = false; }
+
+function clearHighlights(){ document.querySelectorAll(".reading").forEach(e=>e.classList.remove("reading")); document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur")); document.querySelectorAll(".w.speaking").forEach(e=>e.classList.remove("speaking")); if (speakingBtn) speakingBtn.classList.remove("playing"); speakingBtn = null; }
+function stop(){ if (synth) synth.cancel(); clearHighlights(); }
+/* speak(text, spans?) — spans: elements each with data-o (char offset in text) for word highlighting */
+function speak(text, spans, btn){
+  if (!synth) return;
+  stop();
+  const u = new SpeechSynthesisUtterance(spoken(text));
+  u.rate = S.rate; if (voice) u.voice = voice; u.lang = voice ? voice.lang : "en-US";
+  let list = spans ? [...spans] : [];
+  if (list.length && changes(text)) { const box = list[0].closest(".say,.sent,.step,.mathline") || list[0].parentElement; list = []; if (box) box.classList.add("reading"); }
+  u.onboundary = e => { if (!list.length || e.name === "sentence") return; let hit = null; for (const s of list) { if (+s.dataset.o <= e.charIndex) hit = s; else break; }
+    list.forEach(s => s.classList.remove("cur","speaking")); if (hit) hit.classList.add(hit.classList.contains("w")?"speaking":"cur"); };
+  u.onend = u.onerror = () => clearHighlights();
+  if (btn) { speakingBtn = btn; btn.classList.add("playing"); }
+  synth.speak(u);
+}
+/* Turn plain text into word spans that can be highlighted while spoken */
+function spansFrom(text, base){ let o = base||0, out = ""; for (const part of text.split(/(\s+)/)) { if (!part) continue; if (/^\s+$/.test(part)) { out += part; o += part.length; continue; } out += `<span data-o="${o}">${esc(part)}</span>`; o += part.length; } return out; }
+function sayHTML(text){ return `<span class="say">${spansFrom(text,0)}</span>`; }
+function speakEl(el, btn){ const spans = el.querySelectorAll("[data-o]"); const text = el.dataset.text || el.textContent; speak(text, spans, btn); }
+function listenBtn(label, id){ return `<button class="listen" ${id?`id="${id}"`:""}>${SPK}<span>${label}</span></button>`; }
+
+/* ---------- tagged sentences ---------- */
+const SUP = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9"};
+function mathSpeak(t){
+  t = t.replace(/([A-Za-z0-9)])([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (m,b,p) => { const n = [...p].map(c=>SUP[c]).join(""); return b + (n==="2"?" squared":n==="3"?" cubed":n==="0"?" to the zero power":" to the "+n+(n==="1"?"st":"th")+" power"); })
+   .replace(/ˣ/g," to the x power")
+   .replace(/\((−?[\d.]+), (−?[\d.]+)\)/g,"the point $1, $2")
+   .replace(/\b([fgh])\(([^)]+)\)/g,"$1 of $2")
+   .replace(/(\d)\(/g,"$1 times (").replace(/\)\(/g,") times (").replace(/([a-z])\(/g,"$1 times (")
+   .replace(/(^|[\s(,{=])−(?=[\dA-Za-z])/g,"$1negative ")
+   .replace(/−/g," minus ").replace(/≤/g," is less than or equal to ").replace(/≥/g," is greater than or equal to ")
+   .replace(/ < /g," is less than ").replace(/ > /g," is greater than ").replace(/=/g," equals ")
+   .replace(/÷/g," divided by ").replace(/[×·]/g," times ").replace(/(\w)\/(\w)/g,"$1 over $2")
+   .replace(/ \+ /g," plus ").replace(/(\d)([a-z])\b/g,"$1 $2")
+   .replace(/→/g," gives ").replace(/[{}]/g,"").replace(/[()]/g,", ");
+  return t;
+}
+function geneSpeak(t){
+  t = t.replace(/(^|[\s"])B(?=[\s".,?]|$)/g,"$1big B").replace(/(^|[\s"])([bt])(?=[\s".,?]|$)/g,(m,p,l)=>`${p}little ${l.toUpperCase()}`);
+  return t.replace(/\b([A-Za-z])([A-Za-z])\b/g,(m,a,b)=> a.toLowerCase()===b.toLowerCase() ? `${a===a.toUpperCase()?"big":"little"} ${a.toUpperCase()}, ${b===b.toUpperCase()?"big":"little"} ${b.toUpperCase()}` : m);
+}
+const spoken = t => { t = t.replace(/(^|\s)-ly\b/g,"$1L Y").replace(/(^|\s)-ed\b/g,"$1E D");
+  if (SUB.id === "al") t = mathSpeak(t); if (SUB.id === "bi") t = geneSpeak(t);
+  return t.replace(/\s+/g," ").replace(/ ,/g,",").replace(/,\s*,/g,",").trim(); };
+const changes = t => SUB.id !== "gr" && spoken(t) !== t.replace(/\s+/g," ").trim();
+const toks = s => s.split(" ").map(t => { const i = t.lastIndexOf("/"); return {w:t.slice(0,i), tag:t.slice(i+1)}; });
+function sentenceText(s){ return toks(s).map(t=>t.w).join(" ").replace(/ ([.,!?;:])/g,"$1"); }
+function chipsHTML(s, mode){ // mode: "show" colours all, "tap" plain buttons
+  let o = 0; const text = sentenceText(s);
+  return toks(s).map((t,i) => {
+    const idx = text.indexOf(t.w, o); if (idx >= 0) o = idx + t.w.length;
+    const pos = TAGS[t.tag]||["",""];
+    if (t.tag === "x") return `<span class="w punct" data-o="${idx}"><span class="t">${esc(t.w)}</span><span class="lb" aria-hidden="true">&nbsp;</span></span>`;
+    if (mode === "tap") return `<button class="w" data-i="${i}" data-o="${idx}"><span class="t">${esc(t.w)}</span><span class="lb" aria-hidden="true">&nbsp;</span></button>`;
+    const colored = "nvarp".includes(t.tag);
+    return `<span class="w ${colored?t.tag:"plain"}" data-o="${idx}"><span class="t">${esc(t.w)}</span><span class="lb">${colored?pos[0]:"&nbsp;"}</span></span>`;
+  }).join("");
+}
+
+/* ---------- original level illustrations (inline SVG, theme-aware) ---------- */
+const ART = {
+ // Level 1 · Nouns & Verbs: hoop + ball (the thing) going in (the action)
+ nv: `<rect x="30" y="14" width="60" height="40" rx="4" style="fill:var(--card);stroke:var(--navy);stroke-width:4"/>
+      <rect x="48" y="30" width="24" height="16" style="fill:none;stroke:var(--verb);stroke-width:3"/>
+      <ellipse cx="60" cy="58" rx="20" ry="4" style="fill:none;stroke:var(--verb);stroke-width:4"/>
+      <path d="M42 60l6 22M52 61l3 21M60 62v20M68 61l-3 21M78 60l-6 22M45 70h30M48 79h24" style="fill:none;stroke:var(--ink);stroke-width:2;opacity:.7"/>
+      <circle cx="88" cy="92" r="16" style="fill:var(--accent)"/>
+      <path d="M72 92h32M88 76v32M77 81c6 6 6 16 0 22M99 81c-6 6-6 16 0 22" style="fill:none;stroke:var(--navy);stroke-width:2.5"/>
+      <path d="M70 76c-4-6-8-10-14-12" style="fill:none;stroke:var(--accent);stroke-width:3;stroke-dasharray:4 5"/>`,
+ // Level 2 · Adjectives & Adverbs: fast sneaker (describe the shoe, describe how it runs)
+ ar: `<path d="M18 78c0-10 6-18 14-20l18-4 10-14 14 4c-2 8 2 14 10 18l20 8c6 3 8 8 8 12v6H18z" style="fill:var(--card);stroke:var(--navy);stroke-width:4;stroke-linejoin:round"/>
+      <path d="M18 88h92v8c0 4-3 6-7 6H24c-4 0-6-2-6-6z" style="fill:var(--accent)"/>
+      <path d="M52 56l10 6M58 50l10 6M64 44l10 6" style="stroke:var(--navy);stroke-width:3;stroke-linecap:round"/>
+      <path d="M40 70l30-2" style="stroke:var(--adv);stroke-width:5;stroke-linecap:round"/>
+      <path d="M4 60h14M2 72h12M6 84h10" style="stroke:var(--adv);stroke-width:4;stroke-linecap:round"/>`,
+ // Level 3 · Pronouns: two jerseys (he, she, we)
+ pr: `<g transform="translate(2 24)"><path d="M0 14L14 0h8q6 8 12 0h8l14 14-8 12-4-3v49H12V23l-4 3z" style="fill:var(--pron);stroke:var(--navy);stroke-width:3;stroke-linejoin:round"/><text x="28" y="50" text-anchor="middle" style="font:800 17px Lexend,sans-serif;fill:var(--card)">HE</text></g>
+      <g transform="translate(62 24)"><path d="M0 14L14 0h8q6 8 12 0h8l14 14-8 12-4-3v49H12V23l-4 3z" style="fill:var(--accent);stroke:var(--navy);stroke-width:3;stroke-linejoin:round"/><text x="28" y="50" text-anchor="middle" style="font:800 15px Lexend,sans-serif;fill:var(--card)">SHE</text></g>`,
+ // Level 4 · Subject–Verb Agreement: scoreboard where both sides match
+ sv: `<rect x="12" y="26" width="96" height="62" rx="8" style="fill:var(--navy)"/>
+      <rect x="20" y="36" width="36" height="34" rx="4" style="fill:var(--card)"/>
+      <rect x="64" y="36" width="36" height="34" rx="4" style="fill:var(--card)"/>
+      <text x="38" y="62" text-anchor="middle" style="font:800 22px Lexend,sans-serif;fill:var(--noun)">1</text>
+      <text x="82" y="62" text-anchor="middle" style="font:800 22px Lexend,sans-serif;fill:var(--verb)">1</text>
+      <text x="38" y="82" text-anchor="middle" style="font:700 9px Lexend,sans-serif;fill:var(--card)">SUBJECT</text>
+      <text x="82" y="82" text-anchor="middle" style="font:700 9px Lexend,sans-serif;fill:var(--card)">VERB</text>
+      <path d="M40 88v14M80 88v14" style="stroke:var(--navy);stroke-width:5"/>
+      <path d="M50 18l10-8 10 8" style="fill:none;stroke:var(--good);stroke-width:4;stroke-linecap:round;stroke-linejoin:round"/>`,
+ // Level 5 · Complete Sentences: football through the uprights (finish the drive)
+ cs: `<path d="M60 104V62M30 62h60M30 62V14M90 62V14" style="fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round"/>
+      <ellipse cx="60" cy="34" rx="16" ry="10" transform="rotate(-25 60 34)" style="fill:#8a4b22;stroke:var(--navy);stroke-width:2"/>
+      <path d="M52 36l16-6M56 30l2 4M60 29l2 4M64 27l2 4" transform="rotate(-2 60 32)" style="stroke:var(--card);stroke-width:2;stroke-linecap:round"/>
+      <path d="M40 92c6-24 10-40 14-52" style="fill:none;stroke:var(--navy);stroke-width:3;stroke-dasharray:4 5"/>
+      <path d="M14 104h92" style="stroke:var(--good);stroke-width:6;stroke-linecap:round"/>`,
+ // Level 6 · Commas: coach's whistle (a comma is a short pause)
+ cm: `<path d="M24 56a26 26 0 1 0 52 0V44h30v-14H50a26 26 0 0 0-26 26z" style="fill:var(--card);stroke:var(--navy);stroke-width:4;stroke-linejoin:round"/>
+      <circle cx="50" cy="58" r="10" style="fill:var(--accent)"/>
+      <path d="M20 40c-8-8-10-18-6-26" style="fill:none;stroke:var(--navy);stroke-width:3"/>
+      <path d="M84 70c6 4 10 4 16 0M88 80c4 3 8 3 12 0" style="fill:none;stroke:var(--adv);stroke-width:4;stroke-linecap:round"/>
+      <text x="96" y="104" text-anchor="middle" style="font:800 34px Lexend,sans-serif;fill:var(--verb)">,</text>`,
+ // Level 7 · Sound-Alike Words: microphone with sound waves
+ sa: `<rect x="46" y="14" width="28" height="48" rx="14" style="fill:var(--navy)"/>
+      <path d="M50 26h20M50 34h20M50 42h20" style="stroke:var(--card);stroke-width:2;opacity:.6"/>
+      <path d="M36 50a24 24 0 0 0 48 0" style="fill:none;stroke:var(--navy);stroke-width:4;stroke-linecap:round"/>
+      <path d="M60 74v18M46 96h28" style="stroke:var(--navy);stroke-width:5;stroke-linecap:round"/>
+      <path d="M22 32c-6 8-6 22 0 30M12 24c-10 14-10 32 0 46M98 32c6 8 6 22 0 30M108 24c10 14 10 32 0 46" style="fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round"/>`,
+ // Level 8 · Verb Tenses: game clock / stopwatch (past, present, future)
+ vt: `<circle cx="60" cy="66" r="38" style="fill:var(--card);stroke:var(--navy);stroke-width:5"/>
+      <rect x="52" y="14" width="16" height="10" rx="3" style="fill:var(--navy)"/>
+      <path d="M60 66V40M60 66l18 12" style="stroke:var(--verb);stroke-width:5;stroke-linecap:round"/>
+      <circle cx="60" cy="66" r="4" style="fill:var(--navy)"/>
+      <path d="M30 66h6M84 66h6M60 96v-6" style="stroke:var(--ink);stroke-width:3"/>
+      <path d="M90 24l10-8" style="stroke:var(--accent);stroke-width:5;stroke-linecap:round"/>`,
+ // Final level · Championship Game: trophy
+ boss: `<path d="M38 18h44v22a22 22 0 0 1-44 0z" style="fill:var(--accent);stroke:var(--navy);stroke-width:3"/>
+      <path d="M38 24H22c0 14 6 22 18 22M82 24h16c0 14-6 22-18 22" style="fill:none;stroke:var(--navy);stroke-width:4"/>
+      <path d="M54 62h12v16H54zM40 86h40v12H40z" style="fill:var(--navy)"/>
+      <path d="M60 26l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" style="fill:var(--card)"/>`,
+ // Bible (used on lesson slides about Bible examples)
+ bible: `<path d="M26 18h58a8 8 0 0 1 8 8v76H34a8 8 0 0 1-8-8z" style="fill:var(--navy)"/>
+      <path d="M34 94h58" style="stroke:var(--card);stroke-width:4"/>
+      <path d="M59 34v36M48 46h22" style="stroke:var(--accent);stroke-width:6;stroke-linecap:round"/>`,
+ al1: `<path d="M60 22v70M30 104h60" style="stroke:var(--navy);stroke-width:6;stroke-linecap:round"/><path d="M18 40h84" style="stroke:var(--navy);stroke-width:5;stroke-linecap:round"/>
+      <path d="M18 40l-12 30h24zM102 40l-12 30h24z" style="fill:none;stroke:var(--navy);stroke-width:3;stroke-linejoin:round"/>
+      <path d="M6 70a12 6 0 0 0 24 0zM90 70a12 6 0 0 0 24 0z" style="fill:var(--accent)"/><circle cx="60" cy="20" r="7" style="fill:var(--accent)"/>`,
+ al2: `<rect x="12" y="24" width="96" height="72" rx="14" style="fill:var(--navy)"/><path d="M50 40L24 60l26 20M70 40l26 20-26 20" style="fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;stroke-linejoin:round"/>`,
+ al3: `<path d="M18 102V16M18 102h88" style="stroke:var(--navy);stroke-width:5;stroke-linecap:round"/><path d="M24 92L96 28" style="stroke:var(--accent);stroke-width:6;stroke-linecap:round"/>
+      <path d="M40 78h24v-21" style="fill:none;stroke:var(--verb);stroke-width:4;stroke-dasharray:5 4"/><circle cx="96" cy="28" r="9" style="fill:var(--accent)"/>`,
+ al4: `<rect x="34" y="30" width="52" height="60" rx="10" style="fill:var(--navy)"/><text x="60" y="72" text-anchor="middle" style="font:800 30px Lexend,sans-serif;fill:var(--accent)">f</text>
+      <path d="M6 60h22M92 60h22" style="stroke:var(--ink);stroke-width:5;stroke-linecap:round"/><path d="M20 52l8 8-8 8M106 52l8 8-8 8" style="fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round"/>`,
+ al5: `<path d="M14 100L106 20" style="stroke:var(--noun);stroke-width:7;stroke-linecap:round"/><path d="M14 30L106 92" style="stroke:var(--verb);stroke-width:7;stroke-linecap:round"/><circle cx="58" cy="61" r="10" style="fill:var(--accent);stroke:var(--card);stroke-width:3"/>`,
+ al6: `<rect x="14" y="20" width="92" height="80" rx="16" style="fill:var(--card);stroke:var(--navy);stroke-width:5"/><text x="52" y="84" text-anchor="middle" style="font:800 52px Lexend,sans-serif;fill:var(--navy)">x</text><text x="84" y="56" text-anchor="middle" style="font:800 30px Lexend,sans-serif;fill:var(--accent)">2</text>`,
+ al7: `<path d="M12 104C30 10 90 10 108 104" style="fill:none;stroke:var(--navy);stroke-width:4;stroke-dasharray:6 6"/><path d="M8 104h104" style="stroke:var(--ink);stroke-width:4"/><circle cx="60" cy="34" r="13" style="fill:var(--accent)"/><path d="M47 34h26M60 21v26" style="stroke:var(--navy);stroke-width:2.5"/>`,
+ bi1: `<ellipse cx="60" cy="60" rx="50" ry="40" style="fill:var(--good-bg);stroke:var(--good);stroke-width:5"/><circle cx="54" cy="58" r="16" style="fill:var(--adv);opacity:.85"/><circle cx="54" cy="58" r="6" style="fill:var(--navy)"/>
+      <ellipse cx="88" cy="46" rx="10" ry="5" transform="rotate(25 88 46)" style="fill:var(--accent)"/><ellipse cx="84" cy="78" rx="9" ry="5" transform="rotate(-20 84 78)" style="fill:var(--accent)"/><circle cx="30" cy="80" r="3" style="fill:var(--navy)"/><circle cx="36" cy="40" r="3" style="fill:var(--navy)"/>`,
+ bi2: `<path d="M38 30l18 10v20l-18 10-18-10V40z" style="fill:none;stroke:var(--navy);stroke-width:5;stroke-linejoin:round"/><path d="M56 60l16 10v20l-16 10-18-10" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-linejoin:round"/><path d="M72 70l18-10 14 8" style="fill:none;stroke:var(--noun);stroke-width:5;stroke-linecap:round"/><circle cx="104" cy="68" r="7" style="fill:var(--verb)"/>`,
+ bi3: `<circle cx="88" cy="28" r="14" style="fill:var(--accent)"/><path d="M88 6v6M88 44v6M66 28h6M104 28h6M73 13l4 4M99 39l4 4M103 13l-4 4" style="stroke:var(--accent);stroke-width:4;stroke-linecap:round"/>
+      <path d="M18 104C18 60 44 40 80 52 78 88 50 104 18 104z" style="fill:var(--good)"/><path d="M18 104C36 84 52 70 72 58" style="fill:none;stroke:var(--card);stroke-width:4;stroke-linecap:round"/>`,
+ bi4: `<path d="M38 10c44 20 44 30 0 50s-44 30 0 50M82 10c-44 20-44 30 0 50s44 30 0 50" style="fill:none;stroke-width:6;stroke-linecap:round;stroke:var(--noun)"/>
+      <path d="M44 22h32M54 35h12M44 48h32M44 72h32M54 85h12M44 98h32" style="stroke:var(--accent);stroke-width:5;stroke-linecap:round"/>`,
+ bi5: `<rect x="16" y="16" width="88" height="88" rx="10" style="fill:var(--card);stroke:var(--navy);stroke-width:5"/><path d="M60 16v88M16 60h88" style="stroke:var(--navy);stroke-width:4"/>
+      <text x="38" y="48" text-anchor="middle" style="font:800 20px Lexend,sans-serif;fill:var(--verb)">BB</text><text x="82" y="48" text-anchor="middle" style="font:800 20px Lexend,sans-serif;fill:var(--verb)">Bb</text>
+      <text x="38" y="92" text-anchor="middle" style="font:800 20px Lexend,sans-serif;fill:var(--verb)">Bb</text><text x="82" y="92" text-anchor="middle" style="font:800 20px Lexend,sans-serif;fill:var(--noun)">bb</text>`,
+ bi6: `<path d="M60 14L8 104h104z" style="fill:var(--good-bg);stroke:var(--good);stroke-width:5;stroke-linejoin:round"/><path d="M36 58h48M22 82h76" style="stroke:var(--good);stroke-width:4"/>
+      <circle cx="60" cy="42" r="6" style="fill:var(--verb)"/><circle cx="48" cy="70" r="5" style="fill:var(--accent)"/><circle cx="72" cy="70" r="5" style="fill:var(--accent)"/><path d="M30 98l6-8 6 8M54 98l6-8 6 8M78 98l6-8 6 8" style="fill:none;stroke:var(--good);stroke-width:3"/>`,
+ bi7: `<circle cx="60" cy="60" r="46" style="fill:var(--card);stroke:var(--navy);stroke-width:5"/><path d="M60 60m-6 0a6 6 0 1 1 12 0a12 12 0 1 1-24 0a18 18 0 1 1 36 0a24 24 0 1 1-48 0a30 30 0 0 1 30-30" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round"/>`,
+ wh1: `<path d="M14 88L8 34l26 22 26-34 26 34 26-22-6 54z" style="fill:var(--accent);stroke:var(--navy);stroke-width:4;stroke-linejoin:round"/><rect x="14" y="88" width="92" height="14" rx="4" style="fill:var(--navy)"/><circle cx="60" cy="66" r="7" style="fill:var(--verb)"/><circle cx="34" cy="70" r="5" style="fill:var(--noun)"/><circle cx="86" cy="70" r="5" style="fill:var(--noun)"/>`,
+ wh2: `<path d="M10 104V60l24 14V60l24 14V60l24 14V24h14v80z" style="fill:var(--navy)"/><path d="M89 18c-6-6 2-10-2-16M96 18c4-6-2-10 4-14" style="fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round"/>
+      <rect x="18" y="84" width="10" height="10" style="fill:var(--accent)"/><rect x="42" y="84" width="10" height="10" style="fill:var(--accent)"/><rect x="66" y="84" width="10" height="10" style="fill:var(--accent)"/>`,
+ wh3: `<circle cx="56" cy="64" r="42" style="fill:var(--noun);opacity:.9"/><path d="M30 44c10 4 14-4 22 2s0 14 8 18 4 14-6 16M70 30c-4 8 6 10 12 8s10 10 4 16" style="fill:none;stroke:var(--good-bg);stroke-width:6;stroke-linecap:round"/>
+      <path d="M92 10v40" style="stroke:var(--navy);stroke-width:4;stroke-linecap:round"/><path d="M92 12h22l-6 8 6 8H92z" style="fill:var(--accent)"/>`,
+ wh4: `<path d="M20 72a40 34 0 0 1 80 0z" style="fill:var(--good);stroke:var(--navy);stroke-width:4"/><path d="M6 74h108" style="stroke:var(--navy);stroke-width:8;stroke-linecap:round"/><path d="M40 86h40" style="stroke:var(--navy);stroke-width:4;stroke-linecap:round"/>
+      <path d="M8 104l12-8 12 8 12-8 12 8 12-8 12 8 12-8 12 8" style="fill:none;stroke:var(--muted);stroke-width:3"/>`,
+ wh5: `<path d="M14 16v88h92" style="fill:none;stroke:var(--navy);stroke-width:5;stroke-linecap:round"/><path d="M22 40l20-8 16 10 14-4 10 44" style="fill:none;stroke:var(--verb);stroke-width:6;stroke-linecap:round;stroke-linejoin:round"/><path d="M72 76l10 12 10-14" style="fill:none;stroke:var(--verb);stroke-width:6;stroke-linecap:round;stroke-linejoin:round"/>`,
+ wh6: `<path d="M60 12c6 0 8 10 8 20v18l42 18v12l-42-8v22l12 8v8l-20-6-20 6v-8l12-8V72l-42 8V68l42-18V32c0-10 2-20 8-20z" style="fill:var(--navy)"/><circle cx="60" cy="30" r="4" style="fill:var(--accent)"/>`,
+ wh7: `<rect x="10" y="30" width="100" height="70" style="fill:var(--muted)"/><path d="M10 47h100M10 64h100M10 81h100M35 30v17M85 30v17M22 47v17M60 47v17M98 47v17M35 64v17M85 64v17M22 81v19M60 81v19M98 81v19" style="stroke:var(--card);stroke-width:3"/>
+      <path d="M62 30l-8 16 10 10-12 16 8 12-6 16" style="fill:none;stroke:var(--accent);stroke-width:6;stroke-linejoin:round"/>`,
+ lock: `<rect x="34" y="54" width="52" height="42" rx="8" style="fill:var(--muted)"/><path d="M44 54V42a16 16 0 0 1 32 0v12" style="fill:none;stroke:var(--muted);stroke-width:8"/>`,
+};
+const art = (id, size, label) => `<svg viewBox="0 0 120 120" width="${size}" height="${size}" ${label?`role="img" aria-label="${label}"`:'aria-hidden="true"'}>${ART[id]||ART.boss}</svg>`;
+
+/* ---------- visuals ---------- */
+function graphSVG(g){
+  const R = 6, W = 240, sc = W/(2*R), X = x => (x+R)*sc, Y = y => (R-y)*sc; let s = "";
+  for (let i=-R;i<=R;i++){ s += `<path class="grid" d="M${X(i)} 0V${W}M0 ${Y(i)}H${W}"/>`; }
+  s += `<path class="ax" d="M${X(0)} 0V${W}M0 ${Y(0)}H${W}"/>`;
+  for (const i of [-4,-2,2,4]) s += `<text x="${X(i)}" y="${Y(0)+14}" text-anchor="middle">${i<0?"−"+(-i):i}</text><text x="${X(0)-6}" y="${Y(i)+4}" text-anchor="end">${i<0?"−"+(-i):i}</text>`;
+  s += `<text x="${W-6}" y="${Y(0)-6}" text-anchor="end">x</text><text x="${X(0)+6}" y="12">y</text>`;
+  const cols = ["var(--accent)","var(--noun)","var(--verb)"];
+  (g.lines||[]).forEach(([m,b],k) => { s += `<path d="M${X(-R)} ${Y(m*-R+b)}L${X(R)} ${Y(m*R+b)}" style="stroke:${cols[k%3]};stroke-width:4;stroke-linecap:round"/>`; });
+  if (g.quad){ const [a,b,c] = g.quad; let d = ""; for (let x=-R;x<=R+0.001;x+=0.1){ const y = a*x*x+b*x+c; d += (d?"L":"M")+X(x).toFixed(1)+" "+Y(Math.max(-R-2,Math.min(R+2,y))).toFixed(1); } s += `<path d="${d}" style="fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round"/>`; }
+  (g.pts||[]).forEach(([x,y]) => { s += `<circle cx="${X(x)}" cy="${Y(y)}" r="6" style="fill:var(--navy);stroke:var(--card);stroke-width:2"/>`; });
+  return `<svg class="graph" viewBox="0 0 ${W} ${W}" role="img" aria-label="Graph"><defs><clipPath id="gc"><rect width="${W}" height="${W}"/></clipPath></defs><g clip-path="url(#gc)">${s}</g></svg>`;
+}
+function punnettHTML([a,b]){
+  const cell = (x,y) => { const p = [x,y].sort((m,n)=> (m===m.toUpperCase()?0:1)-(n===n.toUpperCase()?0:1)).join(""); return `<td class="${p===p.toLowerCase()?"rec":"dom"}">${p}</td>`; };
+  return `<table class="pun" aria-label="Punnett square: parent one ${esc(a)}, parent two ${esc(b)}"><caption>Top: ${esc(a)} · Side: ${esc(b)}</caption>
+    <tr><th></th><th>${a[0]}</th><th>${a[1]}</th></tr><tr><th>${b[0]}</th>${cell(a[0],b[0])}${cell(a[1],b[0])}</tr><tr><th>${b[1]}</th>${cell(a[0],b[1])}${cell(a[1],b[1])}</tr></table>`;
+}
+const visHTML = v => !v ? "" : `<div class="vis">${v.graph ? graphSVG(v.graph) : v.punnett ? punnettHTML(v.punnett) : ""}</div>`;
+function setSub(id){ SUB = SUBJ.find(s=>s.id===id) || SUBJ[0]; UNITS = SUB.units; S.sub = SUB.id; save(); }
+
+/* ---------- views ---------- */
+let unit = null, slideI = 0, qset = null;
+function go(html){ stop(); $("view").innerHTML = html; window.scrollTo({top:0}); }
+function starsHTML(id){ const b = S.best[id]; const n = b==null?0:b>=0.9?3:b>=0.7?2:b>=0.5?1:0; return `<span class="stars" aria-label="${n} of 3 stars">${[0,1,2].map(i=>`<span class="${i<n?"on":""}">★</span>`).join("")}</span>`; }
+
+/* level i is open when it's the first level, or the level before it has at least 1 star (4 of 8) */
+const PASS = 0.5;
+const bossU = () => ({id:SUB.boss, name:"Championship Game", lesson:[], boss:true});
+const passed = id => (S.best[id]||0) >= PASS;
+const isOpen = i => i === 0 || passed(UNITS[i-1].id);
+const bossOpen = () => UNITS.every(u => passed(u.id));
+function currentLevel(){ for (let i=0;i<UNITS.length;i++) if (isOpen(i) && !passed(UNITS[i].id)) return i; return bossOpen() ? UNITS.length : -1; }
+function stopHTML(i, side){
+  const isBoss = i === UNITS.length, u = isBoss ? bossU() : UNITS[i];
+  const open = isBoss ? bossOpen() : isOpen(i), won = passed(u.id), here = currentLevel() === i;
+  const label = `Level ${isBoss?"Final":i+1}, ${u.name}. ${open?(won?"Finished":"Open"):"Locked"}`;
+  return `<div class="stop ${side}">
+    <button class="node ${isBoss?"boss":""} ${open?(won?"won":"open"):"locked"}" data-u="${i}" aria-label="${esc(label)}" ${open?"":"aria-disabled=\"true\""}>
+      ${here?`<span class="here">YOU</span>`:""}<span class="art">${art(u.id, 84)}</span>${open?"":`<span class="lockic">${art("lock",52)}</span>`}
+      <span class="lvnum">${isBoss?"FINAL":"LEVEL "+(i+1)}</span></button>
+    <div class="stopinfo"><span class="nm">${esc(u.name)}</span>${open?starsHTML(u.id):""}
+      <span class="st">${open?(won?"Finished. Play again any time.":isBoss?(UNITS.length*2)+" mixed plays. Win the title.":"Ready to play"):isBoss?"Finish all "+UNITS.length+" levels to unlock":"Get 1 star on Level "+i+" to unlock"}</span></div>
+  </div>`;
+}
+function linkSVG(fromSide, done){ const d = fromSide==="l" ? "M60 4 C 60 30, 300 16, 300 42" : "M300 4 C 300 30, 60 16, 60 42";
+  return `<svg class="link ${done?"done":""}" viewBox="0 0 360 46" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" vector-effect="non-scaling-stroke"/></svg>`; }
+function mapLine(){ const k = currentLevel(), rk = rankOf(S.points);
+  const where = k === -1 ? "" : k === UNITS.length ? `Bayo, you're in the ${SUB.name} Championship Game.` : `Bayo, you're on Level ${k+1} of ${SUB.name}: ${UNITS[k].name}.`;
+  const allDone = UNITS.every(u=>passed(u.id)) && passed(SUB.boss);
+  return `${allDone?"You won the championship. Go for three stars on every level.":where} Your rank is ${rk.r.name}.${rk.next?` ${rk.next.at-S.points} more points to ${rk.next.name}.`:" That's the top rank."} Each right answer is 2 points.`; }
+function subStats(s){ const won = s.units.filter(u => (S.best[u.id]||0) >= PASS).length; const stars = s.units.reduce((t,u)=>{ const b = S.best[u.id]; return t + (b==null?0:b>=0.9?3:b>=0.7?2:b>=0.5?1:0); },0); return {won, stars, champ:(S.best[s.boss]||0)>=PASS}; }
+function subjects(){
+  const rk = rankOf(S.points), d = S.days[today()];
+  const greet = `What's up, Bayo! ${d&&d.q?`You've done ${d.q} plays today. Keep it going.`:"Pick a subject and let's get to work."} Your rank is ${rk.r.name}.`;
+  go(`<section class="card"><h1 id="hiH">${sayHTML(greet)}</h1><div class="row">${listenBtn("Hear this","hearSub")}</div></section>
+  <div class="subjects">${SUBJ.map(s => { const st = subStats(s); return `<button class="subj" data-s="${s.id}">${art(s.icon,76)}<span style="flex:1;min-width:0"><span class="nm">${esc(s.name)}</span>
+    <span class="st">${st.champ?"Champion · ":""}${st.won} of ${s.units.length} levels won · ${st.stars} ★</span><span class="xp"><i style="width:${Math.round(st.won/s.units.length*100)}%"></i></span></span></button>`; }).join("")}</div>`);
+  $("hearSub").onclick = e => readSequence([$("hiH"), ...SUBJ.map(s => Object.assign(document.createElement("span"), {textContent: `${s.name}: ${subStats(s).won} of ${s.units.length} levels won.`}))], e.currentTarget);
+  document.querySelectorAll(".subj").forEach(b => b.onclick = () => { setSub(b.dataset.s); home(); });
+}
+function home(){
+  const rk = rankOf(S.points), lo = rk.r.at, hi = rk.next ? rk.next.at : rk.r.at, pct = rk.next ? Math.round((S.points-lo)/(hi-lo)*100) : 100;
+  const n = UNITS.length + 1; let path = "";
+  for (let i=0;i<n;i++){ const side = i%2 ? "r" : "l"; path += stopHTML(i, side); if (i<n-1) path += linkSVG(side, i<UNITS.length && passed(UNITS[i].id)); }
+  const legend = ["n","v","a","r","p"].map(t => `<span class="w ${t}"><span class="t">${TAGS[t][0]}</span><span class="lb">${t==="n"?"thing":t==="v"?"action":t==="a"?"describes":t==="r"?"how":"he, she, it"}</span></span>`).join("");
+  go(`<section class="card">
+    <div class="rankcard"><div class="rankbadge">${art("boss",56)}</div>
+      <div style="flex:1;min-width:0"><span class="small muted" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase">Your rank</span>
+      <div class="rankname">${esc(rk.r.name)}</div>
+      <div class="xp" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Progress to next rank"><i style="width:${pct}%"></i></div>
+      <span class="small muted">${rk.next?`${S.points} / ${hi} points to ${esc(rk.next.name)}`:"Top rank reached"}</span></div></div>
+    <p id="mapSay">${sayHTML(mapLine())}</p>
+    <div class="row">${listenBtn("Hear this","hearHome")}</div></section>
+  <section class="card"><div class="row between"><button class="btn" id="allSub">All subjects</button></div><div class="lvhead">${art(SUB.icon,64)}<h1>${esc(SUB.name)} season</h1></div><p class="small muted">Tap a level to play. Locked levels open as you win.</p><div class="map">${path}</div></section>
+  ${SUB.id==="gr"?`<section class="card"><h2>Color key</h2><p class="small muted">The same colors are used everywhere in the app.</p><div class="legend">${legend}</div></section>`:""}`);
+  $("allSub").onclick = subjects;
+  $("hearHome").onclick = e => speakEl($("mapSay"), e.currentTarget);
+  document.querySelectorAll(".node").forEach(b => b.onclick = () => {
+    const i = +b.dataset.u, open = i === UNITS.length ? bossOpen() : isOpen(i);
+    if (!open) { SFX.no(); speak(i === UNITS.length ? `Locked. Finish all ${UNITS.length} levels to unlock the Championship Game.` : `Locked. Get one star on Level ${i} first.`, null, null); return; }
+    openUnit(i); });
+}
+
+let unitI = 0;
+function openUnit(i){ unitI = i;
+  if (i === UNITS.length) { const pool = shuffle(UNITS.flatMap(u => shuffle(u.q).slice(0,2))); unit = Object.assign({}, bossU(), {q: pool}); startPractice(); return; }
+  unit = UNITS[i]; slideI = 0; S.seen[unit.id] = S.seen[unit.id] || false; learn(); }
+
+function learn(){
+  const L = unit.lesson, sl = L[slideI];
+  go(`<section class="card">
+    <div class="row between"><button class="btn" id="back">Map</button><div class="dots">${L.map((_,i)=>`<i class="${i===slideI?"cur":""}"></i>`).join("")}</div></div>
+    <div class="lvhead">${art(unit.id,72)}<div><p class="small muted" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase">Level ${unitI+1} · ${esc(unit.name)} · Learn ${slideI+1} of ${L.length}</p>
+    <h1>${esc(sl.h)}</h1></div></div>
+    <p id="lsay">${sayHTML(sl.say)}</p>
+    ${sl.ex?`<div class="sent" id="lex" data-text="${esc(sentenceText(sl.ex))}">${chipsHTML(sl.ex,"show")}</div>`:""}
+    ${visHTML(sl.vis)}
+    ${sl.steps?`<div class="steps" id="steps">${sl.steps.map((t,i)=>`<div class="step" data-i="${i}" ${i?"hidden":""}>${sayHTML(t)}</div>`).join("")}</div>
+      <div class="row">${sl.steps.length>1?`<button class="btn go" id="nextStep">Show next step</button>`:""}${listenBtn("Hear the steps","hearSteps")}</div>`:""}
+    ${sl.tip?`<p class="tip" id="ltip">${sayHTML(sl.tip)}</p>`:""}
+    <div class="row">${listenBtn("Listen","hearL")}${sl.ex?listenBtn("Hear the example","hearEx"):""}</div>
+    <div class="row between"><button class="btn" id="prev" ${slideI?"":"disabled"}>Previous</button>
+      ${slideI<L.length-1?`<button class="btn go" id="next">Next</button>`:`<button class="btn go" id="practice">Start practice</button>`}</div>
+  </section>`);
+  $("back").onclick = home;
+  $("hearL").onclick = e => { const parts = [$("lsay")]; if ($("ltip")) parts.push($("ltip")); readSequence(parts, e.currentTarget); };
+  if ($("hearEx")) $("hearEx").onclick = e => speak(sentenceText(sl.ex), $("lex").querySelectorAll("[data-o]"), e.currentTarget);
+  if ($("nextStep")) $("nextStep").onclick = e => { const nx = document.querySelector(".step[hidden]"); if (!nx) return; document.querySelectorAll(".step.new").forEach(s=>s.classList.remove("new")); nx.hidden = false; nx.classList.add("new"); speakEl(nx.querySelector(".say"), null); if (!document.querySelector(".step[hidden]")) e.currentTarget.remove(); };
+  if ($("hearSteps")) $("hearSteps").onclick = e => readSequence([...document.querySelectorAll(".step:not([hidden]) .say")], e.currentTarget);
+  $("prev").onclick = () => { slideI--; learn(); };
+  if ($("next")) $("next").onclick = () => { slideI++; learn(); };
+  if ($("practice")) $("practice").onclick = () => { S.seen[unit.id] = true; save(); startPractice(); };
+  if (S.auto) setTimeout(() => $("hearL") && $("hearL").click(), 300);
+}
+/* read several blocks one after another, each with its own highlighting */
+function readSequence(els, btn){
+  if (!synth) return; stop(); let k = 0;
+  const next = () => { if (k >= els.length) { clearHighlights(); return; } const el = els[k++];
+    const u = new SpeechSynthesisUtterance(spoken(el.dataset.text||el.textContent)); u.rate = S.rate; if (voice) u.voice = voice;
+    let list = [...el.querySelectorAll("[data-o]")]; const tx = el.dataset.text||el.textContent;
+    if (changes(tx)) { list = []; el.classList.add("reading"); }
+    u.onboundary = e => { if (e.name === "sentence") return; let hit = null; for (const s of list) { if (+s.dataset.o <= e.charIndex) hit = s; else break; } list.forEach(s=>s.classList.remove("cur","speaking")); if (hit) hit.classList.add(hit.classList.contains("w")?"speaking":"cur"); };
+    u.onend = () => { list.forEach(s=>s.classList.remove("cur","speaking")); el.classList.remove("reading"); next(); }; u.onerror = () => clearHighlights();
+    synth.speak(u); };
+  if (btn) { speakingBtn = btn; btn.classList.add("playing"); }
+  next();
+}
+
+function shuffle(a){ a = a.slice(); for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+function startPractice(){ qset = {qs: shuffle(unit.q.map((_,i)=>i)), n:0, right:0}; ask(); }
+
+/* text of an mc sentence with a choice put in place of the underlined part */
+function filled(s, choice){ const m = s.match(/\[(.*?)\]/); if (!m) return s; const rep = choice === "Correct as is" ? m[1] : choice; return s.replace(/\[.*?\]/, rep).replace(/\s+([.,!?;:])/g,"$1"); }
+function ulHTML(s){ const m = s.match(/^(.*?)\[(.*?)\](.*)$/); if (!m) return sayHTML(s);
+  return `<span class="say">${spansFrom(m[1],0)}<span class="ul">${spansFrom(m[2],m[1].length)}</span>${spansFrom(m[3],m[1].length+m[2].length)}</span>`; }
+
+function ask(){
+  const q = unit.q[qset.qs[qset.n]], L = ["A","B","C","D"];
+  const total = qset.qs.length, pct = qset.n/total*100;
+  let body = "";
+  if (q.t === "tap") {
+    body = `<div class="sent" id="qs" data-text="${esc(sentenceText(q.s))}">${chipsHTML(q.s,"tap")}</div>`;
+  } else if (q.t === "order") {
+    let mix; do { mix = shuffle(q.items.map((_,i)=>i)); } while (mix.every((v,i)=>v===i));
+    qset.pick = []; qset.mix = mix;
+    body = `<p class="small muted" style="font-weight:700">Tap them in order. Tap one again to take it back.</p><ol class="slots" id="slots"></ol><div class="pool" id="pool"></div><div class="row"><button class="btn go" id="checkOrd" disabled>Check my order</button></div>`;
+  } else {
+    const order = q.ch[0]==="Correct as is" ? [0,...shuffle([1,2,3].slice(0,q.ch.length-1))] : shuffle(q.ch.map((_,i)=>i));
+    qset.order = order;
+    const isLine = q.s && !/\[/.test(q.s) && SUB.id !== "gr";
+    body = `${visHTML(q.vis)}${q.s?`<p class="${isLine?"mathline":"sentence"}" id="qs" data-text="${esc(q.s.replace(/[\[\]]/g,""))}">${ulHTML(q.s)}</p>`:""}
+    <div class="opts">${order.map((k,i)=>`<div class="opt" data-k="${k}"><button class="pick" data-k="${k}" data-text="${L[i]}. ${esc(q.ch[k])}."><span class="letter">${L[i]}</span><span>${esc(q.ch[k])}</span></button><button class="hear" data-k="${k}" aria-label="Hear choice ${L[i]}${q.s&&/\[/.test(q.s)?" in the sentence":""}">${SPK}</button></div>`).join("")}</div>`;
+  }
+  go(`<section class="card">
+    <div class="row between"><button class="btn" id="quit">Map</button><span class="small muted" style="font-weight:700;display:flex;align-items:center;gap:8px">${art(unit.id,36)}${esc(unit.name)} · ${qset.n+1} of ${total}</span></div>
+    <div class="prog"><i style="width:${pct}%"></i></div>
+    <h2 id="qp">${sayHTML(q.prompt)}</h2>
+    ${body}
+    <div class="row">${listenBtn("Hear the question","hearQ")}</div>
+    <div id="fb"></div>
+  </section>`);
+  $("quit").onclick = home;
+  $("hearQ").onclick = e => readSequence([$("qp"), ...($("qs")?[$("qs")]:[]), ...document.querySelectorAll(".opt .pick, #pool button")], e.currentTarget);
+  if (q.t === "tap") {
+    document.querySelectorAll("#qs button.w").forEach(b => b.onclick = () => answerTap(q, +b.dataset.i, b));
+  } else {
+    document.querySelectorAll(".opt .pick").forEach(b => b.onclick = () => answerMC(q, +b.dataset.k));
+    document.querySelectorAll(".opt .hear").forEach(b => b.onclick = () => { const k = +b.dataset.k; speak(q.s && /\[/.test(q.s) ? filled(q.s, q.ch[k]) : q.ch[k], null, b); });
+  }
+  if (q.t === "order") { drawOrder(q); $("checkOrd").onclick = () => answerOrder(q); }
+  if (S.auto) setTimeout(() => $("hearQ") && $("hearQ").click(), 350);
+}
+
+function drawOrder(q){
+  const pk = qset.pick;
+  $("slots").innerHTML = q.items.map((_,i) => pk[i]!=null ? `<li class="filled"><button data-p="${i}" aria-label="Take back: ${esc(q.items[pk[i]])}">${esc(q.items[pk[i]])}</button></li>` : `<li><span class="muted small">Tap an item below</span></li>`).join("");
+  $("pool").innerHTML = qset.mix.filter(k => !pk.includes(k)).map(k => `<button data-k="${k}" data-text="${esc(q.items[k])}">${esc(q.items[k])}</button>`).join("");
+  $("checkOrd").disabled = pk.length < q.items.length;
+  document.querySelectorAll("#pool button").forEach(b => b.onclick = () => { pk.push(+b.dataset.k); speak(q.items[+b.dataset.k]); drawOrder(q); });
+  document.querySelectorAll("#slots button").forEach(b => b.onclick = () => { pk.splice(+b.dataset.p, 1); drawOrder(q); });
+}
+function answerOrder(q){
+  const pk = qset.pick, ok = pk.every((k,i) => k === i);
+  score(ok, q);
+  $("slots").querySelectorAll("li").forEach((li,i) => { li.classList.add(pk[i]===i ? "ok" : "no"); const b = li.querySelector("button"); if (b) b.disabled = true; });
+  $("checkOrd").remove();
+  const right = `<ol class="olist" id="fbOrder" data-text="${esc(q.items.map((t,i)=>(i+1)+". "+t+".").join(" "))}">${q.items.map(t=>`<li>${esc(t)}</li>`).join("")}</ol>`;
+  feedback(ok, right, ok ? "" : `${pk.filter((k,i)=>k===i).length} of ${q.items.length} were in the right spot. Here's the right order.`, q.ex);
+  const fbh = $("hearWhy"); if (fbh) fbh.onclick = e => readSequence([...(ok?[]:[$("fbWrong")]), $("fbOrder"), $("fbWhy")], e.currentTarget);
+}
+/* ---------- tracking (time, per-subject stats, misses) + sync to the parent page ---------- */
+let lastAct = 0;
+function dayRec(){ const d = today(); const r = S.days[d] = S.days[d] || {q:0, ok:0}; r.sec = r.sec || 0; r.s = r.s || {}; return r; }
+function tick(){ const now = Date.now(); if (lastAct) dayRec().sec += Math.min(now - lastAct, 90000)/1000; lastAct = now; }
+document.addEventListener("click", tick, true);
+const SYNC_URL = "/api/progress", SYNC_TOKEN = "bayo-sync-v1"; let syncT = null, answered = 0;
+function snapshot(){ return {v:1, name:"Bayo", points:S.points, streak:S.streak, best:S.best, days:S.days, miss:S.miss.slice(-40), sentAt:Date.now(),
+  subjects: SUBJ.map(s => ({id:s.id, name:s.name, boss:s.boss, levels:s.units.map(u=>[u.id,u.name])}))}; }
+function syncNow(keep){ try { if (!/^https?:$/.test(location.protocol)) return; fetch(SYNC_URL, {method:"POST", keepalive:!!keep, headers:{"content-type":"application/json","x-sync-token":SYNC_TOKEN}, body:JSON.stringify(snapshot())}).catch(()=>{}); } catch(e) {} }
+function syncSoon(){ clearTimeout(syncT); syncT = setTimeout(syncNow, 3000); }
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") syncNow(true); });
+function score(ok, q){
+  const r = dayRec(); r.q++; if (ok) r.ok++; const rs = r.s[SUB.id] = r.s[SUB.id] || {q:0, ok:0}; rs.q++; if (ok) rs.ok++;
+  if (!ok && q) { S.miss.push({t:Date.now(), s:SUB.id, l:unit.name, p:(q.prompt + (q.s && q.t!=="tap" ? " " + q.s.replace(/[\[\]]/g,"") : "")).slice(0,160)}); if (S.miss.length > 60) S.miss = S.miss.slice(-60); }
+  if (++answered % 5 === 0) syncSoon();
+  if (ok) { qset.right++; S.points += 2; S.streak++; SFX.ok(); } else { S.streak = 0; SFX.no(); }
+  save(); paintBoard();
+}
+function feedback(ok, headExtra, whyWrong, why){
+  const head = ok ? CHEERS_OK[Math.floor(Math.random()*CHEERS_OK.length)] : CHEERS_NO[Math.floor(Math.random()*CHEERS_NO.length)];
+  const last = qset.n+1 >= qset.qs.length;
+  $("fb").innerHTML = `<div class="fb ${ok?"ok":"no"}" id="fbBox">
+    <div class="head">${esc(head)}${ok?" +2":""}</div>
+    ${headExtra||""}
+    ${whyWrong?`<p id="fbWrong">${sayHTML(whyWrong)}</p>`:""}
+    <p id="fbWhy">${sayHTML(why)}</p>
+    <div class="row">${listenBtn("Hear why","hearWhy")}<button class="btn go" id="nextQ">${last?"See my score":"Next"}</button></div></div>`;
+  $("hearWhy").onclick = e => readSequence([...(whyWrong?[$("fbWrong")]:[]), $("fbWhy")], e.currentTarget);
+  $("nextQ").onclick = () => { qset.n++; qset.n >= qset.qs.length ? done() : ask(); };
+  $("nextQ").focus({preventScroll:true});
+  const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; $("fbBox").scrollIntoView({behavior: calm ? "auto" : "smooth", block:"nearest"});
+  if (S.auto) setTimeout(() => $("hearWhy").click(), 300);
+}
+function answerTap(q, i, btn){
+  const t = toks(q.s)[i], ok = t.tag === q.want;
+  score(ok, q);
+  document.querySelectorAll("#qs button.w").forEach(b => b.disabled = true);
+  btn.classList.add(ok ? "pick-ok" : "pick-bad");
+  const want = TAGS[q.want], got = TAGS[t.tag];
+  const an = w => (/^[aeiou]/i.test(w) ? "an " : "a ") + w;
+  const whyWrong = ok ? "" : `"${t.w}" is ${got[0]==="word"?"not "+an(want[0]):an(got[0])+", "+got[1]}. We're looking for ${an(want[0])}: ${want[1]}.`;
+  const reveal = `<div class="sent" id="reveal" data-text="${esc(sentenceText(q.s))}">${chipsHTML(q.s,"show")}</div>`;
+  setTimeout(() => feedback(ok, reveal, whyWrong, q.ex), 250);
+}
+function answerMC(q, k){
+  const ok = k === q.a;
+  score(ok, q);
+  document.querySelectorAll(".opt .pick").forEach(b => b.disabled = true);
+  document.querySelectorAll(".opt").forEach(o => { const kk = +o.dataset.k; if (kk === q.a) o.classList.add("ok"); else if (kk === k) o.classList.add("no"); });
+  const right = q.s ? `<p class="sentence" id="fbSent" style="font-size:21px">${sayHTML(filled(q.s, q.ch[q.a]))}</p>` : "";
+  feedback(ok, right, ok ? "" : `You picked "${q.ch[k]}". ${q.why[k]}`, `The answer is "${q.ch[q.a]}". ${q.ex}`);
+}
+function done(){
+  const pct = qset.right / qset.qs.length, id = unit.id, isBoss = !!unit.boss;
+  const wasPassed = passed(id), wasBossOpen = bossOpen(), rankBefore = rankOf(S.points - qset.right*2).i;
+  S.best[id] = Math.max(S.best[id] || 0, pct); save();
+  const nowPassed = passed(id);
+  let unlockHTML = "", unlockSay = "";
+  if (!wasPassed && nowPassed) {
+    if (!isBoss && unitI+1 < UNITS.length) { const nx = UNITS[unitI+1]; unlockHTML = `<div class="unlock">${art(nx.id,72)}<div><span class="pill">Unlocked</span><b>Level ${unitI+2}: ${esc(nx.name)}</b></div></div>`; unlockSay = ` Level ${unitI+2}, ${nx.name}, is unlocked.`; }
+    if (!isBoss && !wasBossOpen && bossOpen()) { unlockHTML = `<div class="unlock">${art("boss",72)}<div><span class="pill">Unlocked</span><b>The Championship Game</b></div></div>`; unlockSay = " The Championship Game is unlocked."; }
+    if (isBoss) unlockSay = " You won the championship!";
+  }
+  const rk = rankOf(S.points), rankUp = rk.i > rankBefore;
+  if (rankUp) unlockSay += ` New rank: ${rk.r.name}.`;
+  const msg = (pct>=0.7?"Bayo! ":"") + (!nowPassed ? `You need ${Math.ceil(PASS*qset.qs.length)} right to win this level. Run it back, you've got this.` : pct >= 0.9 ? (isBoss ? "Champion. That's a title run." : "Game over, and you won big.") : pct >= 0.7 ? "Strong game. A little more practice and it's three stars." : "You won the level. Run it back for more stars.");
+  const party = nowPassed && (unlockSay || pct >= 0.9);
+  const colors = ["var(--accent)","var(--noun)","var(--verb)","var(--adj)","var(--adv)","var(--pron)"];
+  const burst = party ? `<div class="burst" aria-hidden="true">${Array.from({length:28},(_,k)=>`<i style="left:${(k*37)%100}%;background:${colors[k%6]};animation-delay:${(k%7)*0.09}s"></i>`).join("")}</div>` : "";
+  go(`<section class="card ${party?"celebrate":""}" ${party?"":"style=\"align-items:flex-start\""}>${burst}
+    <p class="small muted" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase">${isBoss?"Final":"Level "+(unitI+1)} · ${esc(unit.name)} · Final score</p>
+    ${party?`<div class="big">${art(isBoss?"boss":id,150)}</div>`:""}
+    <h1 style="font-size:56px;line-height:1">${qset.right} / ${qset.qs.length}</h1>
+    ${starsHTML(id)}
+    ${rankUp?`<span class="pill" style="background:var(--accent);color:var(--accent-ink)">New rank: ${esc(rk.r.name)}</span>`:""}
+    ${unlockHTML}
+    <p id="dmsg">${sayHTML(`${qset.right} out of ${qset.qs.length}. ${msg}${unlockSay}`)}</p>
+    <div class="row">${listenBtn("Hear it","hearDone")}</div>
+    <div class="row">${unlockHTML&&!isBoss?`<button class="btn go" id="nextLv">Play next level</button>`:""}<button class="btn ${unlockHTML?"":"go"}" id="again">Run it back</button>${isBoss?"":`<button class="btn" id="relearn">Review the lesson</button>`}<button class="btn" id="homeB">Season map</button><button class="btn" id="subB">All subjects</button></div>
+  </section>`);
+  if (party) SFX.win();
+  syncNow();
+  $("hearDone").onclick = e => speakEl($("dmsg"), e.currentTarget);
+  $("again").onclick = () => isBoss ? openUnit(UNITS.length) : startPractice();
+  if ($("relearn")) $("relearn").onclick = () => { slideI = 0; learn(); };
+  if ($("nextLv")) $("nextLv").onclick = () => openUnit(bossOpen() && unitI === UNITS.length-1 ? UNITS.length : unitI+1);
+  $("homeB").onclick = home; $("subB").onclick = subjects;
+  if (S.auto || party) setTimeout(() => $("hearDone") && $("hearDone").click(), 700);
+}
+
+/* ---------- settings ---------- */
+$("setBtn").onclick = () => { $("settings").hidden = !$("settings").hidden; };
+function paintSpeed(){ document.querySelectorAll("#speed button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.r === S.rate))); }
+document.querySelectorAll("#speed button").forEach(b => b.onclick = () => { S.rate = +b.dataset.r; save(); paintSpeed(); speak("This is how fast I'll read."); });
+$("auto").checked = !!S.auto; $("auto").onchange = e => { S.auto = e.target.checked; save(); };
+$("sfx").checked = S.sfx !== false; $("sfx").onchange = e => { S.sfx = e.target.checked; save(); if (S.sfx) SFX.ok(); };
+$("voice").onchange = e => { S.voice = e.target.value; voice = voices.find(v => v.name === S.voice) || voice; save(); speak("Hi Bayo. This is my voice."); };
+$("testVoice").innerHTML = `${SPK}<span>Test the voice</span>`; $("testVoice").onclick = e => speak("Hi Bayo. Let's get to work.", null, e.currentTarget);
+if (![0.75,0.9,1.1].includes(S.rate)) S.rate = 0.9;
+paintSpeed(); paintBoard(); if (!Array.isArray(S.miss)) S.miss = []; setSub(S.sub || "gr"); subjects(); setTimeout(syncNow, 1500);
+</script>
+</body>
+</html>
