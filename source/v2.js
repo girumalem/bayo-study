@@ -16,11 +16,14 @@ let REC = {}; const AU = typeof Audio !== "undefined" ? new Audio() : null;
 let BEATS = {}; try { fetch("/audio/beat/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(x => { BEATS = x || {}; }).catch(() => {}); } catch(e) {}
 try { fetch("/audio/manifest.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {}).then(j => { REC = j || {}; }).catch(() => {}); } catch(e) {}
 document.addEventListener("click", function unlock(){ if (AU && !AU.src) { try { AU.muted = true; AU.play().catch(()=>{}); AU.muted = false; } catch(e) {} } document.removeEventListener("click", unlock, true); }, true);
-function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} try { if (AU) { AU.pause(); AU.ontimeupdate = null; } } catch(e) {} document.querySelectorAll(".v-w.now").forEach(w => w.classList.remove("now")); }
+function hush(){ talkId++; try { synth && synth.cancel(); } catch(e) {} try { if (AU) { AU.pause(); AU.ontimeupdate = null; } } catch(e) {} document.querySelectorAll(".v-w.now, .v-sent .w.now").forEach(w => w.classList.remove("now")); }
 /* slower playback keeps the voice's pitch natural (preservesPitch) */
 function setRate(){ const r = Math.max(0.6, Math.min(1.2, S.rate || 0.8)); try { AU.preservesPitch = true; AU.webkitPreservesPitch = true; AU.defaultPlaybackRate = r; AU.playbackRate = r; } catch(e) {} }
 AU && AU.addEventListener("loadedmetadata", () => setRate());
-function wordSpans(el, text){ if (!el) return []; el.innerHTML = text.split(/\s+/).map(w => `<span class="v-w">${E(w)}</span>`).join(" "); return [...el.querySelectorAll(".v-w")]; }
+function wordSpans(el, text){ if (!el) return [];
+  /* if the element already has word chips or buttons, light those up instead of rewriting it (keeps buttons tappable) */
+  const chips = [...el.querySelectorAll(".w:not(.punct)")]; if (chips.length) return chips.length === text.split(/\s+/).length ? chips : [];
+  if (el.querySelector("button")) return []; el.innerHTML = text.split(/\s+/).map(w => `<span class="v-w">${E(w)}</span>`).join(" "); return [...el.querySelectorAll(".v-w")]; }
 function playRec(text, el){ const rec = REC[text]; if (!rec || !AU || S.rec === false) return null; const id = talkId;
   return new Promise(res => { const ws = wordSpans(el, text), T = rec[1] || []; let fin = false; const end = ok => { if (!fin) { fin = true; ws.forEach(w => w.classList.remove("now")); res(ok && id === talkId); } };
     AU.src = "/audio/" + rec[0]; setRate();
